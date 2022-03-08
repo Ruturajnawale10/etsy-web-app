@@ -1,0 +1,24 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ruturajnawale10/etsy-web-app.git"
+  },
+  "author": "Ruturaj Nawale",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ruturajnawale10/etsy-web-app/issues"
+  },
+  "homepage": "https://github.com/Ruturajnawale10/etsy-web-app#readme",
+  "dependencies": {
+    "express": "^4.17.3"
+  },
+  "type": "module"
+}
