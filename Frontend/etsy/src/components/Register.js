@@ -110,13 +110,13 @@ class Register extends Component{
                         </div>
                         
                             <div class="form-group">
-                                <input onChange = {this.usernameChangeHandler} type="text" class="form-control" name="username" placeholder="Username"/>
+                                <input onChange = {this.usernameChangeHandler} type="text" class="form-control" name="username" placeholder="Username" required autoFocus/>
                             </div>
                             <div class="form-group">
-                                <input onChange = {this.emailChangeHandler} type="email" class="form-control" name="email" placeholder="Email ID"/>
+                                <input onChange = {this.emailChangeHandler} type="email" class="form-control" name="email" placeholder="Email ID" required/>
                             </div>
                             <div class="form-group">
-                                <input onChange = {this.passwordChangeHandler} type="password" class="form-control" name="password" placeholder="Password"/>
+                                <input onChange = {this.passwordChangeHandler} type="password" class="form-control" name="password" placeholder="Password" required/>
                             </div>
                             <button onClick = {this.submitLogin} class="btn btn-primary">Register</button>
                             {this.state.authMsg}    
