@@ -11,7 +11,7 @@ function Main() {
     return(
         <div>
             {/*Render Different Component based on Route*/}
-            <Route path="/" component={Register}/>
+            <Route path="/register" component={Register}/>
             <Route path="/login" component={Login}/>
             {/*<Route path="/home" component={Home}/>
             <Route path="/delete" component={Delete}/>

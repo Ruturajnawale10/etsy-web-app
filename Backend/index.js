@@ -58,24 +58,20 @@ app.post('/login',function(req,res){
     // Object.keys(req.body).forEach(function(key){
     //     req.body = JSON.parse(key);
     // });
-    // var username = req.body.username;
-    // var password = req.body.password;
+    let username = req.body.username;
+    let password = req.body.password;
+    
+    let sql = "select * from user where username = ? AND password = ?";
+    con.query(sql, [username, password], function (err, result, fields) {
+        console.log(result);
+        if (result.length === 0) {
+            console.log("Invalid credentials");
+        } else {
+            console.log("User verified!");
+        }
+    });
+
     console.log("Inside Login Post Request");
-    //console.log("Req Body : ", username + "password : ",password);
-    console.log("Req Body : ",req.body);
-    Users.filter(function(user){
-        if(user.username === req.body.username && user.password === req.body.password){
-            res.cookie('cookie',"admin",{maxAge: 900000, httpOnly: false, path : '/'});
-            req.session.user = user;
-            res.writeHead(200,{
-                'Content-Type' : 'text/plain'
-            })
-            res.end("Successful Login");
-        }
-        else {
-            res.end("Login Failed");
-        }
-    })
 });
 
 app.post('/register',function(req,res){
@@ -83,13 +79,21 @@ app.post('/register',function(req,res){
     // Object.keys(req.body).forEach(function(key){
     //     req.body = JSON.parse(key);
     // });
-    // var username = req.body.username;
-    // var password = req.body.password;
+    let username = req.body.username;
+    let password = req.body.password;
+    let email = req.body.email;  
+    
+    let sql = "insert into user (username, email, password) values(?, ?, ?)";
+    con.query(sql, [username, email, password], function (err, result, fields) {
+        if (err) {
+             console.log("Username already exists!");
+        } else {
+            console.log("1 record inserted");
+        }
+    });
+
     console.log("Inside Register Post Request");
     console.log("Req Body : ",req.body);
-    Users.filter(function(user){
-        res.end("Successful Registration"); 
-    })
 });
 
 //start your server on port 3001
