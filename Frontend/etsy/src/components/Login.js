@@ -74,6 +74,9 @@ class Login extends Component{
                     })
                 }
                 else {
+                    this.setState({
+                        authMsg: <div> Logged in</div> 
+                    })
                     console.log("Whatt", response.data);
                 }
 

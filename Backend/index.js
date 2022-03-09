@@ -66,8 +66,12 @@ app.post('/login',function(req,res){
         console.log(result);
         if (result.length === 0) {
             console.log("Invalid credentials");
+            res.end("Login Failed");
         } else {
             console.log("User verified!");
+            res.cookie('cookie',"admin",{maxAge: 900000, httpOnly: false, path : '/'});
+            req.session.user = result;
+            res.end("Successful Login");
         }
     });
 
