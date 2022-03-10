@@ -13,6 +13,9 @@ function Navbar() {
   let registerLink = null;
   let favouritesLink = null;
   let cartsLink = null;
+  let sellOnEtsyLink = null;
+  let logoutLink = null;
+
   if (!cookie.load("cookie")) {
     loginLink = (
       <li class="nav-item">
@@ -31,7 +34,7 @@ function Navbar() {
     );
   } else {
     favouritesLink = (
-        <a href="/" class="navbar-brand">
+        <a href="/favourites" class="navbar-brand">
                 <img
                     src="https://cdn-icons-png.flaticon.com/128/130/130195.png"
                     width={40}
@@ -42,7 +45,7 @@ function Navbar() {
     )
 
     cartsLink = (
-        <a href="/" class="navbar-brand">
+        <a href="/cart" class="navbar-brand">
                 <img
                     src="https://img.icons8.com/external-icongeek26-outline-icongeek26/344/external-cart-essentials-icongeek26-outline-icongeek26.png"
                     width={40}
@@ -52,10 +55,23 @@ function Navbar() {
         </a>
     )
 
+    sellOnEtsyLink = (
+      <a href="/sellonetsy" class="navbar-brand">
+              Sell on Etsy
+      </a>
+    )
+
+    logoutLink = (
+      <a href="/logout" class="navbar-brand">
+              Logout
+      </a>
+    )
   }
 
   return (
     <div>
+    <head>
+
       <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
         rel="stylesheet"
@@ -66,10 +82,11 @@ function Navbar() {
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
       ></link>
-      <link rel="stylesheet" href="style.css"></link>
+      </head>
+      
       <body>
         <nav class="navbar navbar-expand-lg bg-light navbar-light">
-          <div class="container">
+          <div class="container-fluid">
             <a href="/" class="navbar-brand">
               <img
                 src="https://cdn-icons-png.flaticon.com/512/825/825513.png"
@@ -105,47 +122,24 @@ function Navbar() {
 
             <div class="collapse navbar-collapse" id="navmenu">
               <ul class="navbar-nav ms-auto navbar-nav-scroll">
-                {/* <li class="nav-item">
-                  <a href="/" class="nav-link">
-                    Home
-                  </a>
-                </li> */}
                 {loginLink}
                 {registerLink}
                 {favouritesLink}
                 {cartsLink}
+                {sellOnEtsyLink}
+                {logoutLink}
 
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img
-                    src="https://cdn-icons.flaticon.com/png/512/3033/premium/3033143.png?token=exp=1646801541~hmac=9c2870596695c4493f09a346b24638c0"
-                    width={40}
-                    height={40}
-                    class="img-fluid"
-                ></img>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
-                        <li><a class="dropdown-item" href="#">User Profile</a></li>
-                        <li><a class="dropdown-item" href="#">Sell on Etsy</a></li>
-                        <li><hr class="dropdown-divider"></hr></li>
-                        <li><a class="dropdown-item" href="#">Logout</a></li>
-                    </ul>
-                </li>
-
-                <a href="/" class="navbar-brand">
+                <a href="/profile" class="navbar-brand">
+              <img
+                src="https://cdn-icons.flaticon.com/png/512/3033/premium/3033143.png?token=exp=1646801541~hmac=9c2870596695c4493f09a346b24638c0"
+                width={40}
+                height={40}
+                class="img-fluid"
+              ></img>
+            </a>
+            <a href="/" class="navbar-brand">
                 
                 </a>
-                
-                {/* <li class="nav-item">
-                  <a href="/login" class="nav-link">
-                    Login
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="/register" class="nav-link">
-                    Register
-                  </a>
-                </li> */}
               </ul>
             </div>
           </div>

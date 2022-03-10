@@ -69,7 +69,7 @@ app.post('/login',function(req,res){
             res.end("Login Failed");
         } else {
             console.log("User verified!");
-            res.cookie('cookie',"admin",{maxAge: 900000, httpOnly: false, path : '/'});
+            res.cookie('cookie',"admin",{maxAge: 900000, httpOnly: false, path : '/'});            
             req.session.user = result;
             res.end("Successful Login");
         }
@@ -98,6 +98,22 @@ app.post('/register',function(req,res){
 
     console.log("Inside Register Post Request");
     console.log("Req Body : ",req.body);
+});
+
+app.post('/logout',function(req,res){
+    console.log("Inside logout Post Request");
+    res.status(200).clearCookie('cookie', {
+        path: '/'
+      });
+      req.session.destroy(function (err) {
+        res.redirect('/');
+      });
+});
+
+app.get('/profile',function(req,res) {
+    console.log("Inside Register Post Request");
+    console.log("Req Body : ",req.body);
+    console.log("Req user : ",req.session.user);
 });
 
 //start your server on port 3001
