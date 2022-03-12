@@ -149,6 +149,53 @@ app.post('/profile',function(req,res){
     console.log("Req Body : ",req.body);
 });
 
+app.post('/checkavailibility',function(req,res){
+    let shopname = req.body.shopName;
+
+    let sql = "select *from shop where shop_name=?";
+    con.query(sql, shopname, function (err, result, fields) {
+        if (err) {
+             console.log(err);
+             
+        } else {
+            console.log("Pass");
+        }
+
+        console.log(result);
+        if (result.length === 0) {
+            console.log("alright");
+            res.send("available");
+        }
+        else {
+            console.log("nooooo");
+            res.send("not available");
+        }
+    });
+
+    console.log("Inside check availibility Post Request");
+    console.log("Req Body : ",req.body);
+});
+
+app.post('/createshop',function(req,res){
+    let shopname = req.body.shopname;
+    let username = "admin";
+
+    console.log("Shopp");
+    console.log(shopname);
+    let sql = "insert into shop(shop_name, shop_owner) values(?,?)";
+    con.query(sql, [shopname, username], function (err, result, fields) {
+        if (err) {
+             console.log("Insertion failed");
+             
+        } else {
+            console.log("1 record added");
+        }
+    });
+
+    console.log("Inside Register Post Request");
+    console.log("Req Body : ",req.body);
+});
+
 //start your server on port 3001
 app.listen(3001);
 console.log("Server Listening on port 3001");
