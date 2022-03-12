@@ -131,7 +131,7 @@ function Navbar() {
 
                 <a href="/profile" class="navbar-brand">
               <img
-                src="https://cdn-icons.flaticon.com/png/512/3033/premium/3033143.png?token=exp=1646801541~hmac=9c2870596695c4493f09a346b24638c0"
+                src="https://freesvg.org/img/abstract-user-flat-4.png"
                 width={40}
                 height={40}
                 class="img-fluid"

@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
 function Userprofile() {
 
+  var [profileData, setProfileData] = useState([]);
     let redirectVar = null;
         if(!cookie.load('cookie')){
             redirectVar = <Redirect to= "/login"/>
@@ -13,13 +14,25 @@ function Userprofile() {
         axios.get('http://localhost:3001/profile')
         .then((response) => {
        //todo: write logic for fetching profile data from db
+       setProfileData(response.data[0]);
+       console.log(profileData);
     });
+    }, []);
+
+    const submitData = (e) => {
+    e.preventDefault();
+      
+      axios.post('http://localhost:3001/profile', profileData)
+      .then((response) => {
+     //todo: write logic for fetching profile data from db
+     console.log(profileData);
     });
+    }
 
   return (
     <div class="container p-3" style={{border: "8px solid #666666"}}>
     {redirectVar}
-      <form action="#">
+      <form onSubmit={submitData}>
         <div class="row g-3 align-items-center">
           <div class="col-auto">
             <label for="profilePic" class="col-form-label fw-bold">
@@ -37,7 +50,7 @@ function Userprofile() {
         </div>
 
         <img
-          src="https://cdn-icons.flaticon.com/png/512/3033/premium/3033143.png?token=exp=1646801541~hmac=9c2870596695c4493f09a346b24638c0"
+          src="https://freesvg.org/img/abstract-user-flat-4.png"
           width={130}
           height={130}
           class="img-fluid"
@@ -56,7 +69,8 @@ function Userprofile() {
               type="text"
               id="name"
               class="form-control"
-              aria-describedby="pictureHelpline"
+              value={profileData.name}
+              onChange={(e) => {setProfileData({...profileData, 'name': e.target.value})}}
             />
           </div>
         </div>
@@ -188,6 +202,8 @@ function Userprofile() {
               type="text"
               id="about"
               class="form-control"
+              value={profileData.about}
+              onChange={(e) => {setProfileData({...profileData, 'about': e.target.value})}}
             />
           </div>
         </div>
@@ -204,7 +220,8 @@ function Userprofile() {
               type="text"
               id="name"
               class="form-control"
-              aria-describedby="pictureHelpline"
+              value={profileData.city}
+              onChange={(e) => {setProfileData({...profileData, 'city': e.target.value})}}
             />
           </div>
         </div>
@@ -222,6 +239,8 @@ function Userprofile() {
               type="email"
               id="email"
               class="form-control"
+              value={profileData.email}
+              onChange={(e) => {setProfileData({...profileData, 'email': e.target.value})}}
             />
           </div>
         </div>
@@ -240,7 +259,8 @@ function Userprofile() {
               type="text"
               id="name"
               class="form-control"
-              aria-describedby="pictureHelpline"
+              value={profileData.phone}
+              onChange={(e) => {setProfileData({...profileData, 'phone': e.target.value})}}
             />
           </div>
         </div>
@@ -260,6 +280,8 @@ function Userprofile() {
               id="about"
               class="form-control"
               required
+              value={profileData.address}
+              onChange={(e) => {setProfileData({...profileData, 'address': e.target.value})}}
             />
           </div>
         </div>

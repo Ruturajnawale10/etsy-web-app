@@ -69,7 +69,7 @@ app.post('/login',function(req,res){
             res.end("Login Failed");
         } else {
             console.log("User verified!");
-            res.cookie('cookie',"admin",{maxAge: 900000, httpOnly: false, path : '/'});            
+            res.cookie('cookie',"admin",{maxAge: 480000, httpOnly: false, path : '/'});            
             req.session.user = result;
             res.end("Successful Login");
         }
@@ -79,10 +79,6 @@ app.post('/login',function(req,res){
 });
 
 app.post('/register',function(req,res){
-    
-    // Object.keys(req.body).forEach(function(key){
-    //     req.body = JSON.parse(key);
-    // });
     let username = req.body.username;
     let password = req.body.password;
     let email = req.body.email;  
@@ -111,9 +107,46 @@ app.post('/logout',function(req,res){
 });
 
 app.get('/profile',function(req,res) {
-    console.log("Inside Register Post Request");
+    console.log("Inside Profile GET Request");
     console.log("Req Body : ",req.body);
     console.log("Req user : ",req.session.user);
+
+    let username = "admin";
+    let sql = "select *from user where username=?";
+    con.query(sql, username, function (err, result, fields) {
+        if (err) {
+             console.log("Data fetching failed");
+        } else {
+            console.log("Data fetching successful");
+            res.send(result);
+        }
+    });
+
+    console.log("Inside Register Post Request");
+    console.log("Req Body : ",req.body);
+});
+
+app.post('/profile',function(req,res){
+    let name = req.body.name;
+    let about = req.body.about;
+    let city = req.body.city;
+    let email = req.body.email;
+    let phone = req.body.phone;
+    let address = req.body.address;
+    
+    let username = "admin";
+    let sql = "update user set name=?,about=?,city=?,email=?,phone=?,address=? where username=?";
+    con.query(sql, [name,about,city,email,phone,address, username], function (err, result, fields) {
+        if (err) {
+             console.log("1 record updated!");
+             
+        } else {
+            console.log("Updation failed");
+        }
+    });
+
+    console.log("Inside Register Post Request");
+    console.log("Req Body : ",req.body);
 });
 
 //start your server on port 3001
