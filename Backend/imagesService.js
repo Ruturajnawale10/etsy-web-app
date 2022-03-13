@@ -1,13 +1,10 @@
 //const AWS = require('aws-sdk');
 import AWS from 'aws-sdk';
-
+import creds from './config.js'
 const BUCKET_NAME = 'etsy-bucket';
 // const s3 = new S3({});
 
-const s3 = new AWS.S3({
-    accessKeyId: 'AKIA2QAWOPS4MDBRNGNC',
-    secretAccessKey: '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'
-});
+const s3 = new AWS.S3(creds);
 
 /**
  * @description Uploads an image to S3
