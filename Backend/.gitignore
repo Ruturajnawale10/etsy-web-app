@@ -2,7 +2,7 @@
 
 /.pnp
 .pnp.js
-.config.js
+/configs
 
 # testing
 /coverage
