@@ -1,6 +1,6 @@
 //const AWS = require('aws-sdk');
 import AWS from 'aws-sdk';
-import creds from './config.js'
+import creds from './configs/config.js';
 const BUCKET_NAME = 'etsy-bucket';
 // const s3 = new S3({});
 

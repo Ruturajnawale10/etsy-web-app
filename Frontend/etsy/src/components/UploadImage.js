@@ -27,23 +27,6 @@ const UploadImage = () => {
         })
     }
 
-//     const config = {
-//         bucketName: 'etsy-bucket',
-//         region: 'us-west-1',
-//         accessKeyId: 'AKIA2QAWOPS4MDBRNGNC',
-//         secretAccessKey: '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'
-//   }
-
-// const upload = (e) => {
-//     S3FileUpload.uploadFile(e.target.files[0], config)
-//     .then((data) => {
-//         console.log(data.location)
-//     })
-//     .catch((err) => {
-//         alert(err)
-//     })
-// }
-
   return (
       <div>
           <input type="file" onChange={onSelectFile}></input>

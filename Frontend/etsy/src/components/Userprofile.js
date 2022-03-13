@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
-import ProfileImage from "./UploadImage";
+import UploadImage from "./UploadImage";
 
 function Userprofile() {
 
@@ -41,9 +41,6 @@ function Userprofile() {
               Profile Picture
             </label>
           </div>
-          <div class="col-auto">
-            <ProfileImage/>
-          </div>
         </div>
 
         <img
@@ -53,6 +50,9 @@ function Userprofile() {
           class="img-fluid"
         ></img>
 
+        <div class="col-auto">
+                    <UploadImage/>
+        </div>
         <hr />
 
         <div class="row g-3 align-items-center">
