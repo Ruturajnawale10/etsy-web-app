@@ -6,7 +6,12 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import e from 'express';
 import mysql from 'mysql'
+import imagesService from './imagesService.js';
+
 app.set('view engine', 'ejs');
+
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb'}));
 
 //use cors to allow cross origin resource sharing
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
@@ -194,6 +199,23 @@ app.post('/createshop',function(req,res){
 
     console.log("Inside Register Post Request");
     console.log("Req Body : ",req.body);
+});
+
+app.post('/upload', async (req, res, next) => {
+    console.log("Inside Upload POST");
+    const base64Image = req.body.image;
+    const imageName = req.body.name;
+    const type = req.body.type;
+    let response;
+
+    try {
+        response = await imagesService.upload(imageName, base64Image);
+    } catch (err) {
+        console.error(`Error uploading image: ${err.message}`);
+        return next(new Error(`Error uploading image: ${imageName}`));
+    }
+
+    res.send({link: response});
 });
 
 //start your server on port 3001

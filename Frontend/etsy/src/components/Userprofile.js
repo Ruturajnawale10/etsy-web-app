@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
+import ProfileImage from "./UploadImage";
 
 function Userprofile() {
 
@@ -41,12 +42,7 @@ function Userprofile() {
             </label>
           </div>
           <div class="col-auto">
-            <input
-              type="file"
-              id="profilePic"
-              class="form-control"
-              aria-describedby="pictureHelpline"
-            />
+            <ProfileImage/>
           </div>
         </div>
 
