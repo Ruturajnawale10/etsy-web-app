@@ -28,7 +28,7 @@ function Sellonetsy() {
         }, []);
         
     return (
-        <div className="row">
+        <div>
         {redirectVar}
         {newShop}
         {shophome}

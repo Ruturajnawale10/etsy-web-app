@@ -1,6 +1,7 @@
 import React from "react";
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
+import Additem from "./Popup/Additem";
 
 function Shophome(props) {
     let redirectVar = null;
@@ -11,6 +12,7 @@ function Shophome(props) {
         <div>
         {redirectVar}
         <h1>{props.name}</h1>
+        <Additem/>
         </div>
     )
 }
