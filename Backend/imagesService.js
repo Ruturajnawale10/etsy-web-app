@@ -16,7 +16,7 @@ const s3 = new AWS.S3(creds);
 async function upload(imageName, base64Image, type) {
     const params = {
         Bucket: BUCKET_NAME,
-        Key: "ruturajnawale",
+        Key: imageName,
         Body: new Buffer.from(base64Image.replace(/^data:image\/\w+;base64,/, ""), 'base64'),
         ContentType: type
     };
@@ -33,12 +33,25 @@ async function upload(imageName, base64Image, type) {
 
     return data.Location;
 }
+
+async function getImage(imageURL){
+    console.log("Inside getImage");
+    const data = s3.getObject(
+      {
+          Bucket:BUCKET_NAME,
+          Key: imageURL
+        }
+      
+    ).promise();
+     return data;
+  }
+
 /**
  * @description Promise an upload to S3
  * @param params S3 bucket params
  * @return data/err S3 response object
  */
-function promiseUpload(params) {
+function promiseUpload(params, imageName) {
     return new Promise(function (resolve, reject) {
         s3.upload(params, function (err, data) {
             if (err) {
@@ -50,4 +63,4 @@ function promiseUpload(params) {
     });
 }
 
-export default {upload};
+export default {upload, getImage};

@@ -59,10 +59,6 @@ var con = mysql.createConnection({
 
 //Route to handle Post Request Call
 app.post('/login',function(req,res){
-    
-    // Object.keys(req.body).forEach(function(key){
-    //     req.body = JSON.parse(key);
-    // });
     let username = req.body.username;
     let password = req.body.password;
     
@@ -111,7 +107,7 @@ app.post('/logout',function(req,res){
       });
 });
 
-app.get('/profile',function(req,res) {
+app.get('/profile',async (req,res,next) => {
     console.log("Inside Profile GET Request");
     console.log("Req Body : ",req.body);
     console.log("Req user : ",req.session.user);
@@ -121,17 +117,31 @@ app.get('/profile',function(req,res) {
     con.query(sql, username, function (err, result, fields) {
         if (err) {
              console.log("Data fetching failed");
-        } else {
-            console.log("Data fetching successful");
-            res.send(result);
+        }
+        else {
+            console.log("Heree 1");
+            let imageURL = "profile-pictures/" + username + ".jpg";
+            console.log(imageURL);
+
+            imagesService.getImage(imageURL)
+            .then((imageData)=>{
+                    console.log("here bro");
+                 //console.log(imageData);
+                 let buf = Buffer.from(imageData.Body);
+                 let base64Image = buf.toString('base64');
+                 result[0].image = base64Image;
+                console.log("Data fetching successful");
+                res.send(result);
+            }).catch((e)=>{
+              res.send(e)
+            })
+            
         }
     });
-
-    console.log("Inside Register Post Request");
-    console.log("Req Body : ",req.body);
 });
 
-app.post('/profile',function(req,res){
+app.post('/profile', async (req,res,next) => {
+    console.log("Inside Profile POST");
     let name = req.body.name;
     let about = req.body.about;
     let city = req.body.city;
@@ -140,18 +150,43 @@ app.post('/profile',function(req,res){
     let address = req.body.address;
     
     let username = "admin";
-    let sql = "update user set name=?,about=?,city=?,email=?,phone=?,address=? where username=?";
-    con.query(sql, [name,about,city,email,phone,address, username], function (err, result, fields) {
-        if (err) {
-             console.log("1 record updated!");
-             
-        } else {
-            console.log("Updation failed");
-        }
-    });
 
+    const base64Image = req.body.image;
+    const imageName = "profile-pictures/" + username + ".jpg";
+    let response;
+
+    if (base64Image === null) {
+        let sql = "update user set name=?,about=?,city=?,email=?,phone=?,address=? where username=?";
+        con.query(sql, [name,about,city,email,phone,address,username], function (err, result, fields) {
+            if (err) {
+                console.log("Updation failed");
+                
+            } else {
+                console.log("1 record updated");
+            }
+        });
+    } 
+    else {
+        try {
+            response = await imagesService.upload(imageName, base64Image);
+
+            let sql = "update user set name=?,about=?,city=?,email=?,phone=?,address=?,profile_pic_url=? where username=?";
+            con.query(sql, [name,about,city,email,phone,address,response,username], function (err, result, fields) {
+                if (err) {
+                    console.log("Updation failed");
+                    
+                } else {
+                    console.log("1 record updated");
+                }
+            });
+        } catch (err) {
+            console.error(`Error uploading image: ${err.message}`);
+            return next(new Error(`Error uploading image: ${imageName}`));
+        }
+}   
     console.log("Inside Register Post Request");
     console.log("Req Body : ",req.body);
+    res.end("complete");
 });
 
 app.post('/checkavailibility',function(req,res){
@@ -204,8 +239,8 @@ app.post('/createshop',function(req,res){
 app.post('/upload', async (req, res, next) => {
     console.log("Inside Upload POST");
     const base64Image = req.body.image;
-    const imageName = req.body.name;
-    const type = req.body.type;
+    let username = "admin";
+    const imageName = "profile-pictures/" + username + ".js";
     let response;
 
     try {
