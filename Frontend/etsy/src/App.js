@@ -25,7 +25,7 @@ function App() {
               <Route path="/register" component={Register}/>
               <Route path="/profile" component={Userprofile}/>
               <Route path="/favourites" component={Favourites}/>
-              <Route path="/sellonetsy" component={Sellonetsy}/>
+              <Route path="/shopexists" component={Sellonetsy}/>
               <Route path="/cart" component={Cart}/>
               <Redirect from='*' to='/' />    {/*redirects any other url other then above to / path i.e. login*/}
         </Switch>

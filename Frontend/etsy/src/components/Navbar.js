@@ -56,7 +56,7 @@ function Navbar() {
     )
 
     sellOnEtsyLink = (
-      <a href="/sellonetsy" class="navbar-brand">
+      <a href="/shopexists" class="navbar-brand">
               Sell on Etsy
       </a>
     )

@@ -253,6 +253,25 @@ app.post('/upload', async (req, res, next) => {
     res.send({link: response});
 });
 
+app.get('/shopexists', function(req, res) {
+    console.log("inside GET Shop home");
+    let username = "admin";
+    let sql = "select *from shop where shop_owner=?";
+    con.query(sql, [username], function (err, result, fields) {
+        if (err) {
+             console.log("Insertion failed");
+             
+        } else {
+            if (result.length == 0) {
+                res.send("shopname not registered");
+            }
+            else {
+                res.send(result[0].shop_name)
+            }
+        }
+    });
+}); 
+
 //start your server on port 3001
 app.listen(3001);
 console.log("Server Listening on port 3001");
