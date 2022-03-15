@@ -5,6 +5,7 @@ import session from "express-session";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import mysql from "mysql";
+import config_rds from "./configs/config_rds.js";
 import imagesService from "./imagesService.js";
 
 app.use(cookieParser());
@@ -46,12 +47,7 @@ app.use(function (req, res, next) {
 });
 
 //create Amazon RDS mysql connection
-var con = mysql.createConnection({
-  host: "etsy-db-instance.cry0kqyq0tgc.us-west-1.rds.amazonaws.com",
-  user: "admin",
-  password: "bunTet-xivhu5-cefhog",
-  database: "Etsy_database",
-});
+var con = mysql.createConnection(config_rds);
 
 //connection to mysql
 con.connect(function (err) {
