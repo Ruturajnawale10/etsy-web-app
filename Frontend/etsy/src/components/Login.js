@@ -14,7 +14,6 @@ class Login extends Component {
     this.state = {
       username: "",
       password: "",
-      authFlag: false,
       authMsg: null,
     };
     //Bind the handlers to this class
@@ -23,12 +22,6 @@ class Login extends Component {
     this.submitLogin = this.submitLogin.bind(this);
   }
 
-  //Call the Will Mount to set the auth Flag to false
-  componentWillMount() {
-    this.setState({
-      authFlag: false,
-    });
-  }
   //username change handler to update state variable with the text entered by the user
   usernameChangeHandler = (e) => {
     this.setState({
@@ -43,7 +36,6 @@ class Login extends Component {
   };
   //submit Login handler to send a request to the node backend
   submitLogin = (e) => {
-    var headers = new Headers();
     //prevent page from refresh
     e.preventDefault();
     const data = {
@@ -54,32 +46,18 @@ class Login extends Component {
     axios.defaults.withCredentials = true;
     //make a post request with the user data
     axios.post("http://localhost:3001/login", data).then((response) => {
-      console.log("Data isss: ", response.data);
-      console.log("Status Code : ", response.status);
-      if (response.status === 200) {
+      if (response.data === "Invalid credentials") {
         this.setState({
-          authFlag: true,
-        });
-      } else {
-        this.setState({
-          authFlag: false,
-        });
-      }
-
-      if (response.data === "Login Failed") {
-        console.log("seeee:", response.data);
-        this.setState({
-          authMsg: (
-            <div class="invalid-feedback">
-              Invalid credentials. Please relogin.
-            </div>
-          ),
+          authMsg: 
+            <p style={{color:"red"}}>
+              Invalid credentials. Please check again, or register for new account.
+            </p>
+          
         });
       } else {
         this.setState({
           authMsg: <div> Logged in</div>,
         });
-        console.log("Whatt", response.data);
       }
     });
   };

@@ -4,10 +4,10 @@ var app = express();
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import e from "express";
 import mysql from "mysql";
 import imagesService from "./imagesService.js";
 
+app.use(cookieParser());
 app.set("view engine", "ejs");
 
 app.use(express.json({ limit: "50mb" }));
@@ -67,15 +67,15 @@ con.connect(function (err) {
 
 //Route to handle Post Request Call
 app.post("/login", function (req, res) {
+  console.log("Inside Login Post Request");
   let username = req.body.username;
   let password = req.body.password;
 
   let sql = "select * from user where username = ? AND password = ?";
   con.query(sql, [username, password], function (err, result, fields) {
-    console.log(result);
     if (result.length === 0) {
       console.log("Invalid credentials");
-      res.end("Login Failed");
+      res.end("Invalid credentials");
     } else {
       console.log("User verified!");
       res.cookie("cookie", "admin", {
@@ -83,12 +83,11 @@ app.post("/login", function (req, res) {
         httpOnly: false,
         path: "/",
       });
+      res.cookie("username", username);
       req.session.user = result;
       res.end("Successful Login");
     }
   });
-
-  console.log("Inside Login Post Request");
 });
 
 app.post("/register", function (req, res) {
@@ -121,33 +120,30 @@ app.post("/logout", function (req, res) {
 
 app.get("/profile", async (req, res, next) => {
   console.log("Inside Profile GET Request");
-  console.log("Req Body : ", req.body);
-  console.log("Req user : ", req.session.user);
-
-  let username = "admin";
+  let username = req.cookies.username;
   let sql = "select *from user where username=?";
   con.query(sql, username, function (err, result, fields) {
     if (err) {
       console.log("Data fetching failed");
     } else {
-      console.log("Heree 1");
       let imageURL = `profile-pictures/${username}.jpg`;
       console.log(imageURL);
 
-      imagesService
-        .getImage(imageURL)
-        .then((imageData) => {
-          console.log("here bro");
-          //console.log(imageData);
-          let buf = Buffer.from(imageData.Body);
-          let base64Image = buf.toString("base64");
-          result[0].image = base64Image;
-          console.log("Data fetching successful");
-          res.send(result);
-        })
-        .catch((e) => {
-          res.send(e);
-        });
+      let fetchedURL = result[0].profile_pic_url;
+      if (fetchedURL !== null) {
+        imagesService
+          .getImage(imageURL)
+          .then((imageData) => {
+            let buf = Buffer.from(imageData.Body);
+            let base64Image = buf.toString("base64");
+            result[0].image = base64Image;
+            console.log("Data fetching successful");
+            res.send(result);
+          })
+          .catch((e) => {
+            res.send(result);
+          });
+      }
     }
   });
 });
@@ -163,7 +159,7 @@ app.post("/profile", async (req, res, next) => {
   let phone = req.body.phone;
   let address = req.body.address;
 
-  let username = "admin";
+  let username = req.cookies.username;
 
   const base64Image = req.body.image;
   const imageName = "profile-pictures/" + username + ".jpg";
@@ -212,7 +208,7 @@ app.get("/checkavailibility", function (req, res) {
   let shopname = req.query.shopName;
   console.log("Shop name received in backend is:");
   console.log(shopname);
-  
+
   let sql = "select *from shop where shop_name=?";
   con.query(sql, shopname, function (err, result, fields) {
     if (err) {
@@ -237,10 +233,8 @@ app.get("/checkavailibility", function (req, res) {
 
 app.post("/createshop", function (req, res) {
   let shopname = req.body.shopname;
-  let username = "admin";
+  let username = req.cookies.username;
 
-  console.log("Shopp");
-  console.log(shopname);
   let sql = "insert into shop(shop_name, shop_owner) values(?,?)";
   con.query(sql, [shopname, username], function (err, result, fields) {
     if (err) {
@@ -257,7 +251,7 @@ app.post("/createshop", function (req, res) {
 app.post("/upload", async (req, res, next) => {
   console.log("Inside Upload POST");
   const base64Image = req.body.image;
-  let username = "admin";
+  let username = req.cookies.username;
   const imageName = "profile-pictures/" + username + ".js";
   let response;
 
@@ -273,7 +267,7 @@ app.post("/upload", async (req, res, next) => {
 
 app.get("/shopexists", function (req, res) {
   console.log("inside GET Shop home");
-  let username = "admin";
+  let username = req.cookies.username;
   let sql = "select *from shop where shop_owner=?";
   con.query(sql, [username], function (err, result, fields) {
     if (err) {
@@ -290,15 +284,12 @@ app.get("/shopexists", function (req, res) {
 
 app.post("/additem", async (req, res, next) => {
   console.log("Inside AddItem Post Request");
-  console.log("Req Body : ", req.body);
   let item_name = req.body.item_name;
   let shop_name = req.body.shop_name;
   let category = req.body.category;
   let description = req.body.description;
   let price = req.body.price;
   let quantity = req.body.quantity;
-
-  let username = "admin";
 
   const base64Image = req.body.image;
   const imageName = `shop/${shop_name}/${item_name}.jpg`;
@@ -336,8 +327,6 @@ app.post("/updateitem", async (req, res, next) => {
   let description = req.body.description;
   let price = req.body.price;
   let quantity = req.body.quantity;
-
-  let username = "admin";
 
   const base64Image = req.body.image;
   const imageName = `shop/${shop_name}/${item_name}.jpg`;
@@ -389,9 +378,9 @@ app.get("/getitems", function (req, res, next) {
   con.query(sql, shop_name, function (err, result, fields) {
     if (err) {
       console.log("Data fetching failed");
-      res.send({"status": "failed"});
+      res.send({ status: "failed" });
     } else {
-        res.send(result);
+      res.send(result);
     }
   });
 });

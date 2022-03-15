@@ -15,6 +15,7 @@ function Userprofile() {
   }
 
   useEffect(() => {
+    axios.defaults.withCredentials = true;
     axios.get("http://localhost:3001/profile").then((response) => {
       setProfileData(response.data[0]);
       console.log("haha" + response.data[0]);

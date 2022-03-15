@@ -14,6 +14,7 @@ function Shophome(props) {
   var [items, setItems] = useState([]);
 
   useEffect(() => {
+    axios.defaults.withCredentials = true;
     axios
       .get("http://localhost:3001/getitems", {
         params: {

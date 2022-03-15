@@ -101,52 +101,54 @@ class Register extends Component {
     return (
       <div>
         {redirectVar}
-        <div class="container">
-          <div class="login-form">
-            <div class="main-div">
-              <div class="panel">
-                <h2>Registration</h2>
-                <p>Please enter these details</p>
-              </div>
+        <form onSubmit={this.submitLogin}>
+          <div class="container">
+            <div class="login-form">
+              <div class="main-div">
+                <div class="panel">
+                  <h2>Registration</h2>
+                  <p>Please enter these details</p>
+                </div>
 
-              <div class="form-group">
-                <input
-                  onChange={this.usernameChangeHandler}
-                  type="text"
-                  class="form-control"
-                  name="username"
-                  placeholder="Username"
-                  required
-                  autoFocus
-                />
+                <div class="form-group">
+                  <input
+                    onChange={this.usernameChangeHandler}
+                    type="text"
+                    class="form-control"
+                    name="username"
+                    placeholder="Username"
+                    required
+                    autoFocus
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    onChange={this.emailChangeHandler}
+                    type="email"
+                    class="form-control"
+                    name="email"
+                    placeholder="Email ID"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    onChange={this.passwordChangeHandler}
+                    type="password"
+                    class="form-control"
+                    name="password"
+                    placeholder="Password"
+                    required
+                  />
+                </div>
+                <button type="submit" class="btn btn-primary">
+                  Register
+                </button>
+                {this.state.authMsg}
               </div>
-              <div class="form-group">
-                <input
-                  onChange={this.emailChangeHandler}
-                  type="email"
-                  class="form-control"
-                  name="email"
-                  placeholder="Email ID"
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <input
-                  onChange={this.passwordChangeHandler}
-                  type="password"
-                  class="form-control"
-                  name="password"
-                  placeholder="Password"
-                  required
-                />
-              </div>
-              <button onClick={this.submitLogin} class="btn btn-primary">
-                Register
-              </button>
-              {this.state.authMsg}
             </div>
           </div>
-        </div>
+        </form>
       </div>
     );
   }
