@@ -63,3 +63,26 @@ h1 {
   width: 500px;
   height: 35px;
 }
+
+#items_in_shop {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#items_in_shop td, #items_in_shop th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#items_in_shop tr:nth-child(even){background-color: #f2f2f2;}
+
+#items_in_shop tr:hover {background-color: #ddd;}
+
+#items_in_shop th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: orangered;
+  color: white;
+}

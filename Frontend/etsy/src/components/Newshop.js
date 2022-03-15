@@ -15,9 +15,11 @@ function Newshop() {
 
   const checkAvailibility = (e) => {
     e.preventDefault();
-    console.log(shopName);
-    axios
-      .post("http://localhost:3001/checkavailibility", { shopName: shopName })
+    axios.get("http://localhost:3001/checkavailibility", {
+        params: {
+          shopName: shopName,
+        },
+      })
       .then((response) => {
         if (response.data === "available") {
           setAvailable(<p>available</p>);

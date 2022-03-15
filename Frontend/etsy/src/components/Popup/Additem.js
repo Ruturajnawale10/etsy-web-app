@@ -59,7 +59,7 @@ const Additem = (props) => {
   };
 
   return (
-    <div className="Additem" style={{ marginLeft: 130 }}>
+    <div className="Additem" style={{ marginLeft: 0 }}>
       <p style={{ fontSize: 20 }}>Add a new item in the store</p>
       <div>
         <Container triggerText={triggerText} onSubmit={onSubmit} />

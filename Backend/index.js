@@ -92,6 +92,8 @@ app.post("/login", function (req, res) {
 });
 
 app.post("/register", function (req, res) {
+  console.log("Inside Register Post Request");
+  console.log("Req Body : ", req.body);
   let username = req.body.username;
   let password = req.body.password;
   let email = req.body.email;
@@ -102,11 +104,9 @@ app.post("/register", function (req, res) {
       console.log("Username already exists!");
     } else {
       console.log("1 record inserted");
+      res.end("user registered successfully");
     }
   });
-
-  console.log("Inside Register Post Request");
-  console.log("Req Body : ", req.body);
 });
 
 app.post("/logout", function (req, res) {
@@ -208,9 +208,11 @@ app.post("/profile", async (req, res, next) => {
   res.end("complete");
 });
 
-app.post("/checkavailibility", function (req, res) {
-  let shopname = req.body.shopName;
-
+app.get("/checkavailibility", function (req, res) {
+  let shopname = req.query.shopName;
+  console.log("Shop name received in backend is:");
+  console.log(shopname);
+  
   let sql = "select *from shop where shop_name=?";
   con.query(sql, shopname, function (err, result, fields) {
     if (err) {
@@ -377,6 +379,21 @@ app.post("/updateitem", async (req, res, next) => {
       return next(new Error(`Error uploading image: ${imageName}`));
     }
   }
+});
+
+app.get("/getitems", function (req, res, next) {
+  console.log("Inside shop GET items Request");
+
+  let shop_name = req.query.shopName;
+  let sql = "select item_name,sales from item where shop_name=?";
+  con.query(sql, shop_name, function (err, result, fields) {
+    if (err) {
+      console.log("Data fetching failed");
+      res.send({"status": "failed"});
+    } else {
+        res.send(result);
+    }
+  });
 });
 
 //start your server on port 3001
