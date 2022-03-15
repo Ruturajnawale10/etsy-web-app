@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { Modal } from './Modal';
-import TriggerButton from './Triggerbutton';
+import React, { Component } from "react";
+import { Modal } from "./Modal";
+import TriggerButton from "./Triggerbutton";
 
 export class Container extends Component {
   state = { isShown: false };
@@ -26,7 +26,7 @@ export class Container extends Component {
   };
 
   toggleScrollLock = () => {
-    document.querySelector('html').classList.toggle('scroll-lock');
+    document.querySelector("html").classList.toggle("scroll-lock");
   };
   render() {
     return (

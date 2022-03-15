@@ -1,10 +1,16 @@
-import React from 'react';
+import React from "react";
 
 export const Additemform = ({ onSubmit }) => {
   return (
     <form onSubmit={onSubmit}>
-      <div className="form-group">
       <h4>Enter the Item details</h4>
+
+      <div className="form-group">
+        <p>Add item image</p>
+        <input className="form-control" type="file" id="imageFile" required />
+      </div>
+
+      <div className="form-group">
         <label htmlFor="name"> Name</label>
         <input className="form-control" id="name" />
       </div>
@@ -30,7 +36,11 @@ export const Additemform = ({ onSubmit }) => {
       </div>
 
       <div className="form-group">
-        <button className="form-control btn btn-primary" type="submit">
+        <button
+          className="form-control btn btn-primary"
+          style={{ backgroundColor: "orangered" }}
+          type="submit"
+        >
           Add
         </button>
       </div>

@@ -17,13 +17,12 @@ function Newshop() {
     e.preventDefault();
     console.log(shopName);
     axios
-      .post("http://localhost:3001/checkavailibility", {shopName: shopName})
+      .post("http://localhost:3001/checkavailibility", { shopName: shopName })
       .then((response) => {
         if (response.data === "available") {
           setAvailable(<p>available</p>);
-        }
-        else {
-            setAvailable(<p>Shop name already taken!</p>);
+        } else {
+          setAvailable(<p>Shop name already taken!</p>);
         }
       });
   };
@@ -38,7 +37,7 @@ function Newshop() {
     axios.defaults.withCredentials = true;
     //make a post request with the user data
     axios
-      .post("http://localhost:3001/createshop", {shopname: shopName})
+      .post("http://localhost:3001/createshop", { shopname: shopName })
       .then((response) => {
         console.log("Data isss: ", response.data);
         console.log("Status Code : ", response.status);
@@ -66,8 +65,11 @@ function Newshop() {
           placeholder="Enter shop name"
           onChange={(e) => {
             setShopName(e.target.value);
-          }} ></input>
-        <button className="btn btn-secondary" onClick={checkAvailibility}>Check Availability</button>
+          }}
+        ></input>
+        <button className="btn btn-secondary" onClick={checkAvailibility}>
+          Check Availability
+        </button>
       </span>
       <br />
       {available}

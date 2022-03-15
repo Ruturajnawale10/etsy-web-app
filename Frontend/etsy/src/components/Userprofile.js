@@ -42,8 +42,8 @@ function Userprofile() {
   };
 
   const submitData = async (e) => {
-    console.log("alrighttt");
     e.preventDefault();
+
     if (imageFile !== null) {
       const convertedFile = await convertToBase64(imageFile);
       const s3URL = await axios.post("http://localhost:3001/profile", {
