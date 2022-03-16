@@ -7,8 +7,6 @@ function Userprofile() {
   var [profileData, setProfileData] = useState([]);
   let [imageFile, setImageFile] = useState(null);
   let [fetchedImage, setFetchedImage] = useState(null);
-  let [month, setMonth] = useState(null);
-  let [day, setDay] = useState(null);
   let [alert, setAlert] = useState(null);
 
   let redirectVar = null;
@@ -19,8 +17,12 @@ function Userprofile() {
   useEffect(() => {
     axios.defaults.withCredentials = true;
     axios.get("http://localhost:3001/profile").then((response) => {
-      let bday = response.data[0].birthdate.split(" ");
-      setProfileData({ ...response.data[0], month: bday[0], day: bday[1] });
+      if (response.data[0].birthdate !== null) {
+        let bday = response.data[0].birthdate.split(" ");
+        setProfileData({ ...response.data[0], month: bday[0], day: bday[1] });
+      } else {
+        setProfileData(response.data[0]);
+      }
       setFetchedImage(
         <img
           src={"data:image/jpeg;base64," + response.data[0].image}

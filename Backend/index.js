@@ -124,7 +124,7 @@ app.get("/profile", async (req, res, next) => {
     } else {
       let imageURL = `profile-pictures/${username}.jpg`;
       console.log(imageURL);
-
+        console.log(result);
       let fetchedURL = result[0].profile_pic_url;
       if (fetchedURL !== null) {
         imagesService
@@ -139,6 +139,9 @@ app.get("/profile", async (req, res, next) => {
           .catch((e) => {
             res.send(result);
           });
+      }
+      else {
+          res.send(result);
       }
     }
   });
@@ -388,6 +391,23 @@ app.get("/getitems", function (req, res, next) {
     }
   });
 });
+
+app.get("/getallitems", function (req, res, next) {
+    console.log("Inside GET all items dashboard Request");
+  
+    let username = req.cookies.username;
+
+    let sql = "select item_name, price from item, user, shop where user.username!=? and user.username=shop.shop_owner and item.shop_name=shop.shop_name";
+    con.query(sql, username, function (err, result, fields) {
+      if (err) {
+        console.log("Data fetching failed");
+        res.send({ status: "failed" });
+      } else {
+        res.send(result);
+      }
+    });
+  });
+
 
 //start your server on port 3001
 app.listen(3001);
