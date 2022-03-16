@@ -154,6 +154,14 @@ app.post("/profile", async (req, res, next) => {
   let email = req.body.email;
   let phone = req.body.phone;
   let address = req.body.address;
+  let country = req.body.country;
+  let birthdate;
+  if (req.body.month !== null && req.body.day !== null) {
+         birthdate = `${req.body.month} ${req.body.day}`;
+  } else {
+       birthdate = req.body.birthdate;
+  }
+  let gender = req.body.gender;
 
   let username = req.cookies.username;
 
@@ -163,10 +171,10 @@ app.post("/profile", async (req, res, next) => {
 
   if (base64Image === null) {
     let sql =
-      "update user set name=?,about=?,city=?,email=?,phone=?,address=? where username=?";
+      "update user set name=?,about=?,city=?,email=?,phone=?,address=?,country=?,birthdate=?,gender=? where username=?";
     con.query(
       sql,
-      [name, about, city, email, phone, address, username],
+      [name, about, city, email, phone, address, country, birthdate, gender, username],
       function (err, result, fields) {
         if (err) {
           console.log("Updation failed");

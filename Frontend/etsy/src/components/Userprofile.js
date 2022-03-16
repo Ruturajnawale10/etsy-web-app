@@ -7,6 +7,8 @@ function Userprofile() {
   var [profileData, setProfileData] = useState([]);
   let [imageFile, setImageFile] = useState(null);
   let [fetchedImage, setFetchedImage] = useState(null);
+  let [month, setMonth] = useState(null);
+  let [day, setDay] = useState(null);
   let [alert, setAlert] = useState(null);
 
   let redirectVar = null;
@@ -17,8 +19,8 @@ function Userprofile() {
   useEffect(() => {
     axios.defaults.withCredentials = true;
     axios.get("http://localhost:3001/profile").then((response) => {
-      setProfileData(response.data[0]);
-      setProfileData({...profileData, "country": "India"});
+      let bday = response.data[0].birthdate.split(" ");
+      setProfileData({ ...response.data[0], month: bday[0], day: bday[1] });
       setFetchedImage(
         <img
           src={"data:image/jpeg;base64," + response.data[0].image}
@@ -28,6 +30,9 @@ function Userprofile() {
           class="img-fluid"
         ></img>
       );
+      let date = response.data[0].birthdate;
+      //setProfileData({...profileData, month: date[0]});
+      //setProfileData({...profileData, day: date[1]});
       console.log(response.data[0]);
     });
   }, []);
@@ -79,7 +84,6 @@ function Userprofile() {
             </label>
           </div>
         </div>
-
         {fetchedImage}
         <div>
           <input
@@ -89,9 +93,7 @@ function Userprofile() {
             }}
           ></input>
         </div>
-
         <hr />
-
         <div class="row g-3 align-items-center">
           <div class="col-auto">
             <label for="name" class="col-form-label fw-bold">
@@ -110,47 +112,90 @@ function Userprofile() {
             />
           </div>
         </div>
-
         <hr />
         <div class="row g-3 align-items-center">
           <div class="radio-group" id="gender">
             <span class="fw-bold">Gender &emsp; </span>
-            <input type="radio" value="female" name="gender" id="female" />
-            <label for="female">Female &emsp; &emsp; </label>
-            <input type="radio" value="male" name="gender" id="male" />
-            <label for="male">Male &emsp; &emsp; </label>
+            {profileData.gender}
+            &emsp; &emsp;
+            <span>Change here: </span>
             <input
               type="radio"
-              value="private"
+              value="Female"
+              name="gender"
+              id="female"
+              onChange={(e) => {
+                setProfileData({ ...profileData, gender: e.target.value });
+              }}
+            />
+            <label for="female">Female &emsp; </label>
+            <input
+              type="radio"
+              value="Male"
+              name="gender"
+              id="male"
+              onChange={(e) => {
+                setProfileData({ ...profileData, gender: e.target.value });
+              }}
+            />
+            <label for="male">Male &emsp; </label>
+            <input
+              type="radio"
+              value="Private"
               name="gender"
               id="private"
-              checked
+              onChange={(e) => {
+                setProfileData({ ...profileData, gender: e.target.value });
+              }}
             />
             <label for="private">Other</label>
           </div>
         </div>
         <hr />
-
         <div class="row g-3 align-items-center">
           <span id="birthday-group">
             <span class="fw-bold">Birthday &emsp; </span>
-            <select id="birth-month" name="birth-month" aria-label="Month">
+            {profileData.birthdate}
+            &emsp; &emsp;
+            <span>Change here: </span>
+            <select
+              id="birth-month"
+              name="birth-month"
+              aria-label="Month"
+              value={profileData.month}
+              onChange={(e) => {
+                setProfileData({
+                  ...profileData,
+                  month: e.target.options[e.target.selectedIndex].text,
+                });
+              }}
+            >
               <option value="">- month -</option>
-              <option value="1">January</option>
-              <option value="2">February</option>
-              <option value="3">March</option>
-              <option value="4">April</option>
-              <option value="5">May</option>
-              <option value="6">June</option>
-              <option value="7">July</option>
-              <option value="8">August</option>
-              <option value="9">September</option>
-              <option value="10">October</option>
-              <option value="11">November</option>
-              <option value="12">December</option>
+              <option value="January">January</option>
+              <option value="February">February</option>
+              <option value="March">March</option>
+              <option value="April">April</option>
+              <option value="May">May</option>
+              <option value="June">June</option>
+              <option value="July">July</option>
+              <option value="August">August</option>
+              <option value="September">September</option>
+              <option value="October">October</option>
+              <option value="November">November</option>
+              <option value="December">December</option>
             </select>
-
-            <select id="birth-day" name="birth-day" aria-label="Day">
+            <select
+              id="birth-day"
+              name="birth-day"
+              aria-label="Day"
+              value={profileData.day}
+              onChange={(e) => {
+                setProfileData({
+                  ...profileData,
+                  day: e.target.options[e.target.selectedIndex].text,
+                });
+              }}
+            >
               <option value="">- day -</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -187,7 +232,6 @@ function Userprofile() {
           </span>
         </div>
         <hr />
-
         <div class="row g-3 align-items-center">
           <div class="col-auto">
             <label for="about" class="col-form-label fw-bold">
@@ -207,7 +251,6 @@ function Userprofile() {
           </div>
         </div>
         <hr />
-
         <div class="row g-3 align-items-center">
           <div class="col-auto">
             <label for="name" class="col-form-label fw-bold">
@@ -226,9 +269,7 @@ function Userprofile() {
             />
           </div>
         </div>
-
         <hr />
-
         <div class="row g-3 align-items-center">
           <div class="col-auto">
             <label for="email" class="col-form-label fw-bold">
@@ -247,9 +288,7 @@ function Userprofile() {
             />
           </div>
         </div>
-
         <hr />
-
         <div class="row g-3 align-items-center">
           <div class="col-auto">
             <label for="phone" class="col-form-label fw-bold">
@@ -268,9 +307,7 @@ function Userprofile() {
             />
           </div>
         </div>
-
         <hr />
-
         <div class="row g-3 align-items-center">
           <div class="col-auto">
             <label for="address" class="col-form-label fw-bold">
@@ -291,15 +328,23 @@ function Userprofile() {
           </div>
         </div>
         <hr />
-
         <div class="row g-3 align-items-center">
           <span class="fw-bold">
             Country &emsp;
-            <select id="country" name="country" aria-label="country">
+            <select
+              id="country"
+              name="country"
+              aria-label="country"
+              value={profileData.country}
+              onChange={(e) => {
+                setProfileData({
+                  ...profileData,
+                  country: e.target.options[e.target.selectedIndex].text,
+                });
+              }}
+            >
               <option value="">- country -</option>
-              <option value="US" selected="selected">
-                United States
-              </option>
+              <option selected="selected">{profileData["country"]}</option>
               <option value="AU">Australia</option>
               <option value="CA">Canada</option>
               <option value="FR">France</option>
@@ -562,7 +607,6 @@ function Userprofile() {
           </span>
         </div>
         <hr />
-
         <div>
           <button type="submit" class="btn btn-dark">
             Save Changes
