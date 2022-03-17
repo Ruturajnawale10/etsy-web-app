@@ -1,6 +1,52 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import cookie from "react-cookies";
+import { Redirect } from "react-router";
 
 function Itemcard(props) {
+
+    const favouriteImageURL = "https://www.thesun.co.uk/wp-content/uploads/2020/06/NINTCHDBPICT000611616813.jpg?w=1240";
+
+    const nonfavouriteImageURL = "https://www.thesun.co.uk/wp-content/uploads/2020/06/NINTCHDBPICT000611616809.jpg?w=1240";
+
+    const [favouritesIconSRC, setFavouritesIconSRC] = useState("");
+
+    useEffect(() => {
+        axios.defaults.withCredentials = true;
+        axios
+          .get("http://localhost:3001/checkfavourite", {
+            params: {
+              item_name: props.item.item_name,
+            },
+          })
+          .then((response) => {
+              if (response.data === "IS FAVOURITE") {
+                setFavouritesIconSRC(favouriteImageURL);
+              } else {
+                setFavouritesIconSRC(nonfavouriteImageURL);
+              }
+          });
+      }, []);
+
+  const addToFavourites = (e) => {
+      if (favouritesIconSRC === favouriteImageURL) {
+          setFavouritesIconSRC(nonfavouriteImageURL);
+      } else {
+          setFavouritesIconSRC(favouriteImageURL);
+      }
+    e.preventDefault();
+    const data = {
+      item_name: props.item.item_name,
+    };
+
+    axios.defaults.withCredentials = true;
+
+    axios
+      .post("http://localhost:3001/addtofavourites", data)
+      .then((response) => {
+        console.log("Added to favourites");
+      });
+  };
 
   return (
     <div>
@@ -10,10 +56,12 @@ function Itemcard(props) {
             <div class="thumbnail">
               <a href="/cart" class="navbar-brand">
                 <img
-                  src="https://images.rawpixel.com/image_png_1300/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcm00NjctaGVhcnQtMDAxXzIucG5n.png?s=PgaWWlYmApHnALAgNrDZANg39WzQY1tpdu_snZXmAgQ"
+                  src={favouritesIconSRC}
+                  alt="fav"
                   width={40}
                   height={40}
                   class="img-fluid"
+                  onClick={addToFavourites}
                 ></img>
               </a>
 
@@ -32,9 +80,13 @@ function Itemcard(props) {
                   style={{ width: "100%" }}
                 ></img>
 
-                <div >
-                    <div style={{ display: "inline-block"}}>{props.item.item_name}</div>
-                    <div style={{ display: "inline-block", marginLeft: "200px"}}>Price:  {props.item.price}$</div>
+                <div>
+                  <div style={{ display: "inline-block" }}>
+                    {props.item.item_name}
+                  </div>
+                  <div style={{ display: "inline-block", marginLeft: "200px" }}>
+                    Price: {props.item.price}$
+                  </div>
                   <div>
                     <p></p>
                   </div>

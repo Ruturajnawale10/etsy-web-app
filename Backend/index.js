@@ -75,7 +75,7 @@ app.post("/login", function (req, res) {
     } else {
       console.log("User verified!");
       res.cookie("cookie", "admin", {
-        maxAge: 480000,
+        maxAge: 1920000,
         httpOnly: false,
         path: "/",
       });
@@ -470,6 +470,63 @@ app.get("/getallitems", function (req, res, next) {
     }
   });
 });
+
+app.post("/addtofavourites", function (req, res) {
+  console.log("Inside Add to Favourites Post Request");
+  let item_name = req.body.item_name;
+  let username = req.cookies.username;
+
+  let sql = "select *from favourites where item_name=? and username=?";
+
+  con.query(sql, [item_name, username], function (err, result, fields) {
+    if (err) {
+      console.log("FAILURE in fetching details");
+    } else {
+      if (result.length === 0) {
+        //no favourite record found, so add it
+        sql = "insert into favourites(item_name,username) values(?,?)";
+        con.query(sql, [item_name, username], function (err, result, fields) {
+          if (err) {
+            console.log("FAILURE in inserting to favourites");
+          } else {
+            res.send("SUCCESS");
+          }
+        });
+      } else {
+        //favourite was already present. So toggle it and unfavourite
+        sql = "delete from favourites where item_name=? and username=?";
+        con.query(sql, [item_name, username], function (err, result, fields) {
+          if (err) {
+            console.log("FAILURE to remove fro favourites");
+          } else {
+            res.send("SUCCESS");
+          }
+        });
+      }
+    }
+  });
+});
+
+app.get("/checkfavourite", function (req, res, next) {
+    console.log("Inside Check If Favourite Item GET Request");
+  
+    let item_name = req.query.item_name;
+    let username = req.cookies.username;
+
+    let sql = "select *from favourites where item_name=? and username=?";
+    con.query(sql, [item_name, username] ,function (err, result, fields) {
+      if (err) {
+        console.log("Data fetching failed");
+        res.send({ status: "failed" });
+      } else {
+          if (result.length === 1) {
+              res.send("IS FAVOURITE");
+          } else {
+              res.send("NOT FAVOURITE");
+          }
+      }
+    });
+  });
 
 //start your server on port 3001
 app.listen(3001);

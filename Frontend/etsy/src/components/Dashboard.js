@@ -25,22 +25,13 @@ function Dashboard() {
           </div>
         </div>
       );
-      //   setFetchedImage(
-      //     <img
-      //       src={"data:image/jpeg;base64," + response.data[0].image}
-      //       alt="Red dot"
-      //       width={130}
-      //       height={130}
-      //       class="img-fluid"
-      //     ></img>
-      //   );
     });
   }, []);
 
   return (
     <div>
       {redirectVar}
-      <h1>Welcome to Dashboard</h1>
+      <h1>Explore a variety of products</h1>
       {items}
     </div>
   );
