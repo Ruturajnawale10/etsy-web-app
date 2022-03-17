@@ -1,9 +1,7 @@
 import React from "react";
 
 function Itemcard(props) {
-  var itemname = props;
 
-  //console.log(items);
   return (
     <div>
       <div class="row">
@@ -29,14 +27,14 @@ function Itemcard(props) {
                 }}
               >
                 <img
-                  src="https://www.w3schools.com/w3images/lights.jpg"
-                  alt="Lights"
+                  src={`data:image/jpeg;base64,${props.item.image}`}
+                  alt="Unavailable"
                   style={{ width: "100%" }}
                 ></img>
 
                 <div >
-                    <div style={{ display: "inline-block"}}>{itemname.item.item_name}</div>
-                    <div style={{ display: "inline-block", marginLeft: "200px"}}>Price:  {itemname.item.price}$</div>
+                    <div style={{ display: "inline-block"}}>{props.item.item_name}</div>
+                    <div style={{ display: "inline-block", marginLeft: "200px"}}>Price:  {props.item.price}$</div>
                   <div>
                     <p></p>
                   </div>

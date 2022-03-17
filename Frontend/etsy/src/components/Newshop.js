@@ -8,9 +8,10 @@ import "../App.css";
 function Newshop() {
   const [shopName, setShopName] = useState(null);
   const [available, setAvailable] = useState(null);
-  let redirectVar = null;
+  let [redirectVar, setRedirectVar] = useState(null);
+
   if (!cookie.load("cookie")) {
-    redirectVar = <Redirect to="/login" />;
+    setRedirectVar(<Redirect to="/login" />);
   }
 
   const checkAvailibility = (e) => {
@@ -30,19 +31,17 @@ function Newshop() {
   };
 
   const submitShopName = (e) => {
-    var headers = new Headers();
     //prevent page from refresh
     e.preventDefault();
     //set the with credentials to true
-    console.log("chrchkk before submit");
-    console.log(shopName);
     axios.defaults.withCredentials = true;
     //make a post request with the user data
     axios
       .post("http://localhost:3001/createshop", { shopname: shopName })
       .then((response) => {
-        console.log("Data isss: ", response.data);
-        console.log("Status Code : ", response.status);
+        if (response.data === "SUCCESS") {
+          setRedirectVar(<Redirect to="/sellonetsy"/>);
+        }
       });
   };
 

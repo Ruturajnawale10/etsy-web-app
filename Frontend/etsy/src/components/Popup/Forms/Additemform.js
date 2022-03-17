@@ -12,7 +12,7 @@ export const Additemform = ({ onSubmit }) => {
 
       <div className="form-group">
         <label htmlFor="name"> Name</label>
-        <input className="form-control" id="name" />
+        <input className="form-control" id="name" required/>
       </div>
 
       <div className="form-group">
@@ -27,7 +27,7 @@ export const Additemform = ({ onSubmit }) => {
 
       <div className="form-group">
         <label htmlFor="price"> Price</label>
-        <input className="form-control" id="price" />
+        <input className="form-control" id="price" required/>
       </div>
 
       <div className="form-group">

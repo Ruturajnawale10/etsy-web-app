@@ -122,26 +122,22 @@ app.get("/profile", async (req, res, next) => {
     if (err) {
       console.log("Data fetching failed");
     } else {
-      let imageURL = `profile-pictures/${username}.jpg`;
-      console.log(imageURL);
-        console.log(result);
-      let fetchedURL = result[0].profile_pic_url;
-      if (fetchedURL !== null) {
+      let fetched_image_name = result[0].key_image_name;
+      if (fetched_image_name !== null) {
         imagesService
-          .getImage(imageURL)
+          .getImage(fetched_image_name)
           .then((imageData) => {
             let buf = Buffer.from(imageData.Body);
             let base64Image = buf.toString("base64");
             result[0].image = base64Image;
-            console.log("Data fetching successful");
+            console.log("Data fetched successful");
             res.send(result);
           })
           .catch((e) => {
             res.send(result);
           });
-      }
-      else {
-          res.send(result);
+      } else {
+        res.send(result);
       }
     }
   });
@@ -160,16 +156,15 @@ app.post("/profile", async (req, res, next) => {
   let country = req.body.country;
   let birthdate;
   if (req.body.month !== null && req.body.day !== null) {
-         birthdate = `${req.body.month} ${req.body.day}`;
+    birthdate = `${req.body.month} ${req.body.day}`;
   } else {
-       birthdate = req.body.birthdate;
+    birthdate = req.body.birthdate;
   }
   let gender = req.body.gender;
 
   let username = req.cookies.username;
 
   const base64Image = req.body.image;
-  const imageName = "profile-pictures/" + username + ".jpg";
   let response;
 
   if (base64Image === null) {
@@ -177,7 +172,18 @@ app.post("/profile", async (req, res, next) => {
       "update user set name=?,about=?,city=?,email=?,phone=?,address=?,country=?,birthdate=?,gender=? where username=?";
     con.query(
       sql,
-      [name, about, city, email, phone, address, country, birthdate, gender, username],
+      [
+        name,
+        about,
+        city,
+        email,
+        phone,
+        address,
+        country,
+        birthdate,
+        gender,
+        username,
+      ],
       function (err, result, fields) {
         if (err) {
           console.log("Updation failed");
@@ -188,13 +194,26 @@ app.post("/profile", async (req, res, next) => {
     );
   } else {
     try {
+      const imageName = "profile-pictures/" + req.body.imageName;
       response = await imagesService.upload(imageName, base64Image);
 
       let sql =
-        "update user set name=?,about=?,city=?,email=?,phone=?,address=?,profile_pic_url=? where username=?";
+        "update user set name=?,about=?,city=?,email=?,phone=?,address=?,country=?,birthdate=?,gender=?,key_image_name=? where username=?";
       con.query(
         sql,
-        [name, about, city, email, phone, address, response, username],
+        [
+          name,
+          about,
+          city,
+          email,
+          phone,
+          address,
+          country,
+          birthdate,
+          gender,
+          imageName,
+          username,
+        ],
         function (err, result, fields) {
           if (err) {
             console.log("Updation failed");
@@ -245,9 +264,9 @@ app.post("/createshop", function (req, res) {
   let sql = "insert into shop(shop_name, shop_owner) values(?,?)";
   con.query(sql, [shopname, username], function (err, result, fields) {
     if (err) {
-      console.log("Insertion failed");
+      res.send("FAILURE");
     } else {
-      console.log("1 record added");
+      res.send("SUCCESS");
     }
   });
 
@@ -298,18 +317,27 @@ app.post("/additem", async (req, res, next) => {
   let price = req.body.price;
   let quantity = req.body.quantity;
 
+  let imageName = req.body.imageName;
   const base64Image = req.body.image;
-  const imageName = `shop/${shop_name}/${item_name}.jpg`;
+  const key_image_name = `items/${imageName}`;
   let response;
 
   try {
-    response = await imagesService.upload(imageName, base64Image);
+    response = await imagesService.upload(key_image_name, base64Image);
 
     let sql =
-      "insert into item (item_name, shop_name, category, description, price, quantity) values(?,?,?,?,?,?)";
+      "insert into item (item_name, shop_name, category, description, price, quantity, key_image_name) values(?,?,?,?,?,?,?)";
     con.query(
       sql,
-      [item_name, shop_name, category, description, price, quantity],
+      [
+        item_name,
+        shop_name,
+        category,
+        description,
+        price,
+        quantity,
+        key_image_name,
+      ],
       function (err, result, fields) {
         if (err) {
           console.log("Insertion failed");
@@ -326,25 +354,25 @@ app.post("/additem", async (req, res, next) => {
 });
 
 app.post("/updateitem", async (req, res, next) => {
-  console.log("Inside AddItem Post Request");
+  console.log("Inside UpdateItem Post Request");
   console.log("Req Body : ", req.body);
   let item_name = req.body.item_name;
-  let shop_name = req.body.shop_name;
   let category = req.body.category;
   let description = req.body.description;
   let price = req.body.price;
   let quantity = req.body.quantity;
 
+  let imageName = req.body.imageName;
   const base64Image = req.body.image;
-  const imageName = `shop/${shop_name}/${item_name}.jpg`;
+  const key_image_name = `items/${imageName}`;
   let response;
 
   if (base64Image === null) {
     let sql =
-      "update item set category=?,description=?,price=?,quantity=? where item_name=?";
+      "update item set item_name=?,category=?,description=?,price=?,quantity=? where item_name=?";
     con.query(
       sql,
-      [category, description, price, quantity, item_name],
+      [item_name, category, description, price, quantity, item_name],
       function (err, result, fields) {
         if (err) {
           console.log("Updation failed");
@@ -355,13 +383,21 @@ app.post("/updateitem", async (req, res, next) => {
     );
   } else {
     try {
-      response = await imagesService.upload(imageName, base64Image);
+      response = await imagesService.upload(key_image_name, base64Image);
 
       let sql =
-        "update item set category=?,description=?,price=?,quantity=? where item_name=?";
+        "update item set item_name=?,category=?,description=?,price=?,quantity=?,key_image_name=? where item_name=?";
       con.query(
         sql,
-        [category, description, price, quantity, item_name],
+        [
+          item_name,
+          category,
+          description,
+          price,
+          quantity,
+          key_image_name,
+          item_name,
+        ],
         function (err, result, fields) {
           if (err) {
             console.log("Updation failed");
@@ -393,21 +429,47 @@ app.get("/getitems", function (req, res, next) {
 });
 
 app.get("/getallitems", function (req, res, next) {
-    console.log("Inside GET all items dashboard Request");
-  
-    let username = req.cookies.username;
+  console.log("Inside GET all items dashboard Request");
+  let username = req.cookies.username;
+  let sql =
+    "select item_name, price, item.key_image_name from item, user, shop where user.username!=? and user.username=shop.shop_owner and item.shop_name=shop.shop_name";
 
-    let sql = "select item_name, price from item, user, shop where user.username!=? and user.username=shop.shop_owner and item.shop_name=shop.shop_name";
-    con.query(sql, username, function (err, result, fields) {
-      if (err) {
-        console.log("Data fetching failed");
-        res.send({ status: "failed" });
-      } else {
-        res.send(result);
-      }
+  function fetchImage(i, images_arr, imageName) {
+    return new Promise((resolve) => {
+      imagesService.getImage(imageName).then((imageData) => {
+        let buf = Buffer.from(imageData.Body);
+        let base64Image = buf.toString("base64");
+        images_arr[i] = base64Image;
+        resolve(base64Image);
+      });
     });
-  });
+  }
 
+  con.query(sql, username, function (err, result, fields) {
+    if (err) {
+      console.log("Data fetching failed", err.code);
+      res.send({ status: "failed" });
+    } else {
+      let images_arr = [];
+      let promises = [];
+      for (let i = 0; i < result.length; i++) {
+        promises.push(fetchImage(i, images_arr, result[i].key_image_name));
+      }
+
+      Promise.all(promises)
+        .then(() => {
+          console.log("All images fetched successfully!");
+          for (let i = 0; i < result.length; i++) {
+            result[i].image = images_arr[i];
+          }
+          res.send(result);
+        })
+        .catch((e) => {
+          // Handle errors here
+        });
+    }
+  });
+});
 
 //start your server on port 3001
 app.listen(3001);
