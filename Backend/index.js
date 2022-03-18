@@ -603,35 +603,112 @@ app.get("/itemdetails", function (req, res, next) {
 });
 
 app.post("/addtocart", async (req, res, next) => {
-    console.log("Inside Add to Cart POST Request");
-    let username = req.cookies.username;
-    let item_name = req.body.itemName;
-    let price = req.body.price;
-    let quantityRequested = req.body.quantityRequested;
+  console.log("Inside Add to Cart POST Request");
+  let username = req.cookies.username;
+  let item_name = req.body.itemName;
+  let price = req.body.price;
+  let quantityRequested = req.body.quantityRequested;
 
-    let sql = "insert into cart (item_name,price,quantity,username) values(?,?,?,?)";
-    con.query(sql, [item_name, price, quantityRequested, username], function (err, result, fields) {
-        if (err) {
+  let sql =
+    "insert into cart (item_name,price,quantity,username) values(?,?,?,?)";
+  con.query(
+    sql,
+    [item_name, price, quantityRequested, username],
+    function (err, result, fields) {
+      if (err) {
         res.send("FAILURE");
-        } else {
+      } else {
         res.send("SUCCESS");
-        }
-    });
+      }
+    }
+  );
 });
 
 app.get("/getcartitems", function (req, res, next) {
-    console.log("Cart items GET Request");
-    let username = req.cookies.username;
-  
-    let sql = "select *from cart where username=?";
-    con.query(sql, username, function (err, result, fields) {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send(result);
-      }
-    });
+  console.log("Cart items GET Request");
+  let username = req.cookies.username;
+
+  let sql = "select *from cart where username=?";
+  con.query(sql, username, function (err, result, fields) {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
   });
+});
+
+app.post("/checkout", async (req, res, next) => {
+  console.log("Inside Checkout POST Request");
+  let order_id = req.body.order_id;
+  //get current order date
+  var date = new Date();
+  var dd = String(date.getDate()).padStart(2, "0");
+  var mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
+  var yyyy = date.getFullYear();
+  date = mm + "/" + dd + "/" + yyyy;
+
+  function checkoutItem(items, i, order_id, username, date) {
+    return new Promise((resolve) => {
+      let sql =
+        "insert into purchases (order_id,username,item_name,price,quantity,date) values(?,?,?,?,?,?)";
+      con.query(
+        sql,
+        [
+          order_id,
+          username,
+          items[i].item_name,
+          items[i].price,
+          items[i].quantity,
+          date,
+        ],
+        function (err, result, fields) {
+          console.log("Item added to Order List");
+          sql = "delete from cart where username=? LIMIT ?";
+          con.query(
+            sql,
+            [username, items.length + 1],
+            function (err, result, fields) {
+              console.log("Item deleted from the cart");
+              let sql =
+                "update item set quantity = (quantity - ?) where item_name=?";
+              con.query(
+                sql,
+                [items[i].quantity, items[i].item_name],
+                function (err, result, fields) {
+                  if (err) {
+                    console.log(err);
+                  } else {
+                    res.send(result);
+                  }
+                }
+              );
+            }
+          );
+        }
+      );
+      resolve();
+    });
+  }
+
+  let items = req.body.items;
+  let username = req.cookies.username;
+  let total_items = items.length;
+
+  let promises = [];
+  for (let i = 0; i < total_items; i++) {
+    promises.push(checkoutItem(items, i, order_id, username, date));
+  }
+
+  Promise.all(promises)
+    .then(() => {
+      res.send("SUCCESS");
+    })
+    .catch((e) => {
+      // Handle errors here
+      res.send("FAILURE");
+    });
+});
 
 //start your server on port 3001
 app.listen(3001);

@@ -5,11 +5,13 @@ import { Redirect } from "react-router";
 import Cartitemcard from "./Cartitemcard";
 
 function Favourites() {
-  let redirectVar = null;
+  const [redirectVar, setRedirectVar] = useState(null);
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
+  const [itemsData, setItemsData] = useState(null);
+
   if (!cookie.load("cookie")) {
-    redirectVar = <Redirect to="/login" />;
+    setRedirectVar(<Redirect to="/login" />);
   }
 
   useEffect(() => {
@@ -17,9 +19,10 @@ function Favourites() {
     axios.get("http://localhost:3001/getcartitems").then((response) => {
       let total = 0;
       for (let item of response.data) {
-          total += item.price* item.quantity;
+        total += item.price * item.quantity;
       }
       setTotal(total);
+      setItemsData(response.data);
       setItems(
         <div className="container">
           <div className="row">
@@ -34,8 +37,32 @@ function Favourites() {
     });
   }, []);
 
-  const checkout = (e) => {
+  function makeid(length) {
+    var result = "";
+    var characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
 
+  const checkout = (e) => {
+    let orderID = makeid(10);
+    let data = {
+      items: itemsData,
+      order_id: orderID
+    };
+
+    axios.defaults.withCredentials = true;
+
+    axios
+      .post("http://localhost:3001/checkout", data)
+      .then((response) => {
+        console.log("Order placed successfully!");
+        setRedirectVar(<Redirect to="/purchases"/>);
+      });
   };
 
   return (

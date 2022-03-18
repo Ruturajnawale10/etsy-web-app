@@ -78,6 +78,7 @@ function Userprofile() {
   return (
     <div class="container p-3" style={{ border: "8px solid #666666" }}>
       {redirectVar}
+      <h1>Your Profile</h1>
       <form onSubmit={submitData}>
         <div class="row g-3 align-items-center">
           <div class="col-auto">
