@@ -2,39 +2,37 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import cookie from "react-cookies";
 import { Redirect } from "react-router";
+import favouritesicon from "../images/favouritesicon.jpg";
+import nonfavouritesicon from "../images/nonfavouritesicon.jpg";
 
 function Itemcard(props) {
+  const [favouritesIconSRC, setFavouritesIconSRC] = useState("");
 
-    const favouriteImageURL = "https://www.thesun.co.uk/wp-content/uploads/2020/06/NINTCHDBPICT000611616813.jpg?w=1240";
-
-    const nonfavouriteImageURL = "https://www.thesun.co.uk/wp-content/uploads/2020/06/NINTCHDBPICT000611616809.jpg?w=1240";
-
-    const [favouritesIconSRC, setFavouritesIconSRC] = useState("");
-
-    useEffect(() => {
-        axios.defaults.withCredentials = true;
-        axios
-          .get("http://localhost:3001/checkfavourite", {
-            params: {
-              item_name: props.item.item_name,
-            },
-          })
-          .then((response) => {
-              if (response.data === "IS FAVOURITE") {
-                setFavouritesIconSRC(favouriteImageURL);
-              } else {
-                setFavouritesIconSRC(nonfavouriteImageURL);
-              }
-          });
-      }, []);
+  useEffect(() => {
+    axios.defaults.withCredentials = true;
+    axios
+      .get("http://localhost:3001/checkfavourite", {
+        params: {
+          item_name: props.item.item_name,
+        },
+      })
+      .then((response) => {
+        if (response.data === "IS FAVOURITE") {
+          setFavouritesIconSRC(favouritesicon);
+        } else {
+          setFavouritesIconSRC(nonfavouritesicon);
+        }
+      });
+  }, []);
 
   const addToFavourites = (e) => {
-      if (favouritesIconSRC === favouriteImageURL) {
-          setFavouritesIconSRC(nonfavouriteImageURL);
-      } else {
-          setFavouritesIconSRC(favouriteImageURL);
-      }
     e.preventDefault();
+    if (favouritesIconSRC === favouritesicon) {
+      setFavouritesIconSRC(nonfavouritesicon);
+    } else {
+      setFavouritesIconSRC(favouritesicon);
+    }
+
     const data = {
       item_name: props.item.item_name,
     };
@@ -47,6 +45,23 @@ function Itemcard(props) {
         console.log("Added to favourites");
       });
   };
+
+  const itemClick = (e) => {
+    // axios.defaults.withCredentials = true;
+    // axios
+    //   .get("http://localhost:3001/itemsoverview", {
+    //     params: {
+    //       item_name: props.item.item_name,
+    //     },
+    //   })
+    //   .then((response) => {
+    //     if (response.data === "IS FAVOURITE") {
+    //       //setFavouritesIconSRC(favouritesicon);
+    //     } else {
+    //       //setFavouritesIconSRC(nonfavouritesicon);
+    //     }
+    //   });
+  }
 
   return (
     <div>
@@ -66,18 +81,19 @@ function Itemcard(props) {
               </a>
 
               <a
-                href="/w3images/lights.jpg"
+                href={`/itemsoverview/${props.item.item_name}`}
                 target="_blank"
                 style={{
                   textDecoration: "none",
                   color: "black",
                   fontSize: "25px",
                 }}
+                // onClick={itemClick}
               >
                 <img
                   src={`data:image/jpeg;base64,${props.item.image}`}
                   alt="Unavailable"
-                  style={{ width: "100%" }}
+                  style={{ width: "100%" }}   
                 ></img>
 
                 <div>

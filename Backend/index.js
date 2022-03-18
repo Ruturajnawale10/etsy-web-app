@@ -508,25 +508,99 @@ app.post("/addtofavourites", function (req, res) {
 });
 
 app.get("/checkfavourite", function (req, res, next) {
-    console.log("Inside Check If Favourite Item GET Request");
-  
-    let item_name = req.query.item_name;
-    let username = req.cookies.username;
+  console.log("Inside Check If Favourite Item GET Request");
 
-    let sql = "select *from favourites where item_name=? and username=?";
-    con.query(sql, [item_name, username] ,function (err, result, fields) {
-      if (err) {
-        console.log("Data fetching failed");
-        res.send({ status: "failed" });
+  let item_name = req.query.item_name;
+  let username = req.cookies.username;
+
+  let sql = "select *from favourites where item_name=? and username=?";
+  con.query(sql, [item_name, username], function (err, result, fields) {
+    if (err) {
+      console.log("Data fetching failed");
+      res.send({ status: "failed" });
+    } else {
+      if (result.length === 1) {
+        res.send("IS FAVOURITE");
       } else {
-          if (result.length === 1) {
-              res.send("IS FAVOURITE");
-          } else {
-              res.send("NOT FAVOURITE");
-          }
+        res.send("NOT FAVOURITE");
       }
-    });
+    }
   });
+});
+
+app.get("/getfavouriteitems", function (req, res, next) {
+  console.log("Inside get Favourite Items GET Request");
+
+  let username = req.cookies.username;
+  let sql =
+    "select favourites.item_name, item.price, item.key_image_name from item, favourites where favourites.username=? and favourites.item_name=item.item_name";
+
+  function fetchImage(i, images_arr, imageName) {
+    return new Promise((resolve) => {
+      imagesService.getImage(imageName).then((imageData) => {
+        let buf = Buffer.from(imageData.Body);
+        let base64Image = buf.toString("base64");
+        images_arr[i] = base64Image;
+        resolve(base64Image);
+      });
+    });
+  }
+
+  con.query(sql, username, function (err, result, fields) {
+    if (err) {
+      console.log("Data fetching failed", err.code);
+      res.send({ status: "failed" });
+    } else {
+      let images_arr = [];
+      let promises = [];
+      for (let i = 0; i < result.length; i++) {
+        promises.push(fetchImage(i, images_arr, result[i].key_image_name));
+      }
+
+      Promise.all(promises)
+        .then(() => {
+          console.log("All images fetched successfully!");
+          for (let i = 0; i < result.length; i++) {
+            result[i].image = images_arr[i];
+          }
+          res.send(result);
+        })
+        .catch((e) => {
+          // Handle errors here
+        });
+    }
+  });
+});
+
+app.get("/itemdetails", function (req, res, next) {
+  console.log("Items overview GET Request");
+  let item_name = req.query.item_name;
+
+  let sql = "select *from item where item_name=?";
+  con.query(sql, item_name, function (err, result, fields) {
+    if (err) {
+      console.log(err);
+    } else {
+      let fetched_image_name = result[0].key_image_name;
+      if (fetched_image_name !== null) {
+        imagesService
+          .getImage(fetched_image_name)
+          .then((imageData) => {
+            let buf = Buffer.from(imageData.Body);
+            let base64Image = buf.toString("base64");
+            result[0].image = base64Image;
+            console.log("Data fetched successful");
+            res.send(result);
+          })
+          .catch((e) => {
+            res.send(result);
+          });
+      } else {
+        res.send(result);
+      }
+    }
+  });
+});
 
 //start your server on port 3001
 app.listen(3001);

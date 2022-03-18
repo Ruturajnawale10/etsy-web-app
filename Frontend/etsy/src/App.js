@@ -11,6 +11,7 @@ import Userprofile from './components/Userprofile';
 import Favourites from './components/Favourites';
 import Sellonetsy from './components/Sellonetsy';
 import Cart from './components/Cart';
+import Itemsoverview from './components/Itemsoverview';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
               <Route path="/favourites" component={Favourites}/>
               <Route path="/shopexists" component={Sellonetsy}/>
               <Route path="/cart" component={Cart}/>
+              <Route path="/itemsoverview" component={Itemsoverview}/>
               <Redirect from='*' to='/' />    {/*redirects any other url other then above to / path i.e. login*/}
         </Switch>
       </div>

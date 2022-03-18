@@ -5,6 +5,10 @@ import Register from "./Register";
 import { Link } from "react-router-dom";
 import cookie from "react-cookies";
 import { Redirect } from "react-router";
+import favouritesicon from "../images/favouritesicon.jpg";
+import etsyicon from "../images/etsy-icon.png";
+import cartsicon from "../images/carts-icon.png";
+import profileicon from "../images/profile-icon.png";
 import "../App.css";
 
 function Navbar() {
@@ -36,7 +40,7 @@ function Navbar() {
     favouritesLink = (
       <a href="/favourites" class="navbar-brand">
         <img
-          src="https://cdn-icons-png.flaticon.com/128/130/130195.png"
+          src={favouritesicon}
           width={40}
           height={40}
           class="img-fluid"
@@ -47,7 +51,7 @@ function Navbar() {
     cartsLink = (
       <a href="/cart" class="navbar-brand">
         <img
-          src="https://img.icons8.com/external-icongeek26-outline-icongeek26/344/external-cart-essentials-icongeek26-outline-icongeek26.png"
+          src={cartsicon}
           width={40}
           height={40}
           class="img-fluid"
@@ -88,7 +92,7 @@ function Navbar() {
           <div class="container-fluid">
             <a href="/" class="navbar-brand">
               <img
-                src="https://cdn-icons-png.flaticon.com/512/825/825513.png"
+                src={etsyicon}
                 width={40}
                 height={40}
                 class="img-fluid"
@@ -130,7 +134,7 @@ function Navbar() {
 
                 <a href="/profile" class="navbar-brand">
                   <img
-                    src="https://freesvg.org/img/abstract-user-flat-4.png"
+                    src={profileicon}
                     width={40}
                     height={40}
                     class="img-fluid"
