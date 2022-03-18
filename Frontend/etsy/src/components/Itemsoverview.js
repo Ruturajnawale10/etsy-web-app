@@ -74,7 +74,18 @@ function Itemsoverview(props) {
             setAlert(<h6 style={{color:"red"}}>Out of Stock</h6>);
       } else {
         //call POST API to add to cart
-        
+        const data = {
+            itemName: item.item_name,
+            price: item.price,
+            quantityRequested: quantityRequested
+          };
+      
+          axios.defaults.withCredentials = true;
+          axios
+            .post("http://localhost:3001/addtocart", data)
+            .then((response) => {
+              setAlert(<h6 style={{color:"green"}}>Added to cart</h6>);
+            });
       }
   }
 

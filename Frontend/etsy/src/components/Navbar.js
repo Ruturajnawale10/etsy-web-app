@@ -9,6 +9,7 @@ import favouritesicon from "../images/favouritesicon.jpg";
 import etsyicon from "../images/etsy-icon.png";
 import cartsicon from "../images/carts-icon.png";
 import profileicon from "../images/profile-icon.png";
+import cart from "../images/cart.png";
 import "../App.css";
 
 function Navbar() {
@@ -17,6 +18,7 @@ function Navbar() {
   let registerLink = null;
   let favouritesLink = null;
   let cartsLink = null;
+  let purchasesLink = null;
   let sellOnEtsyLink = null;
   let logoutLink = null;
 
@@ -52,6 +54,17 @@ function Navbar() {
       <a href="/cart" class="navbar-brand">
         <img
           src={cartsicon}
+          width={40}
+          height={40}
+          class="img-fluid"
+        ></img>
+      </a>
+    );
+
+    purchasesLink = (
+      <a href="/purchases" class="navbar-brand">
+        <img
+          src={cart}
           width={40}
           height={40}
           class="img-fluid"
@@ -129,6 +142,7 @@ function Navbar() {
                 {registerLink}
                 {favouritesLink}
                 {cartsLink}
+                {purchasesLink}
                 {sellOnEtsyLink}
                 {logoutLink}
 

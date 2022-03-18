@@ -46,23 +46,6 @@ function Itemcard(props) {
       });
   };
 
-  const itemClick = (e) => {
-    // axios.defaults.withCredentials = true;
-    // axios
-    //   .get("http://localhost:3001/itemsoverview", {
-    //     params: {
-    //       item_name: props.item.item_name,
-    //     },
-    //   })
-    //   .then((response) => {
-    //     if (response.data === "IS FAVOURITE") {
-    //       //setFavouritesIconSRC(favouritesicon);
-    //     } else {
-    //       //setFavouritesIconSRC(nonfavouritesicon);
-    //     }
-    //   });
-  }
-
   return (
     <div>
       <div class="row">

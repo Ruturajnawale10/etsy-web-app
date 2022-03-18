@@ -602,6 +602,37 @@ app.get("/itemdetails", function (req, res, next) {
   });
 });
 
+app.post("/addtocart", async (req, res, next) => {
+    console.log("Inside Add to Cart POST Request");
+    let username = req.cookies.username;
+    let item_name = req.body.itemName;
+    let price = req.body.price;
+    let quantityRequested = req.body.quantityRequested;
+
+    let sql = "insert into cart (item_name,price,quantity,username) values(?,?,?,?)";
+    con.query(sql, [item_name, price, quantityRequested, username], function (err, result, fields) {
+        if (err) {
+        res.send("FAILURE");
+        } else {
+        res.send("SUCCESS");
+        }
+    });
+});
+
+app.get("/getcartitems", function (req, res, next) {
+    console.log("Cart items GET Request");
+    let username = req.cookies.username;
+  
+    let sql = "select *from cart where username=?";
+    con.query(sql, username, function (err, result, fields) {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+  });
+
 //start your server on port 3001
 app.listen(3001);
 console.log("Server Listening on port 3001");
