@@ -23,8 +23,8 @@ app.use(
     secret: "etsy-application",
     resave: false, // Forces the session to be saved back to the session store, even if the session was never modified during the request
     saveUninitialized: false, // Force to save uninitialized session to db. A session is uninitialized when it is new but not modified.
-    duration: 60 * 60 * 1000, // Overall duration of Session : 30 minutes : 1800 seconds
-    activeDuration: 5 * 60 * 1000,
+    duration: 2629800000, // Overall duration of Session :  1 month
+    activeDuration: 2629800000,
   })
 );
 
@@ -53,12 +53,6 @@ var con = mysql.createConnection(config_rds);
 con.connect(function (err) {
   if (err) throw err;
   console.log("Connected!");
-
-  //let sql = "select *from user";
-  con.query("select *from user", function (err, result, fields) {
-    if (err) throw err;
-    console.log(result);
-  });
 });
 
 //Route to handle Post Request Call
@@ -75,7 +69,7 @@ app.post("/login", function (req, res) {
     } else {
       console.log("User verified!");
       res.cookie("cookie", "admin", {
-        maxAge: 1920000,
+        maxAge: 86400000, //24 hrs
         httpOnly: false,
         path: "/",
       });
@@ -145,7 +139,6 @@ app.get("/profile", async (req, res, next) => {
 
 app.post("/profile", async (req, res, next) => {
   console.log("Inside Profile POST Request");
-  console.log("Req Body : ", req.body);
 
   let name = req.body.name;
   let about = req.body.about;
@@ -231,6 +224,7 @@ app.post("/profile", async (req, res, next) => {
 });
 
 app.get("/checkavailibility", function (req, res) {
+  console.log("Inside check availibility GET Request");
   let shopname = req.query.shopName;
   console.log("Shop name received in backend is:");
   console.log(shopname);
@@ -243,21 +237,16 @@ app.get("/checkavailibility", function (req, res) {
       console.log("Pass");
     }
 
-    console.log(result);
     if (result.length === 0) {
-      console.log("alright");
       res.send("available");
     } else {
-      console.log("nooooo");
       res.send("not available");
     }
   });
-
-  console.log("Inside check availibility Post Request");
-  console.log("Req Body : ", req.body);
 });
 
 app.post("/createshop", function (req, res) {
+  console.log("Inside Register Post Request");
   let shopname = req.body.shopname;
   let username = req.cookies.username;
 
@@ -280,9 +269,6 @@ app.post("/createshop", function (req, res) {
       }
     }
   });
-
-  console.log("Inside Register Post Request");
-  console.log("Req Body : ", req.body);
 });
 
 app.post("/upload", async (req, res, next) => {
@@ -365,8 +351,7 @@ app.post("/additem", async (req, res, next) => {
 });
 
 app.post("/updateitem", async (req, res, next) => {
-  console.log("Inside UpdateItem Post Request");
-  console.log("Req Body : ", req.body);
+  console.log("Inside Update Item Post Request");
   let item_name = req.body.item_name;
   let category = req.body.category;
   let description = req.body.description;
@@ -586,7 +571,6 @@ app.get("/getfavouriteitems", function (req, res, next) {
 app.get("/itemdetails", function (req, res, next) {
   console.log("Items overview GET Request");
   let item_name = req.query.item_name;
-  console.log(item_name);
   let sql = "select *from item where item_name=?";
   con.query(sql, item_name, function (err, result, fields) {
     if (err) {
@@ -794,50 +778,50 @@ app.get("/purchasehistory", function (req, res, next) {
 });
 
 app.get("/search", function (req, res, next) {
-    console.log("Inside GET SEARCHED items Request");
-    let username = req.cookies.username;
-    console.log(req.query);
-    let item_name = req.query.itemName;
+  console.log("Inside GET SEARCHED items Request");
+  let username = req.cookies.username;
+  let item_name = req.query.itemName;
 
-    let sql =
-      "select item_name, price, item.key_image_name from item, user, shop where user.username!=? and user.username=shop.shop_owner and item.shop_name=shop.shop_name and item_name LIKE " + con.escape('%'+item_name+'%');
-  
-    function fetchImage(i, images_arr, imageName) {
-      return new Promise((resolve) => {
-        imagesService.getImage(imageName).then((imageData) => {
-          let buf = Buffer.from(imageData.Body);
-          let base64Image = buf.toString("base64");
-          images_arr[i] = base64Image;
-          resolve(base64Image);
-        });
+  let sql =
+    "select item_name, price, item.key_image_name from item, user, shop where user.username!=? and user.username=shop.shop_owner and item.shop_name=shop.shop_name and item_name LIKE " +
+    con.escape("%" + item_name + "%");
+
+  function fetchImage(i, images_arr, imageName) {
+    return new Promise((resolve) => {
+      imagesService.getImage(imageName).then((imageData) => {
+        let buf = Buffer.from(imageData.Body);
+        let base64Image = buf.toString("base64");
+        images_arr[i] = base64Image;
+        resolve(base64Image);
       });
-    }
-  
-    con.query(sql, [username, item_name], function (err, result, fields) {
-      if (err) {
-        console.log("Data fetching failed", err.code);
-        res.send({ status: "failed" });
-      } else {
-        let images_arr = [];
-        let promises = [];
-        for (let i = 0; i < result.length; i++) {
-          promises.push(fetchImage(i, images_arr, result[i].key_image_name));
-        }
-  
-        Promise.all(promises)
-          .then(() => {
-            console.log("All images fetched successfully!");
-            for (let i = 0; i < result.length; i++) {
-              result[i].image = images_arr[i];
-            }
-            res.send(result);
-          })
-          .catch((e) => {
-            // Handle errors here
-          });
-      }
     });
+  }
+
+  con.query(sql, [username, item_name], function (err, result, fields) {
+    if (err) {
+      console.log("Data fetching failed", err.code);
+      res.send({ status: "failed" });
+    } else {
+      let images_arr = [];
+      let promises = [];
+      for (let i = 0; i < result.length; i++) {
+        promises.push(fetchImage(i, images_arr, result[i].key_image_name));
+      }
+
+      Promise.all(promises)
+        .then(() => {
+          console.log("All images fetched successfully!");
+          for (let i = 0; i < result.length; i++) {
+            result[i].image = images_arr[i];
+          }
+          res.send(result);
+        })
+        .catch((e) => {
+          // Handle errors here
+        });
+    }
   });
+});
 
 //start your server on port 3001
 app.listen(3001);
