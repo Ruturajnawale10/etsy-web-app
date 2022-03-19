@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import Dashboard from "./Dashboard";
 import Login from "./Login";
 import Register from "./Register";
@@ -13,6 +13,7 @@ import cart from "../images/cart.png";
 import "../App.css";
 
 function Navbar() {
+  let [searchContent, setSearchContent] = useState(null);
   let redirectVar = null;
   let loginLink = null;
   let registerLink = null;
@@ -85,6 +86,10 @@ function Navbar() {
     );
   }
 
+  const onSearchClick = (e) => {
+
+  }
+
   return (
     <div>
       <head>
@@ -122,15 +127,16 @@ function Navbar() {
             </button>
 
             <div class="search-container">
-              <form action="#">
+              <form action={searchContent}>
                 <input
                   id="searchbarid"
                   type="text"
                   placeholder="Search for anything"
-                  name="search"
                   size={90}
+                  onChange= {(e) => { setSearchContent("search/" +e.target.value)} }
                 ></input>
-                <button type="submit">
+                <button type="submit"> 
+                 {/* onSubmit={onSearchClick} */}
                   <i class="fa fa-search"></i>
                 </button>
               </form>

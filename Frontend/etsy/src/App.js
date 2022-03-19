@@ -13,6 +13,7 @@ import Sellonetsy from './components/Sellonetsy';
 import Cart from './components/Cart';
 import Itemsoverview from './components/Itemsoverview';
 import Purchases from './components/Purchases';
+import Searchitems from './components/Searchitems';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
               <Route path="/cart" component={Cart}/>
               <Route path="/itemsoverview" component={Itemsoverview}/>
               <Route path="/purchases" component={Purchases}/>
+              <Route path="/search" component={Searchitems}/>
               <Redirect from='*' to='/' />    {/*redirects any other url other then above to / path i.e. login*/}
         </Switch>
       </div>

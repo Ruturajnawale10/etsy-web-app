@@ -793,6 +793,52 @@ app.get("/purchasehistory", function (req, res, next) {
   });
 });
 
+app.get("/search", function (req, res, next) {
+    console.log("Inside GET SEARCHED items Request");
+    let username = req.cookies.username;
+    console.log(req.query);
+    let item_name = req.query.itemName;
+
+    let sql =
+      "select item_name, price, item.key_image_name from item, user, shop where user.username!=? and user.username=shop.shop_owner and item.shop_name=shop.shop_name and item_name LIKE " + con.escape('%'+item_name+'%');
+  
+    function fetchImage(i, images_arr, imageName) {
+      return new Promise((resolve) => {
+        imagesService.getImage(imageName).then((imageData) => {
+          let buf = Buffer.from(imageData.Body);
+          let base64Image = buf.toString("base64");
+          images_arr[i] = base64Image;
+          resolve(base64Image);
+        });
+      });
+    }
+  
+    con.query(sql, [username, item_name], function (err, result, fields) {
+      if (err) {
+        console.log("Data fetching failed", err.code);
+        res.send({ status: "failed" });
+      } else {
+        let images_arr = [];
+        let promises = [];
+        for (let i = 0; i < result.length; i++) {
+          promises.push(fetchImage(i, images_arr, result[i].key_image_name));
+        }
+  
+        Promise.all(promises)
+          .then(() => {
+            console.log("All images fetched successfully!");
+            for (let i = 0; i < result.length; i++) {
+              result[i].image = images_arr[i];
+            }
+            res.send(result);
+          })
+          .catch((e) => {
+            // Handle errors here
+          });
+      }
+    });
+  });
+
 //start your server on port 3001
 app.listen(3001);
 console.log("Server Listening on port 3001");
