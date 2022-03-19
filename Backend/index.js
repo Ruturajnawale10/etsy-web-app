@@ -671,15 +671,14 @@ app.post("/checkout", async (req, res, next) => {
             function (err, result, fields) {
               console.log("Item deleted from the cart");
               let sql =
-                "update item set quantity = (quantity - ?) where item_name=?";
+                "update item set quantity = (quantity - ?), sales = (sales + ?) where item_name=?";
               con.query(
                 sql,
-                [items[i].quantity, items[i].item_name],
+                [items[i].quantity,items[i].quantity, items[i].item_name],
                 function (err, result, fields) {
                   if (err) {
                     console.log(err);
                   } else {
-                    res.send(result);
                   }
                 }
               );
@@ -708,6 +707,67 @@ app.post("/checkout", async (req, res, next) => {
       // Handle errors here
       res.send("FAILURE");
     });
+});
+
+app.get("/purchasehistory", function (req, res, next) {
+  console.log("Inside GET Purchase history Request");
+  let username = req.cookies.username;
+  let sql = "select *from purchases where username=?";
+  con.query(sql, username, function (err, result, fields) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("Items reveived");
+
+      function fetchImage(i, images_arr, imageName) {
+        return new Promise((resolve) => {
+          imagesService.getImage(imageName).then((imageData) => {
+            let buf = Buffer.from(imageData.Body);
+            let base64Image = buf.toString("base64");
+            images_arr[i] = base64Image;
+            resolve(base64Image);
+          });
+        });
+      }
+
+      let total_items = result.length;
+      //multiple fetches, use allpromise here!
+      let images_arr = [];
+      let promises = [];
+
+      sql =
+        "select key_image_name, shop_name from item, purchases where purchases.username=? and purchases.item_name=item.item_name";
+      con.query(sql, username, function (err, result2, fields) {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("Image names and shop names fetched");
+          for (let i = 0; i < total_items; i++) {
+            result[i].shop_name = result2[i].shop_name;
+          }
+
+          //fetch image using image_name
+          for (let i = 0; i < total_items; i++) {
+            let imageName = result2[i].key_image_name;
+            promises.push(fetchImage(i, images_arr, imageName));
+          }
+
+          Promise.all(promises)
+            .then(() => {
+              for (let i = 0; i < result.length; i++) {
+                result[i].image = images_arr[i];
+              }
+              console.log(result);
+              res.send(result);
+            })
+            .catch((e) => {
+              // Handle errors here
+              res.send("FAILURE");
+            });
+        }
+      });
+    }
+  });
 });
 
 //start your server on port 3001

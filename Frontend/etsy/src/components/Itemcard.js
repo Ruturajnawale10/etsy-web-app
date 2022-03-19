@@ -71,7 +71,6 @@ function Itemcard(props) {
                   color: "black",
                   fontSize: "25px",
                 }}
-                // onClick={itemClick}
               >
                 <img
                   src={`data:image/jpeg;base64,${props.item.image}`}
