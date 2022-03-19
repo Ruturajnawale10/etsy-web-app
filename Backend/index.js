@@ -261,12 +261,23 @@ app.post("/createshop", function (req, res) {
   let shopname = req.body.shopname;
   let username = req.cookies.username;
 
-  let sql = "insert into shop(shop_name, shop_owner) values(?,?)";
-  con.query(sql, [shopname, username], function (err, result, fields) {
+  let sql = "select address from user where username=?";
+  con.query(sql, username, function (err, result, fields) {
     if (err) {
-      res.send("FAILURE");
+      console.log(err);
     } else {
-      res.send("SUCCESS");
+      if (result[0].address === null) {
+        res.send("FILL ADDRESS");
+      } else {
+        sql = "insert into shop(shop_name, shop_owner) values(?,?)";
+        con.query(sql, [shopname, username], function (err, result, fields) {
+          if (err) {
+            res.send("FAILURE");
+          } else {
+            res.send("SUCCESS");
+          }
+        });
+      }
     }
   });
 
@@ -575,12 +586,13 @@ app.get("/getfavouriteitems", function (req, res, next) {
 app.get("/itemdetails", function (req, res, next) {
   console.log("Items overview GET Request");
   let item_name = req.query.item_name;
-
+  console.log(item_name);
   let sql = "select *from item where item_name=?";
   con.query(sql, item_name, function (err, result, fields) {
     if (err) {
       console.log(err);
     } else {
+      console.log(result);
       let fetched_image_name = result[0].key_image_name;
       if (fetched_image_name !== null) {
         imagesService
@@ -640,6 +652,7 @@ app.get("/getcartitems", function (req, res, next) {
 
 app.post("/checkout", async (req, res, next) => {
   console.log("Inside Checkout POST Request");
+  let username = req.cookies.username;
   let order_id = req.body.order_id;
   //get current order date
   var date = new Date();
@@ -674,7 +687,7 @@ app.post("/checkout", async (req, res, next) => {
                 "update item set quantity = (quantity - ?), sales = (sales + ?) where item_name=?";
               con.query(
                 sql,
-                [items[i].quantity,items[i].quantity, items[i].item_name],
+                [items[i].quantity, items[i].quantity, items[i].item_name],
                 function (err, result, fields) {
                   if (err) {
                     console.log(err);
@@ -691,22 +704,33 @@ app.post("/checkout", async (req, res, next) => {
   }
 
   let items = req.body.items;
-  let username = req.cookies.username;
   let total_items = items.length;
 
   let promises = [];
-  for (let i = 0; i < total_items; i++) {
-    promises.push(checkoutItem(items, i, order_id, username, date));
-  }
 
-  Promise.all(promises)
-    .then(() => {
-      res.send("SUCCESS");
-    })
-    .catch((e) => {
-      // Handle errors here
-      res.send("FAILURE");
-    });
+  let sql = "select address from user where username=?";
+  con.query(sql, username, function (err, result, fields) {
+    if (err) {
+      console.log(err);
+    } else {
+      if (result[0].address === null) {
+        res.send("FILL ADDRESS");
+      } else {
+        for (let i = 0; i < total_items; i++) {
+          promises.push(checkoutItem(items, i, order_id, username, date));
+        }
+
+        Promise.all(promises)
+          .then(() => {
+            res.send("SUCCESS");
+          })
+          .catch((e) => {
+            // Handle errors here
+            res.send("FAILURE");
+          });
+      }
+    }
+  });
 });
 
 app.get("/purchasehistory", function (req, res, next) {
@@ -757,7 +781,6 @@ app.get("/purchasehistory", function (req, res, next) {
               for (let i = 0; i < result.length; i++) {
                 result[i].image = images_arr[i];
               }
-              console.log(result);
               res.send(result);
             })
             .catch((e) => {

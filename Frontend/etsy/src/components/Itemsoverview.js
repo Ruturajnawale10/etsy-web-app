@@ -9,7 +9,7 @@ function Itemsoverview(props) {
   let url = document.location.href;
   let url_arr = url.split("/");
   let item_name = url_arr.pop();
-  item_name = item_name.replace("%20", " ");
+  item_name = item_name.replaceAll("%20", " ").trim();
   const [item, setItem] = useState({ item_name: "Item Name", price: 20 });
   const [quantityRequested, setQuantityRequested] = useState(1);
 

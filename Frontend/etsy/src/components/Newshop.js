@@ -9,6 +9,7 @@ function Newshop() {
   const [shopName, setShopName] = useState(null);
   const [available, setAvailable] = useState(null);
   let [redirectVar, setRedirectVar] = useState(null);
+  const [msg, setMsg] = useState(null);
 
   if (!cookie.load("cookie")) {
     setRedirectVar(<Redirect to="/login" />);
@@ -23,9 +24,9 @@ function Newshop() {
       })
       .then((response) => {
         if (response.data === "available") {
-          setAvailable(<p>available</p>);
+          setAvailable(<p style={{marginLeft:"600px", marginTop:"60px", color:"green", fontSize:"20px"}}>Available</p>);
         } else {
-          setAvailable(<p>Shop name already taken!</p>);
+          setAvailable(<p style={{marginLeft:"600px", marginTop:"60px", color:"red", fontSize:"20px"}}>Shop name already taken!</p>);
         }
       });
   };
@@ -39,7 +40,14 @@ function Newshop() {
     axios
       .post("http://localhost:3001/createshop", { shopname: shopName })
       .then((response) => {
-        if (response.data === "SUCCESS") {
+        if (response.data === "FILL ADDRESS") {
+          setMsg(
+            <p style={{ color: "red", fontSize: "20px", marginLeft:"50px" }}>
+              Please fill your address in the profile for creating a new shop
+            </p>
+          );
+        }
+        else if (response.data === "SUCCESS") {
           setRedirectVar(<Redirect to="/sellonetsy"/>);
         }
       });
@@ -81,6 +89,7 @@ function Newshop() {
       >
         Create Shop
       </button>
+      {msg}
     </div>
   );
 }

@@ -9,6 +9,7 @@ function Favourites() {
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [itemsData, setItemsData] = useState(null);
+  const [msg, setMsg] = useState(null);
 
   if (!cookie.load("cookie")) {
     setRedirectVar(<Redirect to="/login" />);
@@ -52,17 +53,23 @@ function Favourites() {
     let orderID = makeid(10);
     let data = {
       items: itemsData,
-      order_id: orderID
+      order_id: orderID,
     };
 
     axios.defaults.withCredentials = true;
 
-    axios
-      .post("http://localhost:3001/checkout", data)
-      .then((response) => {
+    axios.post("http://localhost:3001/checkout", data).then((response) => {
+      if (response.data === "FILL ADDRESS") {
+        setMsg(
+          <p style={{ color: "red", fontSize: "20px", marginLeft:"50px" }}>
+            Please fill your address in the profile for completing the order
+          </p>
+        );
+      } else {
         console.log("Order placed successfully!");
-        setRedirectVar(<Redirect to="/purchases"/>);
-      });
+        setRedirectVar(<Redirect to="/purchases" />);
+      }
+    });
   };
 
   return (
@@ -87,6 +94,7 @@ function Favourites() {
       >
         Proceed to Checkout
       </button>
+      {msg}
     </div>
   );
 }
