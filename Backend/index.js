@@ -33,7 +33,7 @@ app.use(express.json());
 
 //Allow Access Control
 app.use(function (req, res, next) {
-  res.setHeader("Access-Control-Allow-Origin", host);
+  res.setHeader("Access-Control-Allow-Origin", localhost);
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader(
     "Access-Control-Allow-Methods",
@@ -459,7 +459,7 @@ app.get("/getallitems", function (req, res, next) {
           for (let i = 0; i < result.length; i++) {
             result[i].image = images_arr[i];
           }
-          res.send(result);
+          res.status(200).send(result);
         })
         .catch((e) => {
           // Handle errors here
@@ -827,3 +827,5 @@ app.get("/search", function (req, res, next) {
 //start your server on port 3001
 app.listen(3001);
 console.log("Server Listening on port 3001");
+
+ export default app;

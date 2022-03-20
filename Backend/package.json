@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -19,11 +19,18 @@
   "homepage": "https://github.com/Ruturajnawale10/etsy-web-app#readme",
   "dependencies": {
     "aws-sdk": "^2.1092.0",
+    "chai-http": "^4.3.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "express": "^4.17.3",
     "express-session": "^1.17.2",
     "mysql": "^2.18.1"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "mocha": "^9.2.2",
+    "node-fetch": "^2.6.1",
+    "supertest": "^6.2.2"
+  }
 }
