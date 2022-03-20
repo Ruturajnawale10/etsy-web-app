@@ -17,7 +17,7 @@ function Newshop() {
 
   const checkAvailibility = (e) => {
     e.preventDefault();
-    axios.get("http://localhost:3001/checkavailibility", {
+    axios.get(process.env.REACT_APP_LOCALHOST + "/checkavailibility", {
         params: {
           shopName: shopName,
         },
@@ -38,7 +38,7 @@ function Newshop() {
     axios.defaults.withCredentials = true;
     //make a post request with the user data
     axios
-      .post("http://localhost:3001/createshop", { shopname: shopName })
+      .post(process.env.REACT_APP_LOCALHOST + "/createshop", { shopname: shopName })
       .then((response) => {
         if (response.data === "FILL ADDRESS") {
           setMsg(

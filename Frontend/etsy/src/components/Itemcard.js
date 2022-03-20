@@ -11,7 +11,7 @@ function Itemcard(props) {
   useEffect(() => {
     axios.defaults.withCredentials = true;
     axios
-      .get("http://localhost:3001/checkfavourite", {
+      .get(process.env.REACT_APP_LOCALHOST + "/checkfavourite", {
         params: {
           item_name: props.item.item_name,
         },
@@ -40,7 +40,7 @@ function Itemcard(props) {
     axios.defaults.withCredentials = true;
 
     axios
-      .post("http://localhost:3001/addtofavourites", data)
+      .post(process.env.REACT_APP_LOCALHOST + "/addtofavourites", data)
       .then((response) => {
         console.log("Added to favourites");
       });

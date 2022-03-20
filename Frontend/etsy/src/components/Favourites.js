@@ -13,7 +13,7 @@ function Favourites() {
 
   useEffect(() => {
     axios.defaults.withCredentials = true;
-    axios.get("http://localhost:3001/getfavouriteitems").then((response) => {
+    axios.get(process.env.REACT_APP_LOCALHOST + "/getfavouriteitems").then((response) => {
       setItems(
         <div className="container">
           <div className="row">

@@ -16,7 +16,7 @@ function Userprofile() {
 
   useEffect(() => {
     axios.defaults.withCredentials = true;
-    axios.get("http://localhost:3001/profile").then((response) => {
+    axios.get(process.env.REACT_APP_LOCALHOST + "/profile").then((response) => {
       if (response.data[0].birthdate !== null) {
         let bday = response.data[0].birthdate.split(" ");
         setProfileData({ ...response.data[0], month: bday[0], day: bday[1] });
@@ -54,13 +54,13 @@ function Userprofile() {
 
     if (imageFile !== null) {
       const convertedFile = await convertToBase64(imageFile);
-      const s3URL = await axios.post("http://localhost:3001/profile", {
+      const s3URL = await axios.post(process.env.REACT_APP_LOCALHOST + "/profile", {
         ...profileData,
         image: convertedFile,
         imageName: imageFile.name,
       });
     } else {
-      const s3URL = await axios.post("http://localhost:3001/profile", {
+      const s3URL = await axios.post(process.env.REACT_APP_LOCALHOST + "/profile", {
         ...profileData,
         image: null,
         imageName: null,

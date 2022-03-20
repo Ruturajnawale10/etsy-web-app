@@ -17,7 +17,7 @@ function Favourites() {
 
   useEffect(() => {
     axios.defaults.withCredentials = true;
-    axios.get("http://localhost:3001/getcartitems").then((response) => {
+    axios.get(process.env.REACT_APP_LOCALHOST + "/getcartitems").then((response) => {
       let total = 0;
       for (let item of response.data) {
         total += item.price * item.quantity;
@@ -58,7 +58,7 @@ function Favourites() {
 
     axios.defaults.withCredentials = true;
 
-    axios.post("http://localhost:3001/checkout", data).then((response) => {
+    axios.post(process.env.REACT_APP_LOCALHOST + "/checkout", data).then((response) => {
       if (response.data === "FILL ADDRESS") {
         setMsg(
           <p style={{ color: "red", fontSize: "20px", marginLeft:"50px" }}>

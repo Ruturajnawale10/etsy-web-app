@@ -55,7 +55,7 @@ class Register extends Component {
     //set the with credentials to true
     axios.defaults.withCredentials = true;
     //make a post request with the user data
-    axios.post("http://localhost:3001/register", data).then((response) => {
+    axios.post(process.env.REACT_APP_LOCALHOST + "/register", data).then((response) => {
       if (response.data === "Login Failed") {
         this.setState({
           authMsg: (

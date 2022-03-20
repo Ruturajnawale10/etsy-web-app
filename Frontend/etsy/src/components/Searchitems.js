@@ -17,7 +17,7 @@ function Searchitems() {
     let itemname = url_arr[url_arr.length - 1];
     itemname = itemname.slice(0, itemname.length - 1);
 
-    axios.get("http://localhost:3001/search", {
+    axios.get(process.env.REACT_APP_LOCALHOST + "/search", {
         params: {itemName: itemname,}
   },
     ).then((response) => {

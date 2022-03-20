@@ -16,7 +16,7 @@ function Shophome(props) {
   useEffect(() => {
     axios.defaults.withCredentials = true;
     axios
-      .get("http://localhost:3001/getitems", {
+      .get(process.env.REACT_APP_LOCALHOST + "/getitems", {
         params: {
           shopName: props.name,
         },

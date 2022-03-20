@@ -13,7 +13,7 @@ function Purchases() {
 
   useEffect(() => {
     axios.defaults.withCredentials = true;
-    axios.get("http://localhost:3001/purchasehistory").then((response) => {
+    axios.get(process.env.REACT_APP_LOCALHOST + "/purchasehistory").then((response) => {
       console.log(response.data);
       if(response.data === "FAILURE") {
           console.log("Failed to order");

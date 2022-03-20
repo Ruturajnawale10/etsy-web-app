@@ -13,7 +13,7 @@ function Dashboard() {
 
   useEffect(() => {
     axios.defaults.withCredentials = true;
-    axios.get("http://localhost:3001/getallitems").then((response) => {
+    axios.get(process.env.REACT_APP_LOCALHOST + "/getallitems").then((response) => {
       setItems(
         <div className="container">
           <div className="row">

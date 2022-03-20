@@ -16,7 +16,7 @@ function Sellonetsy() {
 
   useEffect(() => {
     axios.defaults.withCredentials = true;
-    axios.get("http://localhost:3001/shopexists").then((response) => {
+    axios.get(process.env.REACT_APP_LOCALHOST + "/shopexists").then((response) => {
       if (response.data === "shopname not registered") {
         setShophome(<Newshop />);
       } else {

@@ -22,7 +22,7 @@ function Itemsoverview(props) {
     console.log(url);
 
     axios
-      .get("http://localhost:3001/checkfavourite", {
+      .get(process.env.REACT_APP_LOCALHOST + "/checkfavourite", {
         params: {
           item_name: item_name,
         },
@@ -36,7 +36,7 @@ function Itemsoverview(props) {
       });
 
     axios
-      .get("http://localhost:3001/itemdetails", {
+      .get(process.env.REACT_APP_LOCALHOST + "/itemdetails", {
         params: {
           item_name: item_name,
         },
@@ -62,7 +62,7 @@ function Itemsoverview(props) {
     axios.defaults.withCredentials = true;
 
     axios
-      .post("http://localhost:3001/addtofavourites", data)
+      .post(process.env.REACT_APP_LOCALHOST + "/addtofavourites", data)
       .then((response) => {
         console.log("Added to favourites");
       });
@@ -82,7 +82,7 @@ function Itemsoverview(props) {
       
           axios.defaults.withCredentials = true;
           axios
-            .post("http://localhost:3001/addtocart", data)
+            .post(process.env.REACT_APP_LOCALHOST + "/addtocart", data)
             .then((response) => {
               setAlert(<h6 style={{color:"green"}}>Added to cart</h6>);
             });

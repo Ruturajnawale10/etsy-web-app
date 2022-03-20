@@ -7,7 +7,7 @@ function Logout() {
 
   axios.defaults.withCredentials = true;
   //make a post request with the user data
-  axios.post("http://localhost:3001/logout").then((response) => {
+  axios.post(process.env.REACT_APP_LOCALHOST + "/logout").then((response) => {
     console.log("Data isss: ", response.data);
     console.log("Status Code : ", response.status);
     if (response.status === 200) {

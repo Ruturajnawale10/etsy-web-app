@@ -34,7 +34,7 @@ const Additem = (props) => {
     let imageFile = e.target[0].files[0];
     const convertedFile = await convertToBase64(imageFile);
 
-    const s3URL = await axios.post("http://localhost:3001/additem", {
+    const s3URL = await axios.post(process.env.REACT_APP_LOCALHOST + "/additem", {
       ...data,
       image: convertedFile,
       imageName: imageFile.name,
@@ -63,13 +63,13 @@ const Additem = (props) => {
 
     if (imageFile !== null) {
       const convertedFile = await convertToBase64(imageFile);
-      const s3URL = await axios.post("http://localhost:3001/updateitem", {
+      const s3URL = await axios.post(process.env.REACT_APP_LOCALHOST + "/updateitem", {
         ...data,
         image: convertedFile,
         imageName: imageFile.name,
       });
     } else {
-        const s3URL = await axios.post("http://localhost:3001/updateitem", {
+        const s3URL = await axios.post(process.env.REACT_APP_LOCALHOST + "/updateitem", {
         ...data,
         image: null,
         imageName: null,
