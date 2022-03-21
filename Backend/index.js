@@ -8,6 +8,7 @@ import mysql from "mysql";
 import config_rds from "./configs/config_rds.js";
 import imagesService from "./imagesService.js";
 import { localhost } from "./configs/localhost.js";
+import pool from "./connectionPool.js";
 
 app.use(cookieParser());
 app.set("view engine", "ejs");
@@ -48,13 +49,14 @@ app.use(function (req, res, next) {
 });
 
 //create Amazon RDS mysql connection
-var con = mysql.createConnection(config_rds);
+//var con = mysql.createConnection(config_rds);
+var con = pool;
 
 //connection to mysql
-con.connect(function (err) {
-  if (err) throw err;
-  console.log("Connected!");
-});
+// con.connect(function (err) {
+//   if (err) throw err;
+//   console.log("Connected!");
+// });
 
 //Route to handle Post Request Call
 app.post("/login", function (req, res) {
