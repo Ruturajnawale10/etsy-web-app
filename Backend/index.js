@@ -377,7 +377,7 @@ app.post("/updateitem", async (req, res, next) => {
 
   let sql = "update item set ";
   let update_arr = [];
-  
+
   if (category != null) {
     update_arr.push(category);
     sql += "category=?,";
@@ -399,21 +399,17 @@ app.post("/updateitem", async (req, res, next) => {
   sql += " where item_name=?";
   update_arr.push(item_name);
 
-  if (update_arr.length <=1) {
+  if (update_arr.length <= 1) {
     res.end("No update");
   }
- 
-  con.query(
-    sql,
-    update_arr,
-    function (err, result, fields) {
-      if (err) {
-        console.log("Updation failed");
-      } else {
-          res.end("SUCCESS");
-      }
+
+  con.query(sql, update_arr, function (err, result, fields) {
+    if (err) {
+      console.log("Updation failed");
+    } else {
+      res.end("SUCCESS");
     }
-  );
+  });
 });
 
 app.get("/getitems", function (req, res, next) {
@@ -428,7 +424,51 @@ app.get("/getitems", function (req, res, next) {
       res.send({ status: "failed" });
     } else {
       let username = req.cookies.username;
-      
+
+      sql = "select key_image_name from shop where shop_name=?";
+      con.query(sql, shop_name, function (err, result2, fields) {
+        if (err) {
+          console.log("Data fetching failed");
+        } else {
+          let fetched_image_name = result2[0].key_image_name;
+          if (fetched_image_name != null) {
+            imagesService
+              .getImage(fetched_image_name)
+              .then((imageData) => {
+                let buf = Buffer.from(imageData.Body);
+                let base64Image = buf.toString("base64");
+                result[0].image = base64Image;
+                result[0].username = username;
+                console.log("Image fetched SUCCESS");
+                res.send(result);
+              })
+              .catch((e) => {
+                res.send(result);
+              });
+          } else {
+            console.log("shop image not yet set");
+            //result[0].image = null;
+            res.send(result);
+          }
+        }
+      });
+    }
+  });
+});
+
+app.get("/shopdetails", function (req, res, next) {
+  console.log("Inside shop details Request");
+
+  let shop_name = req.query.shopName;
+  console.log(shop_name);
+  let sql = "select item_name,sales from item where shop_name=?";
+  con.query(sql, shop_name, function (err, result, fields) {
+    if (err) {
+      console.log("Data fetching failed");
+      res.send({ status: "failed" });
+    } else {
+      let username = req.cookies.username;
+
       sql = "select key_image_name from shop where shop_name=?";
       con.query(sql, shop_name, function (err, result2, fields) {
         if (err) {

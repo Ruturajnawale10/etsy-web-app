@@ -11,6 +11,8 @@ function Purchases() {
     redirectVar = <Redirect to="/login" />;
   }
 
+  const [totalPurchases, setTotalPurchases] = useState(null);
+
   useEffect(() => {
     axios.defaults.withCredentials = true;
     axios.get(process.env.REACT_APP_LOCALHOST + "/purchasehistory").then((response) => {
@@ -18,6 +20,12 @@ function Purchases() {
       if(response.data === "FAILURE") {
           console.log("Failed to order");
       } else {
+        console.log(response.data);
+        let total = 0;
+        for (let i = 0; i < response.data.length; i++) {
+          total += parseInt(response.data[i].price);
+        }
+        setTotalPurchases(total);
       setItems(
         <div className="container">
           <div className="row">
@@ -38,6 +46,7 @@ function Purchases() {
       {redirectVar}
       <h1>Past Purchases</h1>
       {items}
+      <h1 style={{color: "blue"}}>Total amount of all items purchased is: {totalPurchases}</h1>
     </div>
   );
 }

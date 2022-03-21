@@ -5,11 +5,19 @@ import { Redirect } from "react-router";
 import Additem from "./Popup/Additem";
 import "../App.css";
 
-function Shophome(props) {
+function ShopDetails() {
   let redirectVar = null;
   if (!cookie.load("cookie")) {
     redirectVar = <Redirect to="/login" />;
   }
+
+  let url = document.location.href;
+  let url_arr = url.split("/");
+  let item_namee = url_arr.pop();
+  item_namee = item_namee.replaceAll("%20", " ").trim();
+//   console.log(item_name);
+   const [itemName, setItemName] = useState(item_namee);
+//    setItemName(item_name);
 
   const [items, setItems] = useState([]);
   const [imageFile, setImageFile] = useState(null);
@@ -19,15 +27,17 @@ function Shophome(props) {
   const [totalSales, setTotalSales] = useState(null);
 
   useEffect(() => {
+      setItemName(item_namee);
     axios.defaults.withCredentials = true;
     axios
-      .get(process.env.REACT_APP_LOCALHOST + "/getitems", {
+      .get(process.env.REACT_APP_LOCALHOST + "/getitems" , {
+          
         params: {
-          shopName: props.name,
+          shopName: itemName,
         },
       })
       .then((response) => {
-
+       
         let total = 0;
         for (let sales in response.data) {
           total += parseInt(sales);
@@ -74,65 +84,22 @@ function Shophome(props) {
     });
   };
 
-  const setProfileImage = async (e) => {
-    e.preventDefault();
-    const convertedFile = await convertToBase64(imageFile);
-    const s3URL = await axios.post(
-      process.env.REACT_APP_LOCALHOST + "/upload",
-      {
-        image: convertedFile,
-        imageName: imageFile.name,
-      }
-    );
-    setMsg(
-      <p style={{ fontSize: 30, color: "green", marginRight: 50 }}>
-        Shop Image updated!
-      </p>
-    );
-  };
-
   return (
     <div>
       {redirectVar}
-      <h1>{props.name}</h1>
+      <h1>{itemName}</h1>
       <div class="row g-3 align-items-center">
-        <div class="col-auto">
-        </div>
+        <div class="col-auto"></div>
       </div>
       {fetchedImage}
-
       <div>
-      <br></br>
-        <div>
-          Edit Shop Image:
-          <input
-            type="file"
-            onChange={(e) => {
-              setImageFile(e.target.files[0]);
-              setDisplayButton("block");
-            }}
-          ></input>
-          <button
-            class="btn btn-dark"
-            onClick={setProfileImage}
-            style={{display: displayButton}}
-          >
-            Update
-          </button>
-        </div>
-        {msg}
         <br></br>
-
-        <Additem name={props.name} />
       </div>
       <h4>List of Items in the Shop:</h4>
 
       {items}
-
-    <br></br>
-      <h3>Total Sales is: {totalSales} </h3>
     </div>
   );
 }
 
-export default Shophome;
+export default ShopDetails;
