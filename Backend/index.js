@@ -275,20 +275,29 @@ app.post("/createshop", function (req, res) {
 });
 
 app.post("/upload", async (req, res, next) => {
-  console.log("Inside Upload POST");
+  console.log("Inside Upload Shop Image POST");
   const base64Image = req.body.image;
-  let username = req.cookies.username;
-  const imageName = "profile-pictures/" + username + ".js";
+  let image_name = req.body.imageName;
+  const imageName = "shop-images/" + image_name;
+  let shop_owner = req.cookies.username;
   let response;
 
   try {
     response = await imagesService.upload(imageName, base64Image);
+    let sql = "update shop set key_image_name=? where shop_owner=?";
+    con.query(sql, [imageName, shop_owner], function (err, result, fields) {
+      if (err) {
+        console.log("Updation failed");
+        res.send("FAILURE");
+      } else {
+        console.log("Image uploaded");
+        res.send("SUCCESS");
+      }
+    });
   } catch (err) {
     console.error(`Error uploading image: ${err.message}`);
     return next(new Error(`Error uploading image: ${imageName}`));
   }
-
-  res.send({ link: response });
 });
 
 app.get("/shopexists", function (req, res) {
@@ -416,13 +425,49 @@ app.get("/getitems", function (req, res, next) {
   console.log("Inside shop GET items Request");
 
   let shop_name = req.query.shopName;
+  console.log(shop_name);
   let sql = "select item_name,sales from item where shop_name=?";
   con.query(sql, shop_name, function (err, result, fields) {
     if (err) {
       console.log("Data fetching failed");
       res.send({ status: "failed" });
     } else {
-      res.send(result);
+      let username = req.cookies.username;
+      
+      sql = "select key_image_name, shop_owner from shop where shop_name=?";
+      con.query(sql, shop_name, function (err, result2, fields) {
+        if (err) {
+          console.log("Data fetching failed");
+        } else {
+          result[0].isOwner = "NO";
+          let fetched_image_name = result2[0].key_image_name;
+          let shop_owner = result[0].shop_owner;
+          if (shop_owner === username) {
+            result[0].isOwner = "YES";
+          } else {
+            result[0].isOwner = "NO";
+          }
+          if (fetched_image_name != null) {
+            imagesService
+              .getImage(fetched_image_name)
+              .then((imageData) => {
+                let buf = Buffer.from(imageData.Body);
+                let base64Image = buf.toString("base64");
+                result[0].image = base64Image;
+                result[0].username = username;
+                console.log("Image fetched SUCCESS");
+                res.send(result);
+              })
+              .catch((e) => {
+                res.send(result);
+              });
+          } else {
+            console.log("shop image not yet set");
+            //result[0].image = null;
+            res.send(result);
+          }
+        }
+      });
     }
   });
 });
@@ -830,4 +875,4 @@ app.get("/search", function (req, res, next) {
 app.listen(3001);
 console.log("Server Listening on port 3001");
 
- export default app;
+export default app;
