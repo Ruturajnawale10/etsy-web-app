@@ -13,10 +13,9 @@ function Shophome(props) {
 
   const [items, setItems] = useState([]);
   const [imageFile, setImageFile] = useState(null);
-  const [shouldDisplayImage, setShouldDisplayImage] = useState("none");
+  const [displayButton, setDisplayButton] = useState("none");
   const [msg, setMsg] = useState(null);
   const [fetchedImage, setFetchedImage] = useState(null);
-  const [showEdit, setShowEdit] = useState("none");
   const [totalSales, setTotalSales] = useState(null);
 
   useEffect(() => {
@@ -28,11 +27,7 @@ function Shophome(props) {
         },
       })
       .then((response) => {
-        if (response.data[0].isOwner === "NO") {
-          setShowEdit("block");
-        }
 
-        
         let total = 0;
         for (let sales in response.data) {
           total += parseInt(sales);
@@ -106,7 +101,7 @@ function Shophome(props) {
       </div>
       {fetchedImage}
 
-      <div style={{ display: showEdit }}>
+      <div>
       <br></br>
         <div>
           Edit Shop Image:
@@ -114,13 +109,13 @@ function Shophome(props) {
             type="file"
             onChange={(e) => {
               setImageFile(e.target.files[0]);
-              setShouldDisplayImage("block");
+              setDisplayButton("block");
             }}
           ></input>
           <button
             class="btn btn-dark"
-            style={{ display: shouldDisplayImage }}
             onClick={setProfileImage}
+            style={{display: displayButton}}
           >
             Update
           </button>

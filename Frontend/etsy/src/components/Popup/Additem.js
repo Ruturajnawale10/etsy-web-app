@@ -32,19 +32,26 @@ const Additem = (props) => {
     };
 
     let imageFile = e.target[0].files[0];
-    const convertedFile = await convertToBase64(imageFile);
+    if (imageFile === undefined) {
+      setAlert("Please add an image of the item");
+    } else {
+      const convertedFile = await convertToBase64(imageFile);
 
-    const s3URL = await axios.post(process.env.REACT_APP_LOCALHOST + "/additem", {
-      ...data,
-      image: convertedFile,
-      imageName: imageFile.name,
-    });
+      const s3URL = await axios.post(
+        process.env.REACT_APP_LOCALHOST + "/additem",
+        {
+          ...data,
+          image: convertedFile,
+          imageName: imageFile.name,
+        }
+      );
 
-    setAlert(
-      <p style={{ fontSize: 30, color: "green", marginRight: 50 }}>
-        Item Inserted!
-      </p>
-    );
+      setAlert(
+        <p style={{ fontSize: 30, color: "green", marginRight: 50 }}>
+          Item Inserted!
+        </p>
+      );
+    }
   };
 
   const onUpdateSubmit = async (e) => {
@@ -60,27 +67,41 @@ const Additem = (props) => {
     };
 
     let imageFile = e.target[0].files[0];
-
-    if (imageFile !== null) {
+    if (imageFile !== undefined) {
+      console.log("hahahaha");
       const convertedFile = await convertToBase64(imageFile);
-      const s3URL = await axios.post(process.env.REACT_APP_LOCALHOST + "/updateitem", {
-        ...data,
-        image: convertedFile,
-        imageName: imageFile.name,
-      });
+      const response = await axios.post(
+        process.env.REACT_APP_LOCALHOST + "/updateitem",
+        {
+          ...data,
+          image: convertedFile,
+          imageName: imageFile.name,
+        }
+      );
+      if (response === "SUCCESS") {
+        setUpdatealert(
+          <p style={{ fontSize: 30, color: "green", marginRight: 50 }}>
+            Item Updated!
+          </p>
+        );
+      }
     } else {
-        const s3URL = await axios.post(process.env.REACT_APP_LOCALHOST + "/updateitem", {
-        ...data,
-        image: null,
-        imageName: null,
-      });
+      const response = await axios.post(
+        process.env.REACT_APP_LOCALHOST + "/updateitem",
+        {
+          ...data,
+          image: null,
+          imageName: null,
+        }
+      );
+      if (response === "SUCCESS") {
+        setUpdatealert(
+          <p style={{ fontSize: 30, color: "green", marginRight: 50 }}>
+            Item Updated!
+          </p>
+        );
+      }
     }
-
-    setUpdatealert(
-      <p style={{ fontSize: 30, color: "green", marginRight: 50 }}>
-        Item Updated!
-      </p>
-    );
   };
 
   return (

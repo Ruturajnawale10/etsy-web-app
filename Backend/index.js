@@ -49,14 +49,14 @@ app.use(function (req, res, next) {
 });
 
 //create Amazon RDS mysql connection
-//var con = mysql.createConnection(config_rds);
-var con = pool;
+var con = mysql.createConnection(config_rds);
+//var con = pool;//
 
 //connection to mysql
-// con.connect(function (err) {
-//   if (err) throw err;
-//   console.log("Connected!");
-// });
+con.connect(function (err) {
+  if (err) throw err;
+  console.log("Connected!");
+});
 
 //Route to handle Post Request Call
 app.post("/login", function (req, res) {
@@ -375,50 +375,45 @@ app.post("/updateitem", async (req, res, next) => {
   const key_image_name = `items/${imageName}`;
   let response;
 
-  if (base64Image === null) {
-    let sql =
-      "update item set item_name=?,category=?,description=?,price=?,quantity=? where item_name=?";
-    con.query(
-      sql,
-      [item_name, category, description, price, quantity, item_name],
-      function (err, result, fields) {
-        if (err) {
-          console.log("Updation failed");
-        } else {
-          console.log("1 record updated");
-        }
-      }
-    );
-  } else {
-    try {
-      response = await imagesService.upload(key_image_name, base64Image);
-
-      let sql =
-        "update item set item_name=?,category=?,description=?,price=?,quantity=?,key_image_name=? where item_name=?";
-      con.query(
-        sql,
-        [
-          item_name,
-          category,
-          description,
-          price,
-          quantity,
-          key_image_name,
-          item_name,
-        ],
-        function (err, result, fields) {
-          if (err) {
-            console.log("Updation failed");
-          } else {
-            console.log("1 record updated");
-          }
-        }
-      );
-    } catch (err) {
-      console.error(`Error uploading image: ${err.message}`);
-      return next(new Error(`Error uploading image: ${imageName}`));
-    }
+  let sql = "update item set ";
+  let update_arr = [];
+  
+  if (category != null) {
+    update_arr.push(category);
+    sql += "category=?,";
   }
+  if (description != null) {
+    update_arr.push(description);
+    sql += "description=?,";
+  }
+  if (price != null) {
+    update_arr.push(price);
+    sql += "price=?,";
+  }
+  if (quantity != null) {
+    update_arr.push(quantity);
+    sql += "quantity=?,";
+  }
+
+  sql = sql.slice(0, -1);
+  sql += " where item_name=?";
+  update_arr.push(item_name);
+
+  if (update_arr.length <=1) {
+    res.end("No update");
+  }
+ 
+  con.query(
+    sql,
+    update_arr,
+    function (err, result, fields) {
+      if (err) {
+        console.log("Updation failed");
+      } else {
+          res.end("SUCCESS");
+      }
+    }
+  );
 });
 
 app.get("/getitems", function (req, res, next) {
@@ -434,19 +429,12 @@ app.get("/getitems", function (req, res, next) {
     } else {
       let username = req.cookies.username;
       
-      sql = "select key_image_name, shop_owner from shop where shop_name=?";
+      sql = "select key_image_name from shop where shop_name=?";
       con.query(sql, shop_name, function (err, result2, fields) {
         if (err) {
           console.log("Data fetching failed");
         } else {
-          result[0].isOwner = "NO";
           let fetched_image_name = result2[0].key_image_name;
-          let shop_owner = result[0].shop_owner;
-          if (shop_owner === username) {
-            result[0].isOwner = "YES";
-          } else {
-            result[0].isOwner = "NO";
-          }
           if (fetched_image_name != null) {
             imagesService
               .getImage(fetched_image_name)

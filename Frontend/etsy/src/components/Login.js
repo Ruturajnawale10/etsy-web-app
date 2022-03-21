@@ -72,7 +72,6 @@ class Login extends Component {
     return (
       <div>
         {redirectVar}
-        {process.env.REACT_APP_LOCALHOST}
         <div class="container">
           <div class="login-form">
             <div class="main-div">

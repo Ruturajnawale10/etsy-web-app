@@ -7,7 +7,7 @@ export const Additemform = ({ onSubmit }) => {
 
       <div className="form-group">
         <p>Add item image</p>
-        <input className="form-control" type="file" id="imageFile" required />
+        <input className="form-control" type="file" id="imageFile"/>
       </div>
 
       <div className="form-group">
@@ -27,7 +27,7 @@ export const Additemform = ({ onSubmit }) => {
 
       <div className="form-group">
         <label htmlFor="price"> Price</label>
-        <input className="form-control" id="price" required/>
+        <input className="form-control" id="price"/>
       </div>
 
       <div className="form-group">
