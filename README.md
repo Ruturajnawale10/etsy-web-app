@@ -3,7 +3,7 @@
 ## To run the backend node server: Goto backend folder, then enter
 ### node index.js
 
-# To run the react frontend app, go to Frontend/etsy, then enter
+## To run the react frontend app, go to Frontend/etsy, then enter
 ## npm start
 
 ## To run the mocha tests, go to Backend folder and enter
