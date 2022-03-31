@@ -46,6 +46,7 @@ class Login extends Component {
     axios.defaults.withCredentials = true;
     //make a post request with the user data
     axios.post(process.env.REACT_APP_LOCALHOST + "/login", data).then((response) => {
+      console.log(response.data, "Ohh");
       if (response.data === "Invalid credentials") {
         this.setState({
           authMsg: 

@@ -1,0 +1,9 @@
+FROM node:latest
+
+# ENV PATH=/usr/local/lib:/usr/local/lib/node_modules:/bin:/bin/sh
+ADD ./Backend/ /root/
+
+WORKDIR /root/
+
+EXPOSE 3001
+ENTRYPOINT [ "node", "index.js"]

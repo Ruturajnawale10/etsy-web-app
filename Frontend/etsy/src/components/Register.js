@@ -55,21 +55,21 @@ class Register extends Component {
     //set the with credentials to true
     axios.defaults.withCredentials = true;
     //make a post request with the user data
-    axios.post(process.env.REACT_APP_LOCALHOST + "/register", data).then((response) => {
-      if (response.data === "Login Failed") {
-        this.setState({
-          authMsg: (
-            <div class="invalid-feedback">
-              Invalid credentials. Please relogin.
-            </div>
-          ),
-        });
-      } else {
-        this.setState({
-          authMsg: <Redirect to="/login" />,
-        });
-      }
-    });
+    axios
+      .post(process.env.REACT_APP_LOCALHOST + "/register", data)
+      .then((response) => {
+        console.log(response.data);
+        if (response.data === "ALREADY EXISTS") {
+          console.log("Ohk");
+          this.setState({
+            authMsg: <p style={{ color: "red" }}>Username already exists!</p>,
+          });
+        } else {
+          this.setState({
+            authMsg: <Redirect to="/login" />,
+          });
+        }
+      });
   };
 
   render() {
