@@ -10,9 +10,9 @@ function Userprofile() {
   let [alert, setAlert] = useState(null);
 
   let redirectVar = null;
-  if (!cookie.load("cookie")) {
-    redirectVar = <Redirect to="/login" />;
-  }
+  // if (!cookie.load("cookie")) {
+  //   redirectVar = <Redirect to="/login" />;
+  // }
 
   useEffect(() => {
     axios.defaults.withCredentials = true;

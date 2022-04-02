@@ -9,8 +9,13 @@ import imagesService from "./imagesService.js";
 import { localhost } from "./configs/localhost.js";
 import mongoose from "mongoose";
 import config from "./configs/config_mongo.js";
-const mongoDB = config["mongoDB"];
+const mongoDB = config.mongoDB;
+const secret = config.secret;
 import Users from "./Models/UserModel.js";
+import jwt from "jsonwebtoken";
+import { checkAuth } from "./configs/passport.js";
+import { auth } from "./configs/passport.js";
+auth();
 
 app.use(cookieParser());
 app.set("view engine", "ejs");
@@ -77,13 +82,11 @@ app.post("/login", function (req, res) {
       });
       res.end("Error occurred");
     } else if (user) {
-      res.cookie("cookie", username, {
-        maxAge: 86400000,
-        httpOnly: false,
-        path: "/",
+      const payload = { _id: user._id, username: user.username };
+      const token = jwt.sign(payload, secret, {
+        expiresIn: 1008000,
       });
-      //res.session.user = user;
-      res.send("SUCCESS");
+      res.status(200).end("JWT " + token);
     } else {
       res.send("Invalid credentials");
     }
@@ -130,34 +133,34 @@ app.post("/logout", function (req, res) {
   });
 });
 
-// app.get("/profile", async (req, res, next) => {
-//   console.log("Inside Profile GET Request");
-//   let username = req.cookies.username;
-//   let sql = "select *from user where username=?";
-//   con.query(sql, username, function (err, result, fields) {
-//     if (err) {
-//       console.log("Data fetching failed");
-//     } else {
-//       let fetched_image_name = result[0].key_image_name;
-//       if (fetched_image_name !== null) {
-//         imagesService
-//           .getImage(fetched_image_name)
-//           .then((imageData) => {
-//             let buf = Buffer.from(imageData.Body);
-//             let base64Image = buf.toString("base64");
-//             result[0].image = base64Image;
-//             console.log("Data fetched successful");
-//             res.send(result);
-//           })
-//           .catch((e) => {
-//             res.send(result);
-//           });
-//       } else {
-//         res.send(result);
-//       }
-//     }
-//   });
-// });
+app.get("/profile", checkAuth, async (req, res, next) => {
+  console.log("Inside Profile GET Request");
+  // let username = req.cookies.username;
+  // let sql = "select *from user where username=?";
+  // con.query(sql, username, function (err, result, fields) {
+  //   if (err) {
+  //     console.log("Data fetching failed");
+  //   } else {
+  //     let fetched_image_name = result[0].key_image_name;
+  //     if (fetched_image_name !== null) {
+  //       imagesService
+  //         .getImage(fetched_image_name)
+  //         .then((imageData) => {
+  //           let buf = Buffer.from(imageData.Body);
+  //           let base64Image = buf.toString("base64");
+  //           result[0].image = base64Image;
+  //           console.log("Data fetched successful");
+  //           res.send(result);
+  //         })
+  //         .catch((e) => {
+  //           res.send(result);
+  //         });
+  //     } else {
+  //       res.send(result);
+  //     }
+  //   }
+  // });
+});
 
 // app.post("/profile", async (req, res, next) => {
 //   console.log("Inside Profile POST Request");

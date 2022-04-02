@@ -3,6 +3,7 @@ import "../App.css";
 import axios from "axios";
 import cookie from "react-cookies";
 import { Redirect } from "react-router";
+import jwtDecode from "jwt-decode";
 
 //Define a Login Component
 class Login extends Component {
@@ -15,6 +16,8 @@ class Login extends Component {
       username: "",
       password: "",
       authMsg: null,
+      token: "",
+      redirectVar1: null
     };
     //Bind the handlers to this class
     this.usernameChangeHandler = this.usernameChangeHandler.bind(this);
@@ -45,29 +48,43 @@ class Login extends Component {
     //set the with credentials to true
     axios.defaults.withCredentials = true;
     //make a post request with the user data
-    axios.post(process.env.REACT_APP_LOCALHOST + "/login", data).then((response) => {
-      console.log(response.data, "Ohh");
-      if (response.data === "Invalid credentials") {
-        this.setState({
-          authMsg: 
-            <p style={{color:"red"}}>
-              Invalid credentials. Please check again, or register for new account.
-            </p>
-          
-        });
-      } else {
-        this.setState({
-          authMsg: <div> Logged in</div>,
-        });
-      }
-    });
+    axios.post(process.env.REACT_APP_LOCALHOST + "/login", data)
+      .then((response) => {
+        console.log(response.data, "Ohh");
+        if (response.data === "Invalid credentials") {
+          this.setState({
+            authMsg: (
+              <p style={{ color: "red" }}>
+                Invalid credentials. Please check again, or register for new
+                account.
+              </p>
+            ),
+          });
+        } else {
+          console.log("response is::");
+          console.log(response.data);
+          this.setState({
+            token: response.data,
+          });
+        }
+      });
   };
 
   render() {
     //redirect based on successful login
     let redirectVar = null;
-    if (cookie.load("cookie")) {
+    if (this.state.token.length > 0) {
+      console.log("hehe");
+      localStorage.setItem("token", this.state.token);
+
+      var decoded = jwtDecode(this.state.token.split(" ")[1]);
+      localStorage.setItem("user_id", decoded._id);
+      localStorage.setItem("username", decoded.username);
+
       redirectVar = <Redirect to="/home" />;
+      // this.setState ({
+      //   redirectVar1:  <Redirect to="/home" />
+      // });
     }
 
     return (

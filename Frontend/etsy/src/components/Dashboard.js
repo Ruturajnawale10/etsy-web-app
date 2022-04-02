@@ -7,7 +7,7 @@ import Itemcard from "./Itemcard";
 function Dashboard() {
   let redirectVar = null;
   const [items, setItems] = useState([]);
-  if (!cookie.load("cookie")) {
+  if (!localStorage.getItem("token")) {
     redirectVar = <Redirect to="/login" />;
   }
 
