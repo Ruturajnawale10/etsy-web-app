@@ -2,9 +2,19 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 var usersSchema = new Schema({
-    username: {type: String, required: true},
-    password: {type: String, required: true},
-    email: {type: String}
+    username: {type: String},
+    password: {type: String},
+    email: {type: String},
+    name: {type: String},
+    about: {type: String},
+    city: {type: String},
+    email: {type: String},
+    phone: {type: String},
+    address: {type: String},
+    country: {type: String},
+    birthdate: {type: String},
+    gender: {type: String},
+    imageName: {type: String}
 },
 {
     versionKey: false

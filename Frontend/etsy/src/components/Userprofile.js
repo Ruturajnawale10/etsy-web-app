@@ -10,33 +10,33 @@ function Userprofile() {
   let [alert, setAlert] = useState(null);
 
   let redirectVar = null;
-  // if (!cookie.load("cookie")) {
-  //   redirectVar = <Redirect to="/login" />;
-  // }
+  if (!localStorage.getItem("token")) {
+    redirectVar = <Redirect to="/login" />;
+  }
 
   useEffect(() => {
-    axios.defaults.withCredentials = true;
-    axios.get(process.env.REACT_APP_LOCALHOST + "/profile").then((response) => {
-      if (response.data[0].birthdate !== null) {
-        let bday = response.data[0].birthdate.split(" ");
-        setProfileData({ ...response.data[0], month: bday[0], day: bday[1] });
-      } else {
-        setProfileData(response.data[0]);
-      }
-      setFetchedImage(
-        <img
-          src={"data:image/jpeg;base64," + response.data[0].image}
-          alt="Red dot"
-          width={130}
-          height={130}
-          class="img-fluid"
-        ></img>
-      );
-      let date = response.data[0].birthdate;
-      //setProfileData({...profileData, month: date[0]});
-      //setProfileData({...profileData, day: date[1]});
-      console.log(response.data[0]);
-    });
+    axios.defaults.headers.common["authorization"] =
+      localStorage.getItem("token");
+    axios
+      .get(process.env.REACT_APP_LOCALHOST + "/your/profile")
+      .then((response) => {
+        console.log(response.data._doc);
+        if (response.data._doc.birthdate !== null) {
+          let bday = response.data._doc.birthdate.split(" ");
+          setProfileData({ ...response.data._doc, month: bday[0], day: bday[1] });
+        } else {
+          setProfileData(response.data._doc);
+        }
+        setFetchedImage(
+          <img
+            src={"data:image/jpeg;base64," + response.data.image}
+            alt="Red dot"
+            width={130}
+            height={130}
+            class="img-fluid"
+          ></img>
+        );
+      });
   }, []);
 
   const convertToBase64 = (imageFile) => {
@@ -54,17 +54,27 @@ function Userprofile() {
 
     if (imageFile !== null) {
       const convertedFile = await convertToBase64(imageFile);
-      const s3URL = await axios.post(process.env.REACT_APP_LOCALHOST + "/profile", {
-        ...profileData,
-        image: convertedFile,
-        imageName: imageFile.name,
-      });
+      axios.defaults.headers.common["authorization"] =
+        localStorage.getItem("token");
+      const s3URL = await axios.post(
+        process.env.REACT_APP_LOCALHOST + "/your/profile",
+        {
+          ...profileData,
+          image: convertedFile,
+          imageName: imageFile.name,
+        }
+      );
     } else {
-      const s3URL = await axios.post(process.env.REACT_APP_LOCALHOST + "/profile", {
-        ...profileData,
-        image: null,
-        imageName: null,
-      });
+      axios.defaults.headers.common["authorization"] =
+        localStorage.getItem("token");
+      const s3URL = await axios.post(
+        process.env.REACT_APP_LOCALHOST + "/your/profile",
+        {
+          ...profileData,
+          image: null,
+          imageName: null,
+        }
+      );
     }
 
     setAlert(

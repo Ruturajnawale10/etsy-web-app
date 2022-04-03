@@ -11,12 +11,13 @@ function Favourites() {
   const [itemsData, setItemsData] = useState(null);
   const [msg, setMsg] = useState(null);
 
-  if (!cookie.load("cookie")) {
-    setRedirectVar(<Redirect to="/login" />);
+  if (!localStorage.getItem("token")) {
+    setRedirectVar = <Redirect to="/login" />;
   }
 
   useEffect(() => {
-    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
     axios.get(process.env.REACT_APP_LOCALHOST + "/getcartitems").then((response) => {
       let total = 0;
       for (let item of response.data) {
@@ -56,7 +57,8 @@ function Favourites() {
       order_id: orderID,
     };
 
-    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
 
     axios.post(process.env.REACT_APP_LOCALHOST + "/checkout", data).then((response) => {
       if (response.data === "FILL ADDRESS") {

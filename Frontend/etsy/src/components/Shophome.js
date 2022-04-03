@@ -7,7 +7,7 @@ import "../App.css";
 
 function Shophome(props) {
   let redirectVar = null;
-  if (!cookie.load("cookie")) {
+  if (!localStorage.getItem("token")) {
     redirectVar = <Redirect to="/login" />;
   }
 
@@ -19,7 +19,8 @@ function Shophome(props) {
   const [totalSales, setTotalSales] = useState(null);
 
   useEffect(() => {
-    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
     axios
       .get(process.env.REACT_APP_LOCALHOST + "/getitems", {
         params: {

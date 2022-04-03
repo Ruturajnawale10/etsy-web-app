@@ -23,7 +23,7 @@ function Navbar() {
   let sellOnEtsyLink = null;
   let logoutLink = null;
 
-  if (!cookie.load("cookie")) {
+  if (!localStorage.getItem("token")) {
     loginLink = (
       <li class="nav-item">
         <a href="/login" class="nav-link">
@@ -152,7 +152,7 @@ function Navbar() {
                 {sellOnEtsyLink}
                 {logoutLink}
 
-                <a href="/profile" class="navbar-brand">
+                <a href="/your/profile" class="navbar-brand">
                   <img
                     src={profileicon}
                     width={40}

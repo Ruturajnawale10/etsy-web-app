@@ -10,12 +10,13 @@ function Sellonetsy() {
   let [newShop, setNewShop] = useState(null);
   let [shophome, setShophome] = useState(null);
 
-  if (!cookie.load("cookie")) {
+  if (!localStorage.getItem("token")) {
     redirectVar = <Redirect to="/login" />;
   }
 
   useEffect(() => {
-    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
     axios.get(process.env.REACT_APP_LOCALHOST + "/shopexists").then((response) => {
       if (response.data === "shopname not registered") {
         setShophome(<Newshop />);

@@ -4,18 +4,10 @@ var app = express();
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import mysql from "mysql";
-import imagesService from "./imagesService.js";
 import { localhost } from "./configs/localhost.js";
 import mongoose from "mongoose";
 import config from "./configs/config_mongo.js";
 const mongoDB = config.mongoDB;
-const secret = config.secret;
-import Users from "./Models/UserModel.js";
-import jwt from "jsonwebtoken";
-import { checkAuth } from "./configs/passport.js";
-import { auth } from "./configs/passport.js";
-auth();
 
 app.use(cookieParser());
 app.set("view engine", "ejs");
@@ -70,183 +62,11 @@ mongoose.connect(mongoDB, options, (err, res) => {
 });
 
 //Route to handle Post Request Call
-app.post("/login", function (req, res) {
-  console.log("Inside Login Post Request");
-  let username = req.body.username;
-  let password = req.body.password;
+import Usersession from "./routes/UserSession.js";
+import User from "./routes/User.js";
 
-  Users.findOne({ username: username, password: password }, (error, user) => {
-    if (error) {
-      res.writeHead(500, {
-        "Content-Type": "text/plain",
-      });
-      res.end("Error occurred");
-    } else if (user) {
-      const payload = { _id: user._id, username: user.username };
-      const token = jwt.sign(payload, secret, {
-        expiresIn: 1008000,
-      });
-      res.status(200).end("JWT " + token);
-    } else {
-      res.send("Invalid credentials");
-    }
-  });
-});
-
-app.post("/register", function (req, res) {
-  console.log("Inside Register Post Request");
-  console.log("Req Body : ", req.body);
-  let username = req.body.username;
-  let password = req.body.password;
-  let email = req.body.email;
-
-  var new_user = new Users({
-    username: username,
-    password: password,
-    email: email,
-  });
-
-  Users.findOne({ username: username }, (error, user) => {
-    if (error) {
-      res.send("FAILURE");
-    } else if (user) {
-      res.send("ALREADY EXISTS");
-    } else {
-      new_user.save((error, data) => {
-        if (error) {
-          res.send("FAILURE");
-        } else {
-          res.send("SUCCESS");
-        }
-      });
-    }
-  });
-});
-
-app.post("/logout", function (req, res) {
-  console.log("Inside logout Post Request");
-  res.status(200).clearCookie("cookie", {
-    path: "/",
-  });
-  req.session.destroy(function (err) {
-    res.redirect("/");
-  });
-});
-
-app.get("/profile", checkAuth, async (req, res, next) => {
-  console.log("Inside Profile GET Request");
-  // let username = req.cookies.username;
-  // let sql = "select *from user where username=?";
-  // con.query(sql, username, function (err, result, fields) {
-  //   if (err) {
-  //     console.log("Data fetching failed");
-  //   } else {
-  //     let fetched_image_name = result[0].key_image_name;
-  //     if (fetched_image_name !== null) {
-  //       imagesService
-  //         .getImage(fetched_image_name)
-  //         .then((imageData) => {
-  //           let buf = Buffer.from(imageData.Body);
-  //           let base64Image = buf.toString("base64");
-  //           result[0].image = base64Image;
-  //           console.log("Data fetched successful");
-  //           res.send(result);
-  //         })
-  //         .catch((e) => {
-  //           res.send(result);
-  //         });
-  //     } else {
-  //       res.send(result);
-  //     }
-  //   }
-  // });
-});
-
-// app.post("/profile", async (req, res, next) => {
-//   console.log("Inside Profile POST Request");
-
-//   let name = req.body.name;
-//   let about = req.body.about;
-//   let city = req.body.city;
-//   let email = req.body.email;
-//   let phone = req.body.phone;
-//   let address = req.body.address;
-//   let country = req.body.country;
-//   let birthdate;
-//   if (req.body.month !== null && req.body.day !== null) {
-//     birthdate = `${req.body.month} ${req.body.day}`;
-//   } else {
-//     birthdate = req.body.birthdate;
-//   }
-//   let gender = req.body.gender;
-
-//   let username = req.cookies.username;
-
-//   const base64Image = req.body.image;
-//   let response;
-
-//   if (base64Image === null) {
-//     let sql =
-//       "update user set name=?,about=?,city=?,email=?,phone=?,address=?,country=?,birthdate=?,gender=? where username=?";
-//     con.query(
-//       sql,
-//       [
-//         name,
-//         about,
-//         city,
-//         email,
-//         phone,
-//         address,
-//         country,
-//         birthdate,
-//         gender,
-//         username,
-//       ],
-//       function (err, result, fields) {
-//         if (err) {
-//           console.log("Updation failed");
-//         } else {
-//           console.log("1 record updated");
-//         }
-//       }
-//     );
-//   } else {
-//     try {
-//       const imageName = "profile-pictures/" + req.body.imageName;
-//       response = await imagesService.upload(imageName, base64Image);
-
-//       let sql =
-//         "update user set name=?,about=?,city=?,email=?,phone=?,address=?,country=?,birthdate=?,gender=?,key_image_name=? where username=?";
-//       con.query(
-//         sql,
-//         [
-//           name,
-//           about,
-//           city,
-//           email,
-//           phone,
-//           address,
-//           country,
-//           birthdate,
-//           gender,
-//           imageName,
-//           username,
-//         ],
-//         function (err, result, fields) {
-//           if (err) {
-//             console.log("Updation failed");
-//           } else {
-//             console.log("1 record updated");
-//           }
-//         }
-//       );
-//     } catch (err) {
-//       console.error(`Error uploading image: ${err.message}`);
-//       return next(new Error(`Error uploading image: ${imageName}`));
-//     }
-//   }
-//   res.end("complete");
-// });
+app.use("/user", Usersession);
+app.use("/your", User);
 
 // app.get("/checkavailibility", function (req, res) {
 //   console.log("Inside check availibility GET Request");
@@ -273,7 +93,10 @@ app.get("/profile", checkAuth, async (req, res, next) => {
 // app.post("/createshop", function (req, res) {
 //   console.log("Inside Register Post Request");
 //   let shopname = req.body.shopname;
-//   let username = req.cookies.username;
+//   let token = 
+//req.headers.authorization;
+  //var decoded = jwtDecode(token.split(" ")[1]);
+//  let user_id = decoded._id;
 
 //   let sql = "select address from user where username=?";
 //   con.query(sql, username, function (err, result, fields) {
@@ -324,7 +147,10 @@ app.get("/profile", checkAuth, async (req, res, next) => {
 
 // app.get("/shopexists", function (req, res) {
 //   console.log("inside GET Shop home");
-//   let username = req.cookies.username;
+//   let token = 
+//req.headers.authorization;
+  //var decoded = jwtDecode(token.split(" ")[1]);
+//  let user_id = decoded._id;
 //   let sql = "select *from shop where shop_owner=?";
 //   con.query(sql, [username], function (err, result, fields) {
 //     if (err) {
@@ -445,7 +271,10 @@ app.get("/profile", checkAuth, async (req, res, next) => {
 //       console.log("Data fetching failed");
 //       res.send({ status: "failed" });
 //     } else {
-//       let username = req.cookies.username;
+//       let token = 
+//req.headers.authorization;
+  //var decoded = jwtDecode(token.split(" ")[1]);
+//  let user_id = decoded._id;
 
 //       sql = "select key_image_name from shop where shop_name=?";
 //       con.query(sql, shop_name, function (err, result2, fields) {
@@ -489,7 +318,10 @@ app.get("/profile", checkAuth, async (req, res, next) => {
 //       console.log("Data fetching failed");
 //       res.send({ status: "failed" });
 //     } else {
-//       let username = req.cookies.username;
+//       let token = 
+//req.headers.authorization;
+  //var decoded = jwtDecode(token.split(" ")[1]);
+//  let user_id = decoded._id;
 
 //       sql = "select key_image_name from shop where shop_name=?";
 //       con.query(sql, shop_name, function (err, result2, fields) {
@@ -524,7 +356,10 @@ app.get("/profile", checkAuth, async (req, res, next) => {
 
 // app.get("/getallitems", function (req, res, next) {
 //   console.log("Inside GET all items dashboard Request");
-//   let username = req.cookies.username;
+//   let token = 
+//req.headers.authorization;
+  //var decoded = jwtDecode(token.split(" ")[1]);
+//  let user_id = decoded._id;
 //   let sql =
 //     "select item_name, price, item.key_image_name from item, user, shop where user.username!=? and user.username=shop.shop_owner and item.shop_name=shop.shop_name";
 
@@ -568,7 +403,10 @@ app.get("/profile", checkAuth, async (req, res, next) => {
 // app.post("/addtofavourites", function (req, res) {
 //   console.log("Inside Add to Favourites Post Request");
 //   let item_name = req.body.item_name;
-//   let username = req.cookies.username;
+//   let token = 
+//req.headers.authorization;
+  //var decoded = jwtDecode(token.split(" ")[1]);
+//  let user_id = decoded._id;
 
 //   let sql = "select *from favourites where item_name=? and username=?";
 
@@ -605,7 +443,10 @@ app.get("/profile", checkAuth, async (req, res, next) => {
 //   console.log("Inside Check If Favourite Item GET Request");
 
 //   let item_name = req.query.item_name;
-//   let username = req.cookies.username;
+//   let token = 
+//req.headers.authorization;
+  //var decoded = jwtDecode(token.split(" ")[1]);
+//  let user_id = decoded._id;
 
 //   let sql = "select *from favourites where item_name=? and username=?";
 //   con.query(sql, [item_name, username], function (err, result, fields) {
@@ -625,7 +466,10 @@ app.get("/profile", checkAuth, async (req, res, next) => {
 // app.get("/getfavouriteitems", function (req, res, next) {
 //   console.log("Inside get Favourite Items GET Request");
 
-//   let username = req.cookies.username;
+//   let token = 
+//req.headers.authorization;
+  //var decoded = jwtDecode(token.split(" ")[1]);
+//  let user_id = decoded._id;
 //   let sql =
 //     "select favourites.item_name, item.price, item.key_image_name from item, favourites where favourites.username=? and favourites.item_name=item.item_name";
 
@@ -698,7 +542,10 @@ app.get("/profile", checkAuth, async (req, res, next) => {
 
 // app.post("/addtocart", async (req, res, next) => {
 //   console.log("Inside Add to Cart POST Request");
-//   let username = req.cookies.username;
+//   let token = 
+//req.headers.authorization;
+  //var decoded = jwtDecode(token.split(" ")[1]);
+//  let user_id = decoded._id;
 //   let item_name = req.body.itemName;
 //   let price = req.body.price;
 //   let quantityRequested = req.body.quantityRequested;
@@ -720,7 +567,10 @@ app.get("/profile", checkAuth, async (req, res, next) => {
 
 // app.get("/getcartitems", function (req, res, next) {
 //   console.log("Cart items GET Request");
-//   let username = req.cookies.username;
+//   let token = 
+//req.headers.authorization;
+  //var decoded = jwtDecode(token.split(" ")[1]);
+//  let user_id = decoded._id;
 
 //   let sql = "select *from cart where username=?";
 //   con.query(sql, username, function (err, result, fields) {
@@ -734,7 +584,10 @@ app.get("/profile", checkAuth, async (req, res, next) => {
 
 // app.post("/checkout", async (req, res, next) => {
 //   console.log("Inside Checkout POST Request");
-//   let username = req.cookies.username;
+//   let token = 
+//req.headers.authorization;
+  //var decoded = jwtDecode(token.split(" ")[1]);
+//  let user_id = decoded._id;
 //   let order_id = req.body.order_id;
 //   //get current order date
 //   var date = new Date();
@@ -817,7 +670,10 @@ app.get("/profile", checkAuth, async (req, res, next) => {
 
 // app.get("/purchasehistory", function (req, res, next) {
 //   console.log("Inside GET Purchase history Request");
-//   let username = req.cookies.username;
+//   let token = 
+//req.headers.authorization;
+  //var decoded = jwtDecode(token.split(" ")[1]);
+//  let user_id = decoded._id;
 //   let sql = "select *from purchases where username=?";
 //   con.query(sql, username, function (err, result, fields) {
 //     if (err) {
@@ -877,7 +733,10 @@ app.get("/profile", checkAuth, async (req, res, next) => {
 
 // app.get("/search", function (req, res, next) {
 //   console.log("Inside GET SEARCHED items Request");
-//   let username = req.cookies.username;
+//   let token = 
+//req.headers.authorization;
+  //var decoded = jwtDecode(token.split(" ")[1]);
+//  let user_id = decoded._id;
 //   let item_name = req.query.itemName;
 
 //   let sql =

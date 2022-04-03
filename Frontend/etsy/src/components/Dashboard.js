@@ -12,7 +12,8 @@ function Dashboard() {
   }
 
   // useEffect(() => {
-  //   axios.defaults.withCredentials = true;
+  //   axios.defaults.headers.common["authorization"] =
+  //   localStorage.getItem("token");
   //   axios.get(process.env.REACT_APP_LOCALHOST + "/getallitems").then((response) => {
   //     setItems(
   //       <div className="container">

@@ -7,12 +7,13 @@ import Itemcard from "./Itemcard";
 function Favourites() {
   let redirectVar = null;
   const [items, setItems] = useState([]);
-  if (!cookie.load("cookie")) {
+  if (!localStorage.getItem("token")) {
     redirectVar = <Redirect to="/login" />;
   }
 
   useEffect(() => {
-    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
     axios.get(process.env.REACT_APP_LOCALHOST + "/getfavouriteitems").then((response) => {
       setItems(
         <div className="container">

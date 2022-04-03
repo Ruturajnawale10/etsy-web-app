@@ -7,14 +7,15 @@ import Purchaseitemcard from "./Purchaseitemcard";
 function Purchases() {
   let redirectVar = null;
   const [items, setItems] = useState([]);
-  if (!cookie.load("cookie")) {
+  if (!localStorage.getItem("token")) {
     redirectVar = <Redirect to="/login" />;
   }
 
   const [totalPurchases, setTotalPurchases] = useState(null);
 
   useEffect(() => {
-    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
     axios.get(process.env.REACT_APP_LOCALHOST + "/purchasehistory").then((response) => {
       console.log(response.data);
       if(response.data === "FAILURE") {

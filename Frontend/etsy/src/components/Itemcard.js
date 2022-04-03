@@ -9,7 +9,8 @@ function Itemcard(props) {
   const [favouritesIconSRC, setFavouritesIconSRC] = useState("");
 
   useEffect(() => {
-    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
     axios
       .get(process.env.REACT_APP_LOCALHOST + "/checkfavourite", {
         params: {
@@ -37,7 +38,8 @@ function Itemcard(props) {
       item_name: props.item.item_name,
     };
 
-    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
 
     axios
       .post(process.env.REACT_APP_LOCALHOST + "/addtofavourites", data)

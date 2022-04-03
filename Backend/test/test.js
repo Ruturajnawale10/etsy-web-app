@@ -14,7 +14,7 @@ describe("/Profile details authenticity", () => {
   it("to get the correct profile details", async () => {
     const res = await chai
       .request(service)
-      .get("/profile")
+      .get("/your/profile")
       .set("Cookie", "username=admin");
     equal(res.status, 200);
     equal(res.body[0].name, "Ruturaj Nawale");

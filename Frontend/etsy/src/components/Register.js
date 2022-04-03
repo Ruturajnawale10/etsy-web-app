@@ -53,10 +53,11 @@ class Register extends Component {
       password: this.state.password,
     };
     //set the with credentials to true
-    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
     //make a post request with the user data
     axios
-      .post(process.env.REACT_APP_LOCALHOST + "/register", data)
+      .post(process.env.REACT_APP_LOCALHOST + "/user/register", data)
       .then((response) => {
         console.log(response.data);
         if (response.data === "ALREADY EXISTS") {
@@ -75,7 +76,7 @@ class Register extends Component {
   render() {
     //redirect based on successful login
     let redirectVar = null;
-    if (cookie.load("cookie")) {
+    if (localStorage.getItem("token")) {
       redirectVar = <Redirect to="/home" />;
     }
 

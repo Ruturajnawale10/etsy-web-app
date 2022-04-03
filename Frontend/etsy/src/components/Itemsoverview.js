@@ -17,7 +17,8 @@ function Itemsoverview(props) {
   const [alert, setAlert] = useState(null);
 
   useEffect(() => {
-    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
     console.log(item_name);
     console.log(url);
 
@@ -59,7 +60,8 @@ function Itemsoverview(props) {
       item_name: item_name,
     };
 
-    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
 
     axios
       .post(process.env.REACT_APP_LOCALHOST + "/addtofavourites", data)
@@ -80,7 +82,8 @@ function Itemsoverview(props) {
             quantityRequested: quantityRequested
           };
       
-          axios.defaults.withCredentials = true;
+          axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
           axios
             .post(process.env.REACT_APP_LOCALHOST + "/addtocart", data)
             .then((response) => {
