@@ -17,7 +17,7 @@ function Sellonetsy() {
   useEffect(() => {
     axios.defaults.headers.common["authorization"] =
     localStorage.getItem("token");
-    axios.get(process.env.REACT_APP_LOCALHOST + "/shopexists").then((response) => {
+    axios.get(process.env.REACT_APP_LOCALHOST + "/your/shop").then((response) => {
       if (response.data === "shopname not registered") {
         setShophome(<Newshop />);
       } else {

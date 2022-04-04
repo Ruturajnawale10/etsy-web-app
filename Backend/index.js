@@ -64,106 +64,11 @@ mongoose.connect(mongoDB, options, (err, res) => {
 //Route to handle Post Request Call
 import Usersession from "./routes/UserSession.js";
 import User from "./routes/User.js";
+import Shop from "./routes/Shop.js";
 
 app.use("/user", Usersession);
 app.use("/your", User);
-
-// app.get("/checkavailibility", function (req, res) {
-//   console.log("Inside check availibility GET Request");
-//   let shopname = req.query.shopName;
-//   console.log("Shop name received in backend is:");
-//   console.log(shopname);
-
-//   let sql = "select *from shop where shop_name=?";
-//   con.query(sql, shopname, function (err, result, fields) {
-//     if (err) {
-//       console.log(err);
-//     } else {
-//       console.log("Pass");
-//     }
-
-//     if (result.length === 0) {
-//       res.send("available");
-//     } else {
-//       res.send("not available");
-//     }
-//   });
-// });
-
-// app.post("/createshop", function (req, res) {
-//   console.log("Inside Register Post Request");
-//   let shopname = req.body.shopname;
-//   let token = 
-//req.headers.authorization;
-  //var decoded = jwtDecode(token.split(" ")[1]);
-//  let user_id = decoded._id;
-
-//   let sql = "select address from user where username=?";
-//   con.query(sql, username, function (err, result, fields) {
-//     if (err) {
-//       console.log(err);
-//     } else {
-//       if (result[0].address === null) {
-//         res.send("FILL ADDRESS");
-//       } else {
-//         sql = "insert into shop(shop_name, shop_owner) values(?,?)";
-//         con.query(sql, [shopname, username], function (err, result, fields) {
-//           if (err) {
-//             res.send("FAILURE");
-//           } else {
-//             res.send("SUCCESS");
-//           }
-//         });
-//       }
-//     }
-//   });
-// });
-
-// app.post("/upload", async (req, res, next) => {
-//   console.log("Inside Upload Shop Image POST");
-//   const base64Image = req.body.image;
-//   let image_name = req.body.imageName;
-//   const imageName = "shop-images/" + image_name;
-//   let shop_owner = req.cookies.username;
-//   let response;
-
-//   try {
-//     response = await imagesService.upload(imageName, base64Image);
-//     let sql = "update shop set key_image_name=? where shop_owner=?";
-//     con.query(sql, [imageName, shop_owner], function (err, result, fields) {
-//       if (err) {
-//         console.log("Updation failed");
-//         res.send("FAILURE");
-//       } else {
-//         console.log("Image uploaded");
-//         res.send("SUCCESS");
-//       }
-//     });
-//   } catch (err) {
-//     console.error(`Error uploading image: ${err.message}`);
-//     return next(new Error(`Error uploading image: ${imageName}`));
-//   }
-// });
-
-// app.get("/shopexists", function (req, res) {
-//   console.log("inside GET Shop home");
-//   let token = 
-//req.headers.authorization;
-  //var decoded = jwtDecode(token.split(" ")[1]);
-//  let user_id = decoded._id;
-//   let sql = "select *from shop where shop_owner=?";
-//   con.query(sql, [username], function (err, result, fields) {
-//     if (err) {
-//       console.log("Insertion failed");
-//     } else {
-//       if (result.length == 0) {
-//         res.send("shopname not registered");
-//       } else {
-//         res.send(result[0].shop_name);
-//       }
-//     }
-//   });
-// });
+app.use("/your/shop", Shop);
 
 // app.post("/additem", async (req, res, next) => {
 //   console.log("Inside AddItem Post Request");
@@ -256,53 +161,6 @@ app.use("/your", User);
 //       console.log("Updation failed");
 //     } else {
 //       res.end("SUCCESS");
-//     }
-//   });
-// });
-
-// app.get("/getitems", function (req, res, next) {
-//   console.log("Inside shop GET items Request");
-
-//   let shop_name = req.query.shopName;
-//   console.log(shop_name);
-//   let sql = "select item_name,sales from item where shop_name=?";
-//   con.query(sql, shop_name, function (err, result, fields) {
-//     if (err) {
-//       console.log("Data fetching failed");
-//       res.send({ status: "failed" });
-//     } else {
-//       let token = 
-//req.headers.authorization;
-  //var decoded = jwtDecode(token.split(" ")[1]);
-//  let user_id = decoded._id;
-
-//       sql = "select key_image_name from shop where shop_name=?";
-//       con.query(sql, shop_name, function (err, result2, fields) {
-//         if (err) {
-//           console.log("Data fetching failed");
-//         } else {
-//           let fetched_image_name = result2[0].key_image_name;
-//           if (fetched_image_name != null) {
-//             imagesService
-//               .getImage(fetched_image_name)
-//               .then((imageData) => {
-//                 let buf = Buffer.from(imageData.Body);
-//                 let base64Image = buf.toString("base64");
-//                 result[0].image = base64Image;
-//                 result[0].username = username;
-//                 console.log("Image fetched SUCCESS");
-//                 res.send(result);
-//               })
-//               .catch((e) => {
-//                 res.send(result);
-//               });
-//           } else {
-//             console.log("shop image not yet set");
-//             //result[0].image = null;
-//             res.send(result);
-//           }
-//         }
-//       });
 //     }
 //   });
 // });

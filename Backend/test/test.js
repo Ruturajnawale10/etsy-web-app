@@ -27,7 +27,7 @@ describe("/Check if user has created the shop", () => {
   it("to check if user created shop", (done) => {
     chai
       .request(service)
-      .get("/shopexists")
+      .get("/your/shop")
       .set("Cookie", "username=xyzpqr")
       .end((err, res) => {
         equal(res.status, 200);

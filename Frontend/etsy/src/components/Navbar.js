@@ -74,7 +74,7 @@ function Navbar() {
     );
 
     sellOnEtsyLink = (
-      <a href="/shopexists" class="navbar-brand">
+      <a href="/your/shop" class="navbar-brand">
         Sell on Etsy
       </a>
     );

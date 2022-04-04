@@ -22,7 +22,7 @@ function Shophome(props) {
     axios.defaults.headers.common["authorization"] =
     localStorage.getItem("token");
     axios
-      .get(process.env.REACT_APP_LOCALHOST + "/getitems", {
+      .get(process.env.REACT_APP_LOCALHOST + "/your/shop/getitems", {
         params: {
           shopName: props.name,
         },
@@ -30,31 +30,31 @@ function Shophome(props) {
       .then((response) => {
 
         let total = 0;
-        for (let sales in response.data) {
+        for (let sales in response.data._doc) {
           total += parseInt(sales);
         }
         setTotalSales(total);
-        setItems(
-          <table id="items_in_shop">
-            <tr>
-              <th>Item name</th>
-              <th>Sales</th>
-            </tr>
-            {response.data.map((item, i) => {
-              return (
-                <tr key={i} value={item}>
-                  <td>{item.item_name}</td>
-                  <td>{item.sales}</td>
-                </tr>
-              );
-            })}
-          </table>
-        );
+        // setItems(
+        //   <table id="items_in_shop">
+        //     <tr>
+        //       <th>Item name</th>
+        //       <th>Sales</th>
+        //     </tr>
+        //     {response.data._doc.map((item, i) => {
+        //       return (
+        //         <tr key={i} value={item}>
+        //           <td>{item.item_name}</td>
+        //           <td>{item.totalSales}</td>
+        //         </tr>
+        //       );
+        //     })}
+        //   </table>
+        // );
 
-        if (response.data[0].image != null) {
+        if (response.data.image != null) {
           setFetchedImage(
             <img
-              src={"data:image/jpeg;base64," + response.data[0].image}
+              src={"data:image/jpeg;base64," + response.data.image}
               alt="Red dot"
               width={300}
               height={300}
@@ -78,8 +78,11 @@ function Shophome(props) {
   const setProfileImage = async (e) => {
     e.preventDefault();
     const convertedFile = await convertToBase64(imageFile);
+    console.log("Hello")
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
     const s3URL = await axios.post(
-      process.env.REACT_APP_LOCALHOST + "/upload",
+      process.env.REACT_APP_LOCALHOST + "/your/shop/uploadshopimage",
       {
         image: convertedFile,
         imageName: imageFile.name,
