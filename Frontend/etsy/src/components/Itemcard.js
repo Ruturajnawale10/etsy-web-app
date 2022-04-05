@@ -6,7 +6,7 @@ import favouritesicon from "../images/favouritesicon.jpg";
 import nonfavouritesicon from "../images/nonfavouritesicon.jpg";
 
 function Itemcard(props) {
-  const [favouritesIconSRC, setFavouritesIconSRC] = useState("");
+  const [favouritesIconSRC, setFavouritesIconSRC] = useState(nonfavouritesicon);
 
   useEffect(() => {
     axios.defaults.headers.common["authorization"] =
@@ -14,7 +14,7 @@ function Itemcard(props) {
     axios
       .get(process.env.REACT_APP_LOCALHOST + "/checkfavourite", {
         params: {
-          itemName: props.item.itemName,
+          itemName: props.item._doc.itemName,
         },
       })
       .then((response) => {
@@ -35,7 +35,7 @@ function Itemcard(props) {
     }
 
     const data = {
-      itemName: props.item.itemName,
+      itemName: props.item._doc.itemName,
     };
 
     axios.defaults.headers.common["authorization"] =
@@ -66,7 +66,7 @@ function Itemcard(props) {
               </a>
 
               <a
-                href={`/itemsoverview/${props.item.itemName}`}
+                href={`/itemsoverview/${props.item._doc.itemName}`}
                 target="_blank"
                 style={{
                   textDecoration: "none",
@@ -82,10 +82,10 @@ function Itemcard(props) {
 
                 <div>
                   <div style={{ display: "inline-block" }}>
-                    {props.item.itemName}
+                    {props.item._doc.itemName}
                   </div>
                   <div style={{ display: "inline-block", marginLeft: "200px" }}>
-                    Price: {props.item.price}$
+                    Price: {props.item._doc.price}$
                   </div>
                   <div>
                     <p></p>

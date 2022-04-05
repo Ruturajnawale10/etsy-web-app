@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 var itemSchema = new Schema({
     itemName: {type: String},
     shopName: {type: String},
+    itemOwner: {type: String},
     category: {type: String},
     description: {type: String},
     price: {type: String},

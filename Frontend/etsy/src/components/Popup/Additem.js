@@ -36,6 +36,8 @@ const Additem = (props) => {
       setAlert("Please add an image of the item");
     } else {
       const convertedFile = await convertToBase64(imageFile);
+      axios.defaults.headers.common["authorization"] =
+        localStorage.getItem("token");
 
       const s3URL = await axios.post(
         process.env.REACT_APP_LOCALHOST + "/your/shop/additem",

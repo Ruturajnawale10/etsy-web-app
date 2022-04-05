@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { Object } from "mongoose/lib/schema/index.js";
 const Schema = mongoose.Schema;
 
 var usersSchema = new Schema({
@@ -14,7 +15,8 @@ var usersSchema = new Schema({
     country: {type: String},
     birthdate: {type: String},
     gender: {type: String},
-    imageName: {type: String}
+    imageName: {type: String},
+    shop: {type: Object}
 },
 {
     versionKey: false

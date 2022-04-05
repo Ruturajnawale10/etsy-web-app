@@ -11,29 +11,29 @@ function Dashboard() {
     redirectVar = <Redirect to="/login" />;
   }
 
-  // useEffect(() => {
-  //   axios.defaults.headers.common["authorization"] =
-  //   localStorage.getItem("token");
-  //   axios.get(process.env.REACT_APP_LOCALHOST + "/getallitems").then((response) => {
-  //     setItems(
-  //       <div className="container">
-  //         <div className="row">
-  //           {response.data.map((item) => (
-  //             <div key={item.itemName} id="cardItem" className="col-xs-4">
-  //               <Itemcard item={item} />
-  //             </div>
-  //           ))}
-  //         </div>
-  //       </div>
-  //     );
-  //   });
-  // }, []);
+  useEffect(() => {
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
+    axios.get(process.env.REACT_APP_LOCALHOST + "/items/getallitems").then((response) => {
+      setItems(
+        <div className="container">
+          <div className="row">
+            {response.data.map((item) => (
+              <div key={item.itemName} id="cardItem" className="col-xs-4">
+                <Itemcard item={item} />
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    });
+  }, []);
 
   return (
     <div>
       {redirectVar}
       <h1>Explore a variety of products</h1>
-      {/* {items} */}
+      {items}
     </div>
   );
 }

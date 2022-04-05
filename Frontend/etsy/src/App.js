@@ -23,7 +23,7 @@ function App() {
     <div>
       <Navbar/>
         <Switch>
-              <Route exact path="/" component={Dashboard}/>
+              <Route exact path="/items" component={Dashboard}/>
               <Route path="/login" component={Login}/>
               <Route path="/logout" component={Logout}/>
               <Route path="/register" component={Register}/>
@@ -35,7 +35,7 @@ function App() {
               <Route path="/purchases" component={Purchases}/>
               <Route path="/search" component={Searchitems}/>
               <Route path="/shopdetails" component={ShopDetails}/>
-              <Redirect from='*' to='/' />    {/*redirects any other url other then above to / path i.e. login*/}
+              <Redirect from='*' to='/items' />    {/*redirects any other url other then above to / path i.e. login*/}
         </Switch>
       </div>
     </Router>

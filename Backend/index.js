@@ -65,10 +65,13 @@ mongoose.connect(mongoDB, options, (err, res) => {
 import Usersession from "./routes/UserSession.js";
 import User from "./routes/User.js";
 import Shop from "./routes/Shop.js";
+import DashboardItems from "./routes/DashboardItems.js";
 
 app.use("/user", Usersession);
 app.use("/your", User);
 app.use("/your/shop", Shop);
+app.use("/items", DashboardItems);
+
 
 // app.get("/shopdetails", function (req, res, next) {
 //   console.log("Inside shop details Request");
@@ -113,52 +116,6 @@ app.use("/your/shop", Shop);
 //           }
 //         }
 //       });
-//     }
-//   });
-// });
-
-// app.get("/getallitems", function (req, res, next) {
-//   console.log("Inside GET all items dashboard Request");
-//   let token = 
-//req.headers.authorization;
-  //var decoded = jwtDecode(token.split(" ")[1]);
-//  let user_id = decoded._id;
-//   let sql =
-//     "select itemName, price, item.key_image_name from item, user, shop where user.username!=? and user.username=shop.shopOwner and item.shopName=shop.shopName";
-
-//   function fetchImage(i, images_arr, imageName) {
-//     return new Promise((resolve) => {
-//       imagesService.getImage(imageName).then((imageData) => {
-//         let buf = Buffer.from(imageData.Body);
-//         let base64Image = buf.toString("base64");
-//         images_arr[i] = base64Image;
-//         resolve(base64Image);
-//       });
-//     });
-//   }
-
-//   con.query(sql, username, function (err, result, fields) {
-//     if (err) {
-//       console.log("Data fetching failed", err.code);
-//       res.send({ status: "failed" });
-//     } else {
-//       let images_arr = [];
-//       let promises = [];
-//       for (let i = 0; i < result.length; i++) {
-//         promises.push(fetchImage(i, images_arr, result[i].key_image_name));
-//       }
-
-//       Promise.all(promises)
-//         .then(() => {
-//           console.log("All images fetched successfully!");
-//           for (let i = 0; i < result.length; i++) {
-//             result[i].image = images_arr[i];
-//           }
-//           res.status(200).send(result);
-//         })
-//         .catch((e) => {
-//           // Handle errors here
-//         });
 //     }
 //   });
 // });
