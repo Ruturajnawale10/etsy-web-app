@@ -29,7 +29,7 @@ function Favourites() {
         <div className="container">
           <div className="row">
             {response.data.map((item) => (
-              <div key={item.item_name} id="cartitemcard" className="col-xs-4">
+              <div key={item.itemName} id="cartitemcard" className="col-xs-4">
                 <Cartitemcard item={item} />
               </div>
             ))}
@@ -54,7 +54,7 @@ function Favourites() {
     let orderID = makeid(10);
     let data = {
       items: itemsData,
-      order_id: orderID,
+      orderID: orderID,
     };
 
     axios.defaults.headers.common["authorization"] =

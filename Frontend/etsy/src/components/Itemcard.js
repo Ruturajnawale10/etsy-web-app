@@ -14,7 +14,7 @@ function Itemcard(props) {
     axios
       .get(process.env.REACT_APP_LOCALHOST + "/checkfavourite", {
         params: {
-          item_name: props.item.item_name,
+          itemName: props.item.itemName,
         },
       })
       .then((response) => {
@@ -35,7 +35,7 @@ function Itemcard(props) {
     }
 
     const data = {
-      item_name: props.item.item_name,
+      itemName: props.item.itemName,
     };
 
     axios.defaults.headers.common["authorization"] =
@@ -66,7 +66,7 @@ function Itemcard(props) {
               </a>
 
               <a
-                href={`/itemsoverview/${props.item.item_name}`}
+                href={`/itemsoverview/${props.item.itemName}`}
                 target="_blank"
                 style={{
                   textDecoration: "none",
@@ -82,7 +82,7 @@ function Itemcard(props) {
 
                 <div>
                   <div style={{ display: "inline-block" }}>
-                    {props.item.item_name}
+                    {props.item.itemName}
                   </div>
                   <div style={{ display: "inline-block", marginLeft: "200px" }}>
                     Price: {props.item.price}$

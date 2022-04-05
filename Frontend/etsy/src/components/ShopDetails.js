@@ -15,9 +15,9 @@ function ShopDetails() {
   let url_arr = url.split("/");
   let item_namee = url_arr.pop();
   item_namee = item_namee.replaceAll("%20", " ").trim();
-//   console.log(item_name);
+//   console.log(itemName);
    const [itemName, setItemName] = useState(item_namee);
-//    setItemName(item_name);
+//    setItemName(itemName);
 
   const [items, setItems] = useState([]);
   const [imageFile, setImageFile] = useState(null);
@@ -53,7 +53,7 @@ function ShopDetails() {
             {response.data.map((item, i) => {
               return (
                 <tr key={i} value={item}>
-                  <td>{item.item_name}</td>
+                  <td>{item.itemName}</td>
                   <td>{item.sales}</td>
                 </tr>
               );

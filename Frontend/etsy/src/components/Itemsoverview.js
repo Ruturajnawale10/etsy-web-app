@@ -8,9 +8,9 @@ import nonfavouritesicon from "../images/nonfavouritesicon.jpg";
 function Itemsoverview(props) {
   let url = document.location.href;
   let url_arr = url.split("/");
-  let item_name = url_arr.pop();
-  item_name = item_name.replaceAll("%20", " ").trim();
-  const [item, setItem] = useState({ item_name: "Item Name", price: 20 });
+  let itemName = url_arr.pop();
+  itemName = itemName.replaceAll("%20", " ").trim();
+  const [item, setItem] = useState({ itemName: "Item Name", price: 20 });
   const [quantityRequested, setQuantityRequested] = useState(1);
 
   const [favouritesIconSRC, setFavouritesIconSRC] = useState("");
@@ -19,13 +19,13 @@ function Itemsoverview(props) {
   useEffect(() => {
     axios.defaults.headers.common["authorization"] =
     localStorage.getItem("token");
-    console.log(item_name);
+    console.log(itemName);
     console.log(url);
 
     axios
       .get(process.env.REACT_APP_LOCALHOST + "/checkfavourite", {
         params: {
-          item_name: item_name,
+          itemName: itemName,
         },
       })
       .then((response) => {
@@ -39,7 +39,7 @@ function Itemsoverview(props) {
     axios
       .get(process.env.REACT_APP_LOCALHOST + "/itemdetails", {
         params: {
-          item_name: item_name,
+          itemName: itemName,
         },
       })
       .then((response) => {
@@ -57,7 +57,7 @@ function Itemsoverview(props) {
     }
 
     const data = {
-      item_name: item_name,
+      itemName: itemName,
     };
 
     axios.defaults.headers.common["authorization"] =
@@ -77,7 +77,7 @@ function Itemsoverview(props) {
       } else {
         //call POST API to add to cart
         const data = {
-            itemName: item.item_name,
+            itemName: item.itemName,
             price: item.price,
             quantityRequested: quantityRequested
           };
@@ -126,11 +126,11 @@ function Itemsoverview(props) {
             </div>
           </div>
           <div class="col-md-4" style={{ marginLeft:"150px", marginTop:"100px"}}>
-            <a href={`/shopdetails/${item.shop_name}`}> Shop: {item.shop_name}</a>
+            <a href={`/shopdetails/${item.shopName}`}> Shop: {item.shopName}</a>
             <h6> Sales: {item.sales}</h6>
             <br></br>
             <h2>
-              {item.item_name} | {item.description}
+              {item.itemName} | {item.description}
             </h2>
             <h2>{item.price} $</h2>
             <br></br>

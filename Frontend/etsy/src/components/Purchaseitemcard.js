@@ -13,7 +13,7 @@ function Purchaseitemcard(props) {
           <div class="col-md-4">
             <div class="thumbnail">
               <a
-                href={`/itemsoverview/${props.item.item_name}`}
+                href={`/itemsoverview/${props.item.itemName}`}
                 target="_blank"
                 style={{
                   textDecoration: "none",
@@ -31,12 +31,12 @@ function Purchaseitemcard(props) {
           </div>
           <div class="col-md-8">
             <div class="row" style={{ marginTop: "50px" }}>
-              <div class="col" style={{fontSize:"20px"}}>Name: {props.item.item_name}</div>
+              <div class="col" style={{fontSize:"20px"}}>Name: {props.item.itemName}</div>
               <div class="col" style={{fontSize:"20px"}}>Price: {props.item.price}$</div>
               <div class="col" style={{fontSize:"20px"}}>Quantity: {props.item.quantity}</div>
             </div>
             <div class="row" style={{ marginTop: "50px" }}>
-              <div class="col-4" style={{fontSize:"20px"}}>Shop: {props.item.shop_name}</div>
+              <div class="col-4" style={{fontSize:"20px"}}>Shop: {props.item.shopName}</div>
               <div class="col" style={{fontSize:"20px"}}>Date of Purchase: {props.item.date}</div>
             </div>
           </div>

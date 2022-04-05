@@ -23,8 +23,8 @@ const Additem = (props) => {
     console.log(e.target);
 
     let data = {
-      item_name: e.target.name.value,
-      shop_name: props.name,
+      itemName: e.target.name.value,
+      shopName: props.name,
       category: e.target.category.value,
       description: e.target.description.value,
       price: e.target.price.value,
@@ -38,7 +38,7 @@ const Additem = (props) => {
       const convertedFile = await convertToBase64(imageFile);
 
       const s3URL = await axios.post(
-        process.env.REACT_APP_LOCALHOST + "/additem",
+        process.env.REACT_APP_LOCALHOST + "/your/shop/additem",
         {
           ...data,
           image: convertedFile,
@@ -58,8 +58,8 @@ const Additem = (props) => {
     e.preventDefault();
 
     let data = {
-      item_name: e.target.name.value,
-      shop_name: props.name,
+      itemName: e.target.name.value,
+      shopName: props.name,
       category: e.target.category.value,
       description: e.target.description.value,
       price: e.target.price.value,

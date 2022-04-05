@@ -28,28 +28,28 @@ function Shophome(props) {
         },
       })
       .then((response) => {
-
+        console.log(response.data);
         let total = 0;
-        for (let sales in response.data._doc) {
-          total += parseInt(sales);
+        for (let i = 0; i <  response.data.items.length; i++) {
+          total += parseInt(response.data.items[i].sales);
         }
         setTotalSales(total);
-        // setItems(
-        //   <table id="items_in_shop">
-        //     <tr>
-        //       <th>Item name</th>
-        //       <th>Sales</th>
-        //     </tr>
-        //     {response.data._doc.map((item, i) => {
-        //       return (
-        //         <tr key={i} value={item}>
-        //           <td>{item.item_name}</td>
-        //           <td>{item.totalSales}</td>
-        //         </tr>
-        //       );
-        //     })}
-        //   </table>
-        // );
+        setItems(
+          <table id="items_in_shop">
+            <tr>
+              <th>Item name</th>
+              <th>Sales</th>
+            </tr>
+            {response.data.items.map((item, i) => {
+              return (
+                <tr key={i} value={item}>
+                  <td>{item.itemName}</td>
+                  <td>{item.sales}</td>
+                </tr>
+              );
+            })}
+          </table>
+        );
 
         if (response.data.image != null) {
           setFetchedImage(

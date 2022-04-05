@@ -70,108 +70,13 @@ app.use("/user", Usersession);
 app.use("/your", User);
 app.use("/your/shop", Shop);
 
-// app.post("/additem", async (req, res, next) => {
-//   console.log("Inside AddItem Post Request");
-//   let item_name = req.body.item_name;
-//   let shop_name = req.body.shop_name;
-//   let category = req.body.category;
-//   let description = req.body.description;
-//   let price = req.body.price;
-//   let quantity = req.body.quantity;
-
-//   let imageName = req.body.imageName;
-//   const base64Image = req.body.image;
-//   const key_image_name = `items/${imageName}`;
-//   let response;
-
-//   try {
-//     response = await imagesService.upload(key_image_name, base64Image);
-
-//     let sql =
-//       "insert into item (item_name, shop_name, category, description, price, quantity, key_image_name) values(?,?,?,?,?,?,?)";
-//     con.query(
-//       sql,
-//       [
-//         item_name,
-//         shop_name,
-//         category,
-//         description,
-//         price,
-//         quantity,
-//         key_image_name,
-//       ],
-//       function (err, result, fields) {
-//         if (err) {
-//           console.log("Insertion failed");
-//         } else {
-//           console.log("1 record inserted");
-//         }
-//       }
-//     );
-//   } catch (err) {
-//     console.error(`Error uploading image: ${err.message}`);
-//     return next(new Error(`Error uploading image: ${imageName}`));
-//   }
-//   res.end("complete");
-// });
-
-// app.post("/updateitem", async (req, res, next) => {
-//   console.log("Inside Update Item Post Request");
-//   let item_name = req.body.item_name;
-//   let category = req.body.category;
-//   let description = req.body.description;
-//   let price = req.body.price;
-//   let quantity = req.body.quantity;
-
-//   let imageName = req.body.imageName;
-//   const base64Image = req.body.image;
-//   const key_image_name = `items/${imageName}`;
-//   let response;
-
-//   let sql = "update item set ";
-//   let update_arr = [];
-
-//   if (category != null) {
-//     update_arr.push(category);
-//     sql += "category=?,";
-//   }
-//   if (description != null) {
-//     update_arr.push(description);
-//     sql += "description=?,";
-//   }
-//   if (price != null) {
-//     update_arr.push(price);
-//     sql += "price=?,";
-//   }
-//   if (quantity != null) {
-//     update_arr.push(quantity);
-//     sql += "quantity=?,";
-//   }
-
-//   sql = sql.slice(0, -1);
-//   sql += " where item_name=?";
-//   update_arr.push(item_name);
-
-//   if (update_arr.length <= 1) {
-//     res.end("No update");
-//   }
-
-//   con.query(sql, update_arr, function (err, result, fields) {
-//     if (err) {
-//       console.log("Updation failed");
-//     } else {
-//       res.end("SUCCESS");
-//     }
-//   });
-// });
-
 // app.get("/shopdetails", function (req, res, next) {
 //   console.log("Inside shop details Request");
 
-//   let shop_name = req.query.shopName;
-//   console.log(shop_name);
-//   let sql = "select item_name,sales from item where shop_name=?";
-//   con.query(sql, shop_name, function (err, result, fields) {
+//   let shopName = req.query.shopName;
+//   console.log(shopName);
+//   let sql = "select itemName,sales from item where shopName=?";
+//   con.query(sql, shopName, function (err, result, fields) {
 //     if (err) {
 //       console.log("Data fetching failed");
 //       res.send({ status: "failed" });
@@ -181,8 +86,8 @@ app.use("/your/shop", Shop);
   //var decoded = jwtDecode(token.split(" ")[1]);
 //  let user_id = decoded._id;
 
-//       sql = "select key_image_name from shop where shop_name=?";
-//       con.query(sql, shop_name, function (err, result2, fields) {
+//       sql = "select key_image_name from shop where shopName=?";
+//       con.query(sql, shopName, function (err, result2, fields) {
 //         if (err) {
 //           console.log("Data fetching failed");
 //         } else {
@@ -219,7 +124,7 @@ app.use("/your/shop", Shop);
   //var decoded = jwtDecode(token.split(" ")[1]);
 //  let user_id = decoded._id;
 //   let sql =
-//     "select item_name, price, item.key_image_name from item, user, shop where user.username!=? and user.username=shop.shop_owner and item.shop_name=shop.shop_name";
+//     "select itemName, price, item.key_image_name from item, user, shop where user.username!=? and user.username=shop.shopOwner and item.shopName=shop.shopName";
 
 //   function fetchImage(i, images_arr, imageName) {
 //     return new Promise((resolve) => {
@@ -260,22 +165,22 @@ app.use("/your/shop", Shop);
 
 // app.post("/addtofavourites", function (req, res) {
 //   console.log("Inside Add to Favourites Post Request");
-//   let item_name = req.body.item_name;
+//   let itemName = req.body.itemName;
 //   let token = 
 //req.headers.authorization;
   //var decoded = jwtDecode(token.split(" ")[1]);
 //  let user_id = decoded._id;
 
-//   let sql = "select *from favourites where item_name=? and username=?";
+//   let sql = "select *from favourites where itemName=? and username=?";
 
-//   con.query(sql, [item_name, username], function (err, result, fields) {
+//   con.query(sql, [itemName, username], function (err, result, fields) {
 //     if (err) {
 //       console.log("FAILURE in fetching details");
 //     } else {
 //       if (result.length === 0) {
 //         //no favourite record found, so add it
-//         sql = "insert into favourites(item_name,username) values(?,?)";
-//         con.query(sql, [item_name, username], function (err, result, fields) {
+//         sql = "insert into favourites(itemName,username) values(?,?)";
+//         con.query(sql, [itemName, username], function (err, result, fields) {
 //           if (err) {
 //             console.log("FAILURE in inserting to favourites");
 //           } else {
@@ -284,8 +189,8 @@ app.use("/your/shop", Shop);
 //         });
 //       } else {
 //         //favourite was already present. So toggle it and unfavourite
-//         sql = "delete from favourites where item_name=? and username=?";
-//         con.query(sql, [item_name, username], function (err, result, fields) {
+//         sql = "delete from favourites where itemName=? and username=?";
+//         con.query(sql, [itemName, username], function (err, result, fields) {
 //           if (err) {
 //             console.log("FAILURE to remove fro favourites");
 //           } else {
@@ -300,14 +205,14 @@ app.use("/your/shop", Shop);
 // app.get("/checkfavourite", function (req, res, next) {
 //   console.log("Inside Check If Favourite Item GET Request");
 
-//   let item_name = req.query.item_name;
+//   let itemName = req.query.itemName;
 //   let token = 
 //req.headers.authorization;
   //var decoded = jwtDecode(token.split(" ")[1]);
 //  let user_id = decoded._id;
 
-//   let sql = "select *from favourites where item_name=? and username=?";
-//   con.query(sql, [item_name, username], function (err, result, fields) {
+//   let sql = "select *from favourites where itemName=? and username=?";
+//   con.query(sql, [itemName, username], function (err, result, fields) {
 //     if (err) {
 //       console.log("Data fetching failed");
 //       res.send({ status: "failed" });
@@ -329,7 +234,7 @@ app.use("/your/shop", Shop);
   //var decoded = jwtDecode(token.split(" ")[1]);
 //  let user_id = decoded._id;
 //   let sql =
-//     "select favourites.item_name, item.price, item.key_image_name from item, favourites where favourites.username=? and favourites.item_name=item.item_name";
+//     "select favourites.itemName, item.price, item.key_image_name from item, favourites where favourites.username=? and favourites.itemName=item.itemName";
 
 //   function fetchImage(i, images_arr, imageName) {
 //     return new Promise((resolve) => {
@@ -370,9 +275,9 @@ app.use("/your/shop", Shop);
 
 // app.get("/itemdetails", function (req, res, next) {
 //   console.log("Items overview GET Request");
-//   let item_name = req.query.item_name;
-//   let sql = "select *from item where item_name=?";
-//   con.query(sql, item_name, function (err, result, fields) {
+//   let itemName = req.query.itemName;
+//   let sql = "select *from item where itemName=?";
+//   con.query(sql, itemName, function (err, result, fields) {
 //     if (err) {
 //       console.log(err);
 //     } else {
@@ -404,15 +309,15 @@ app.use("/your/shop", Shop);
 //req.headers.authorization;
   //var decoded = jwtDecode(token.split(" ")[1]);
 //  let user_id = decoded._id;
-//   let item_name = req.body.itemName;
+//   let itemName = req.body.itemName;
 //   let price = req.body.price;
 //   let quantityRequested = req.body.quantityRequested;
 
 //   let sql =
-//     "insert into cart (item_name,price,quantity,username) values(?,?,?,?)";
+//     "insert into cart (itemName,price,quantity,username) values(?,?,?,?)";
 //   con.query(
 //     sql,
-//     [item_name, price, quantityRequested, username],
+//     [itemName, price, quantityRequested, username],
 //     function (err, result, fields) {
 //       if (err) {
 //         res.send("FAILURE");
@@ -446,7 +351,7 @@ app.use("/your/shop", Shop);
 //req.headers.authorization;
   //var decoded = jwtDecode(token.split(" ")[1]);
 //  let user_id = decoded._id;
-//   let order_id = req.body.order_id;
+//   let orderID = req.body.orderID;
 //   //get current order date
 //   var date = new Date();
 //   var dd = String(date.getDate()).padStart(2, "0");
@@ -454,16 +359,16 @@ app.use("/your/shop", Shop);
 //   var yyyy = date.getFullYear();
 //   date = mm + "/" + dd + "/" + yyyy;
 
-//   function checkoutItem(items, i, order_id, username, date) {
+//   function checkoutItem(items, i, orderID, username, date) {
 //     return new Promise((resolve) => {
 //       let sql =
-//         "insert into purchases (order_id,username,item_name,price,quantity,date) values(?,?,?,?,?,?)";
+//         "insert into purchases (orderID,username,itemName,price,quantity,date) values(?,?,?,?,?,?)";
 //       con.query(
 //         sql,
 //         [
-//           order_id,
+//           orderID,
 //           username,
-//           items[i].item_name,
+//           items[i].itemName,
 //           items[i].price,
 //           items[i].quantity,
 //           date,
@@ -477,10 +382,10 @@ app.use("/your/shop", Shop);
 //             function (err, result, fields) {
 //               console.log("Item deleted from the cart");
 //               let sql =
-//                 "update item set quantity = (quantity - ?), sales = (sales + ?) where item_name=?";
+//                 "update item set quantity = (quantity - ?), sales = (sales + ?) where itemName=?";
 //               con.query(
 //                 sql,
-//                 [items[i].quantity, items[i].quantity, items[i].item_name],
+//                 [items[i].quantity, items[i].quantity, items[i].itemName],
 //                 function (err, result, fields) {
 //                   if (err) {
 //                     console.log(err);
@@ -510,7 +415,7 @@ app.use("/your/shop", Shop);
 //         res.send("FILL ADDRESS");
 //       } else {
 //         for (let i = 0; i < total_items; i++) {
-//           promises.push(checkoutItem(items, i, order_id, username, date));
+//           promises.push(checkoutItem(items, i, orderID, username, date));
 //         }
 
 //         Promise.all(promises)
@@ -556,14 +461,14 @@ app.use("/your/shop", Shop);
 //       let promises = [];
 
 //       sql =
-//         "select key_image_name, shop_name from item, purchases where purchases.username=? and purchases.item_name=item.item_name";
+//         "select key_image_name, shopName from item, purchases where purchases.username=? and purchases.itemName=item.itemName";
 //       con.query(sql, username, function (err, result2, fields) {
 //         if (err) {
 //           console.log(err);
 //         } else {
 //           console.log("Image names and shop names fetched");
 //           for (let i = 0; i < total_items; i++) {
-//             result[i].shop_name = result2[i].shop_name;
+//             result[i].shopName = result2[i].shopName;
 //           }
 
 //           //fetch image using image_name
@@ -595,11 +500,11 @@ app.use("/your/shop", Shop);
 //req.headers.authorization;
   //var decoded = jwtDecode(token.split(" ")[1]);
 //  let user_id = decoded._id;
-//   let item_name = req.query.itemName;
+//   let itemName = req.query.itemName;
 
 //   let sql =
-//     "select item_name, price, item.key_image_name from item, user, shop where user.username!=? and user.username=shop.shop_owner and item.shop_name=shop.shop_name and item_name LIKE " +
-//     con.escape("%" + item_name + "%");
+//     "select itemName, price, item.key_image_name from item, user, shop where user.username!=? and user.username=shop.shopOwner and item.shopName=shop.shopName and itemName LIKE " +
+//     con.escape("%" + itemName + "%");
 
 //   function fetchImage(i, images_arr, imageName) {
 //     return new Promise((resolve) => {
@@ -612,7 +517,7 @@ app.use("/your/shop", Shop);
 //     });
 //   }
 
-//   con.query(sql, [username, item_name], function (err, result, fields) {
+//   con.query(sql, [username, itemName], function (err, result, fields) {
 //     if (err) {
 //       console.log("Data fetching failed", err.code);
 //       res.send({ status: "failed" });

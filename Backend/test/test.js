@@ -52,7 +52,7 @@ describe("/Check if favourite item", () => {
     const res = await chai
       .request(service)
       .get("/checkfavourite")
-      .query({ item_name: "ps4" })
+      .query({ itemName: "ps4" })
       .set("Cookie", "username=admin");
     equal(res.text, "IS FAVOURITE");
   });
@@ -60,7 +60,7 @@ describe("/Check if favourite item", () => {
     const res = await chai
       .request(service)
       .get("/checkfavourite")
-      .query({ item_name: "Bicycle" })
+      .query({ itemName: "Bicycle" })
       .set("Cookie", "username=admin");
     equal(res.text, "NOT FAVOURITE");
   });
@@ -71,8 +71,8 @@ describe("/Check item details", () => {
     const res = await chai
       .request(service)
       .get("/itemdetails")
-      .query({ item_name: "Bicycle" });
+      .query({ itemName: "Bicycle" });
     equal(res.body[0].price, 300);
-    equal(res.body[0].shop_name, "Sony_tusa");
+    equal(res.body[0].shopName, "Sony_tusa");
   });
 });

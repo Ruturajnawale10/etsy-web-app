@@ -16,7 +16,7 @@ function Cartitemcard(props) {
             <div class="thumbnail">
                 <div>
                   <div style={{ display: "inline-block" }}>
-                    Name: {props.item.item_name}
+                    Name: {props.item.itemName}
                   </div>
                   <div style={{ display: "inline-block", marginLeft: "200px" }}>
                     Price: {props.item.price}$

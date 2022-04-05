@@ -26,7 +26,7 @@ function Searchitems() {
         <div className="container">
           <div className="row">
             {response.data.map((item) => (
-              <div key={item.item_name} id="cardItem" className="col-xs-4">
+              <div key={item.itemName} id="cardItem" className="col-xs-4">
                 <Itemcard item={item} />
               </div>
             ))}
