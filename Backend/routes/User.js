@@ -25,9 +25,11 @@ router.get("/profile", checkAuth, async (req, res) => {
           let buf = Buffer.from(imageData.Body);
           let base64Image = buf.toString("base64");
           console.log("Data fetched successful");
-          res.status(200).send({ ...user, image: base64Image });
+          user._doc = {...user._doc, image: base64Image};
+          res.status(200).send(user._doc);
         });
       } else {
+        console.log(user);
         res.status(200).send(user);
       }
     } else {

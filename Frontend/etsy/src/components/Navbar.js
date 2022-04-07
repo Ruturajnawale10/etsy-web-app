@@ -41,7 +41,7 @@ function Navbar() {
     );
   } else {
     favouritesLink = (
-      <a href="/favourites" class="navbar-brand">
+      <a href="/items/favourites" class="navbar-brand">
         <img
           src={favouritesicon}
           width={40}

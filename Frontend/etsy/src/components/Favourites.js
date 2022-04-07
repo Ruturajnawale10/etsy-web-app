@@ -14,7 +14,8 @@ function Favourites() {
   useEffect(() => {
     axios.defaults.headers.common["authorization"] =
     localStorage.getItem("token");
-    axios.get(process.env.REACT_APP_LOCALHOST + "/getfavouriteitems").then((response) => {
+    axios.get(process.env.REACT_APP_LOCALHOST + "/items/favourites").then((response) => {
+      console.log(response.data);
       setItems(
         <div className="container">
           <div className="row">

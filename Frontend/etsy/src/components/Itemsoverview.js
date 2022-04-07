@@ -13,7 +13,7 @@ function Itemsoverview(props) {
   const [item, setItem] = useState({ itemName: "Item Name", price: 20 });
   const [quantityRequested, setQuantityRequested] = useState(1);
 
-  const [favouritesIconSRC, setFavouritesIconSRC] = useState("");
+  const [favouritesIconSRC, setFavouritesIconSRC] = useState(nonfavouritesicon);
   const [alert, setAlert] = useState(null);
 
   useEffect(() => {

@@ -20,12 +20,11 @@ function Userprofile() {
     axios
       .get(process.env.REACT_APP_LOCALHOST + "/your/profile")
       .then((response) => {
-        console.log(response.data._doc);
-        if (response.data._doc.birthdate !== null) {
-          let bday = response.data._doc.birthdate.split(" ");
-          setProfileData({ ...response.data._doc, month: bday[0], day: bday[1] });
+        if (response.data.birthdate) {
+          let bday = response.data.birthdate.split(" ");
+          setProfileData({ ...response.data, month: bday[0], day: bday[1] });
         } else {
-          setProfileData(response.data._doc);
+          setProfileData(response.data);
         }
         setFetchedImage(
           <img

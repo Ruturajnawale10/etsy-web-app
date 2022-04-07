@@ -12,13 +12,13 @@ function Itemcard(props) {
     axios.defaults.headers.common["authorization"] =
     localStorage.getItem("token");
     axios
-      .get(process.env.REACT_APP_LOCALHOST + "/checkfavourite", {
+      .get(process.env.REACT_APP_LOCALHOST + "/items/checkfavourite", {
         params: {
           itemName: props.item._doc.itemName,
         },
       })
       .then((response) => {
-        if (response.data === "IS FAVOURITE") {
+        if (response.data === "ITEM IS FAVOURITE") {
           setFavouritesIconSRC(favouritesicon);
         } else {
           setFavouritesIconSRC(nonfavouritesicon);
@@ -28,21 +28,25 @@ function Itemcard(props) {
 
   const addToFavourites = (e) => {
     e.preventDefault();
+    let isFavourite;
     if (favouritesIconSRC === favouritesicon) {
+      isFavourite = "YES";
       setFavouritesIconSRC(nonfavouritesicon);
     } else {
+      isFavourite = "NO";
       setFavouritesIconSRC(favouritesicon);
     }
 
     const data = {
-      itemName: props.item._doc.itemName,
+      item: props.item._doc,
+      isFavourite: isFavourite
     };
 
     axios.defaults.headers.common["authorization"] =
     localStorage.getItem("token");
 
     axios
-      .post(process.env.REACT_APP_LOCALHOST + "/addtofavourites", data)
+      .post(process.env.REACT_APP_LOCALHOST + "/items/addtofavourites", data)
       .then((response) => {
         console.log("Added to favourites");
       });

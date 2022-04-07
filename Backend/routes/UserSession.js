@@ -4,6 +4,7 @@ const router = express.Router();
 import config from "../configs/config_mongo.js";
 const secret = config.secret;
 import Users from "../Models/UserModel.js";
+import Favourites from "../Models/FavouritesModel.js";
 import jwt from "jsonwebtoken";
 import { checkAuth } from "../configs/passport.js";
 import { auth } from "../configs/passport.js";
@@ -55,6 +56,10 @@ router.post("/login", function (req, res) {
       password: password,
       email: email,
     });
+    var favourites = new Favourites({
+      userName: username,
+      items: []
+    });
 
     Users.findOne({ username: username }, (error, user) => {
       if (error) {
@@ -66,7 +71,13 @@ router.post("/login", function (req, res) {
           if (error) {
             res.send("FAILURE");
           } else {
-            res.send("SUCCESS");
+            favourites.save((error1, data1) => {
+              if (error1) {
+                res.send("FAILURE");
+              } else {
+                res.send("SUCCESS");
+              }
+            })
           }
         });
       }
