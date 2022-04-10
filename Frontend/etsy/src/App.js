@@ -28,10 +28,10 @@ function App() {
               <Route path="/logout" component={Logout}/>
               <Route path="/register" component={Register}/>
               <Route path="/your/profile" component={Userprofile}/>
-              <Route path="/items/favourites" component={Favourites}/>
+              <Route exact path="/items/favourites" component={Favourites}/>
               <Route path="/your/shop" component={Sellonetsy}/>
               <Route path="/cart" component={Cart}/>
-              <Route path="/itemsoverview" component={Itemsoverview}/>
+              <Route path="/items" component={Itemsoverview}/>
               <Route path="/purchases" component={Purchases}/>
               <Route path="/search" component={Searchitems}/>
               <Route path="/shopdetails" component={ShopDetails}/>

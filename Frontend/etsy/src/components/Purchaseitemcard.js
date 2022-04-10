@@ -13,7 +13,7 @@ function Purchaseitemcard(props) {
           <div class="col-md-4">
             <div class="thumbnail">
               <a
-                href={`/itemsoverview/${props.item.itemName}`}
+                href={`/items/${props.item.itemName}`}
                 target="_blank"
                 style={{
                   textDecoration: "none",

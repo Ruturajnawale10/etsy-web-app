@@ -70,7 +70,7 @@ function Itemcard(props) {
               </a>
 
               <a
-                href={`/itemsoverview/${props.item._doc.itemName}`}
+                href={`/items/${props.item._doc.itemName}`}
                 target="_blank"
                 style={{
                   textDecoration: "none",

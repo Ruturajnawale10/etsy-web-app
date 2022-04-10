@@ -70,7 +70,7 @@ describe("/Check item details", () => {
   it("to check item details", async () => {
     const res = await chai
       .request(service)
-      .get("/itemdetails")
+      .get("/item/details")
       .query({ itemName: "Bicycle" });
     equal(res.body[0].price, 300);
     equal(res.body[0].shopName, "Sony_tusa");

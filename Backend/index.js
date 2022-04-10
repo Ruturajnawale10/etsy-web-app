@@ -66,11 +66,13 @@ import Usersession from "./routes/UserSession.js";
 import User from "./routes/User.js";
 import Shop from "./routes/Shop.js";
 import DashboardItems from "./routes/DashboardItems.js";
+import Item from "./routes/Item.js";
 
 app.use("/user", Usersession);
 app.use("/your", User);
 app.use("/your/shop", Shop);
 app.use("/items", DashboardItems);
+app.use("/items", Item);
 
 
 // app.get("/shopdetails", function (req, res, next) {
@@ -116,36 +118,6 @@ app.use("/items", DashboardItems);
 //           }
 //         }
 //       });
-//     }
-//   });
-// });
-
-// app.get("/itemdetails", function (req, res, next) {
-//   console.log("Items overview GET Request");
-//   let itemName = req.query.itemName;
-//   let sql = "select *from item where itemName=?";
-//   con.query(sql, itemName, function (err, result, fields) {
-//     if (err) {
-//       console.log(err);
-//     } else {
-//       console.log(result);
-//       let fetched_image_name = result[0].key_image_name;
-//       if (fetched_image_name !== null) {
-//         imagesService
-//           .getImage(fetched_image_name)
-//           .then((imageData) => {
-//             let buf = Buffer.from(imageData.Body);
-//             let base64Image = buf.toString("base64");
-//             result[0].image = base64Image;
-//             console.log("Data fetched successful");
-//             res.send(result);
-//           })
-//           .catch((e) => {
-//             res.send(result);
-//           });
-//       } else {
-//         res.send(result);
-//       }
 //     }
 //   });
 // });

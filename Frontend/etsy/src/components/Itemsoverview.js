@@ -10,7 +10,7 @@ function Itemsoverview(props) {
   let url_arr = url.split("/");
   let itemName = url_arr.pop();
   itemName = itemName.replaceAll("%20", " ").trim();
-  const [item, setItem] = useState({ itemName: "Item Name", price: 20 });
+  const [item, setItem] = useState({ itemName: "Item Name", price: 0 });
   const [quantityRequested, setQuantityRequested] = useState(1);
 
   const [favouritesIconSRC, setFavouritesIconSRC] = useState(nonfavouritesicon);
@@ -23,13 +23,13 @@ function Itemsoverview(props) {
     console.log(url);
 
     axios
-      .get(process.env.REACT_APP_LOCALHOST + "/checkfavourite", {
+      .get(process.env.REACT_APP_LOCALHOST + "/items/checkfavourite", {
         params: {
           itemName: itemName,
         },
       })
       .then((response) => {
-        if (response.data === "IS FAVOURITE") {
+        if (response.data === "ITEM IS FAVOURITE") {
           setFavouritesIconSRC(favouritesicon);
         } else {
           setFavouritesIconSRC(nonfavouritesicon);
@@ -37,14 +37,14 @@ function Itemsoverview(props) {
       });
 
     axios
-      .get(process.env.REACT_APP_LOCALHOST + "/itemdetails", {
+      .get(process.env.REACT_APP_LOCALHOST + "/items/details", {
         params: {
           itemName: itemName,
         },
       })
       .then((response) => {
-        console.log(response.data[0]);
-        setItem(response.data[0]);
+        console.log(response.data);
+        setItem(response.data);
       });
   }, []);
 
@@ -132,7 +132,7 @@ function Itemsoverview(props) {
             <h2>
               {item.itemName} | {item.description}
             </h2>
-            <h2>{item.price} $</h2>
+            <h2>$ {item.price}</h2>
             <br></br>
             <input type="text"class="form-control" name="username" placeholder="Enter quantity" style={{width:"200px"}}
                 value={quantityRequested} onChange = {(e) => {setQuantityRequested(e.target.value); setAlert(null)}}
