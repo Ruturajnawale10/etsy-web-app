@@ -31,10 +31,10 @@ function App() {
               <Route exact path="/items/favourites" component={Favourites}/>
               <Route path="/your/shop" component={Sellonetsy}/>
               <Route path="/cart" component={Cart}/>
+              <Route path="/items/shopdetails" component={ShopDetails}/>
               <Route path="/items" component={Itemsoverview}/>
               <Route path="/purchases" component={Purchases}/>
               <Route path="/search" component={Searchitems}/>
-              <Route path="/shopdetails" component={ShopDetails}/>
               <Redirect from='*' to='/items' />    {/*redirects any other url other then above to / path i.e. login*/}
         </Switch>
       </div>

@@ -126,7 +126,7 @@ function Itemsoverview(props) {
             </div>
           </div>
           <div class="col-md-4" style={{ marginLeft:"150px", marginTop:"100px"}}>
-            <a href={`/shopdetails/${item.shopName}`}> Shop: {item.shopName}</a>
+            <a href={`/items/shopdetails/${item.shopName}`}> Shop: {item.shopName}</a>
             <h6> Sales: {item.sales}</h6>
             <br></br>
             <h2>

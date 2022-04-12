@@ -74,54 +74,6 @@ app.use("/your/shop", Shop);
 app.use("/items", DashboardItems);
 app.use("/items", Item);
 
-
-// app.get("/shopdetails", function (req, res, next) {
-//   console.log("Inside shop details Request");
-
-//   let shopName = req.query.shopName;
-//   console.log(shopName);
-//   let sql = "select itemName,sales from item where shopName=?";
-//   con.query(sql, shopName, function (err, result, fields) {
-//     if (err) {
-//       console.log("Data fetching failed");
-//       res.send({ status: "failed" });
-//     } else {
-//       let token = 
-//req.headers.authorization;
-  //var decoded = jwtDecode(token.split(" ")[1]);
-//  let user_id = decoded._id;
-
-//       sql = "select key_image_name from shop where shopName=?";
-//       con.query(sql, shopName, function (err, result2, fields) {
-//         if (err) {
-//           console.log("Data fetching failed");
-//         } else {
-//           let fetched_image_name = result2[0].key_image_name;
-//           if (fetched_image_name != null) {
-//             imagesService
-//               .getImage(fetched_image_name)
-//               .then((imageData) => {
-//                 let buf = Buffer.from(imageData.Body);
-//                 let base64Image = buf.toString("base64");
-//                 result[0].image = base64Image;
-//                 result[0].username = username;
-//                 console.log("Image fetched SUCCESS");
-//                 res.send(result);
-//               })
-//               .catch((e) => {
-//                 res.send(result);
-//               });
-//           } else {
-//             console.log("shop image not yet set");
-//             //result[0].image = null;
-//             res.send(result);
-//           }
-//         }
-//       });
-//     }
-//   });
-// });
-
 // app.post("/addtocart", async (req, res, next) => {
 //   console.log("Inside Add to Cart POST Request");
 //   let token = 
