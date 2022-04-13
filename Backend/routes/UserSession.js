@@ -24,7 +24,6 @@ router.post("/login", function (req, res) {
       } else if (user) {
         const payload = { _id: user._id, username: user.username };
         const token = jwt.sign(payload, secret, {
-          expiresIn: 1008000,
         });
         res.status(200).end("JWT " + token);
       } else {

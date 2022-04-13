@@ -24,8 +24,7 @@ app.use(
     secret: "etsy-application",
     resave: false, // Forces the session to be saved back to the session store, even if the session was never modified during the request
     saveUninitialized: false, // Force to save uninitialized session to db. A session is uninitialized when it is new but not modified.
-    duration: 2629800000, // Overall duration o f Session :  1 month
-    activeDuration: 2629800000,
+    duration: 30* 24* 60 *60 *1000, // Overall duration of Session :  1 month
   })
 );
 
@@ -73,48 +72,6 @@ app.use("/your", User);
 app.use("/your/shop", Shop);
 app.use("/items", DashboardItems);
 app.use("/items", Item);
-
-// app.post("/addtocart", async (req, res, next) => {
-//   console.log("Inside Add to Cart POST Request");
-//   let token = 
-//req.headers.authorization;
-  //var decoded = jwtDecode(token.split(" ")[1]);
-//  let user_id = decoded._id;
-//   let itemName = req.body.itemName;
-//   let price = req.body.price;
-//   let quantityRequested = req.body.quantityRequested;
-
-//   let sql =
-//     "insert into cart (itemName,price,quantity,username) values(?,?,?,?)";
-//   con.query(
-//     sql,
-//     [itemName, price, quantityRequested, username],
-//     function (err, result, fields) {
-//       if (err) {
-//         res.send("FAILURE");
-//       } else {
-//         res.send("SUCCESS");
-//       }
-//     }
-//   );
-// });
-
-// app.get("/getcartitems", function (req, res, next) {
-//   console.log("Cart items GET Request");
-//   let token = 
-//req.headers.authorization;
-  //var decoded = jwtDecode(token.split(" ")[1]);
-//  let user_id = decoded._id;
-
-//   let sql = "select *from cart where username=?";
-//   con.query(sql, username, function (err, result, fields) {
-//     if (err) {
-//       console.log(err);
-//     } else {
-//       res.send(result);
-//     }
-//   });
-// });
 
 // app.post("/checkout", async (req, res, next) => {
 //   console.log("Inside Checkout POST Request");

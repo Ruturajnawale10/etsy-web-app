@@ -18,10 +18,11 @@ function Favourites() {
   useEffect(() => {
     axios.defaults.headers.common["authorization"] =
     localStorage.getItem("token");
-    axios.get(process.env.REACT_APP_LOCALHOST + "/getcartitems").then((response) => {
+    axios.get(process.env.REACT_APP_LOCALHOST + "/items/getcartitems").then((response) => {
       let total = 0;
+      console.log(response.data);
       for (let item of response.data) {
-        total += item.price * item.quantity;
+        total += item.price * item.quantityRequested;
       }
       setTotal(total);
       setItemsData(response.data);
@@ -80,7 +81,7 @@ function Favourites() {
       <h1>Your Cart</h1>
       {items}
 
-      <h3 style={{ marginTop: "60px", marginLeft: "50px" }}>Total: {total}</h3>
+      <h3 style={{ marginTop: "60px", marginLeft: "50px" }}>Total: $ {total}</h3>
 
       <button
         type="button"

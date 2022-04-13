@@ -18,7 +18,7 @@ function Itemsoverview(props) {
 
   useEffect(() => {
     axios.defaults.headers.common["authorization"] =
-    localStorage.getItem("token");
+      localStorage.getItem("token");
     console.log(itemName);
     console.log(url);
 
@@ -61,7 +61,7 @@ function Itemsoverview(props) {
     };
 
     axios.defaults.headers.common["authorization"] =
-    localStorage.getItem("token");
+      localStorage.getItem("token");
 
     axios
       .post(process.env.REACT_APP_LOCALHOST + "/addtofavourites", data)
@@ -71,37 +71,37 @@ function Itemsoverview(props) {
   };
 
   const addToCart = (e) => {
-      e.preventDefault();
-      if (quantityRequested > item.quantity) {
-            setAlert(<h6 style={{color:"red"}}>Out of Stock</h6>);
-      } else {
-        //call POST API to add to cart
-        const data = {
-            itemName: item.itemName,
-            price: item.price,
-            quantityRequested: quantityRequested
-          };
-      
-          axios.defaults.headers.common["authorization"] =
-    localStorage.getItem("token");
-          axios
-            .post(process.env.REACT_APP_LOCALHOST + "/addtocart", data)
-            .then((response) => {
-              setAlert(<h6 style={{color:"green"}}>Added to cart</h6>);
-            });
-      }
-  }
+    e.preventDefault();
+    if (quantityRequested > item.quantity) {
+      setAlert(<h6 style={{ color: "red" }}>Out of Stock</h6>);
+    } else {
+      //call POST API to add to cart
+      const data = {
+        itemName: item.itemName,
+        price: item.price,
+        quantityRequested: quantityRequested,
+      };
+
+      axios.defaults.headers.common["authorization"] =
+        localStorage.getItem("token");
+      axios
+        .post(process.env.REACT_APP_LOCALHOST + "/items/addtocart", data)
+        .then((response) => {
+          setAlert(<h6 style={{ color: "green" }}>Added to cart</h6>);
+        });
+    }
+  };
 
   return (
     <div>
       <div className="card" style={{ width: "100%" }}>
         <div class="row">
-          <div class="col-md-5" style={{ marginLeft:"50px"}}>
+          <div class="col-md-5" style={{ marginLeft: "50px" }}>
             <div class="thumbnail">
               <a href="#" class="navbar-brand">
                 <img
                   src={favouritesIconSRC}
-                  style={{ marginLeft: "450px", marginTop:"20px" }}
+                  style={{ marginLeft: "450px", marginTop: "20px" }}
                   alt="fav"
                   width={40}
                   height={40}
@@ -125,8 +125,14 @@ function Itemsoverview(props) {
               </a>
             </div>
           </div>
-          <div class="col-md-4" style={{ marginLeft:"150px", marginTop:"100px"}}>
-            <a href={`/items/shopdetails/${item.shopName}`}> Shop: {item.shopName}</a>
+          <div
+            class="col-md-4"
+            style={{ marginLeft: "150px", marginTop: "100px" }}
+          >
+            <a href={`/items/shopdetails/${item.shopName}`}>
+              {" "}
+              Shop: {item.shopName}
+            </a>
             <h6> Sales: {item.sales}</h6>
             <br></br>
             <h2>
@@ -134,12 +140,21 @@ function Itemsoverview(props) {
             </h2>
             <h2>$ {item.price}</h2>
             <br></br>
-            <input type="text"class="form-control" name="username" placeholder="Enter quantity" style={{width:"200px"}}
-                value={quantityRequested} onChange = {(e) => {setQuantityRequested(e.target.value); setAlert(null)}}
+            <input
+              type="text"
+              class="form-control"
+              name="username"
+              placeholder="Enter quantity"
+              style={{ width: "200px" }}
+              value={quantityRequested}
+              onChange={(e) => {
+                setQuantityRequested(e.target.value);
+                setAlert(null);
+              }}
             />
-            <br/>
+            <br />
             {alert}
-            <br/>
+            <br />
             <button
               type="button"
               class="btn btn-dark rounded-pill"

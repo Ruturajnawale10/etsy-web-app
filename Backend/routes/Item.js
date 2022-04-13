@@ -60,8 +60,13 @@ router.get("/shopdetails", checkAuth, function (req, res, next) {
                     .then((imageData) => {
                       let buf = Buffer.from(imageData.Body);
                       let base64Image2 = buf.toString("base64");
-                      console.log("user Image fetched SUCCESS");                      
-                      res.send({ items: item, image: base64Image, user: user, userImage: base64Image2 });
+                      console.log("user Image fetched SUCCESS");
+                      res.send({
+                        items: item,
+                        image: base64Image,
+                        user: user,
+                        userImage: base64Image2,
+                      });
                     })
                     .catch((e) => {
                       res.send("Error", e.message);
@@ -82,6 +87,88 @@ router.get("/shopdetails", checkAuth, function (req, res, next) {
       });
     }
   });
+});
+
+router.post("/addtocart", async (req, res, next) => {
+  console.log("Inside Add to Cart POST Request");
+  let token = req.headers.authorization;
+  var decoded = jwtDecode(token.split(" ")[1]);
+  let user_id = decoded._id;
+  let itemName = req.body.itemName;
+  let price = req.body.price;
+  let quantityRequested = req.body.quantityRequested;
+
+  Users.findOneAndUpdate(
+    { _id: user_id },
+    {
+      $push: {
+        cartItems: {
+          itemName: itemName,
+          quantityRequested: quantityRequested,
+        },
+      },
+    },
+    function (err, doc) {
+      if (err) {
+        res.send("FAILURE");
+      } else {
+        res.send("SUCCESS");
+      }
+    }
+  );
+});
+
+router.get("/getcartitems", function (req, res, next) {
+  console.log("Cart items GET Request");
+  let token = req.headers.authorization;
+  var decoded = jwtDecode(token.split(" ")[1]);
+  let user_id = decoded._id;
+
+  Users.findOne({ _id: user_id }, function (err, user) {
+    if (err) {
+      res.send("FAILURE");
+    } else {
+      let itemNameArr = [];
+      for (let i = 0; i < user.cartItems.length; i++) {
+        itemNameArr.push(user.cartItems[i].itemName);
+      }
+
+      Items.find({ itemName: { $in: itemNameArr } }, function (err, item) {
+        let result = [];
+        for (let i = 0; i < item.length; i++) {
+          result.push({
+            itemName: itemNameArr[i],
+            quantityRequested: user.cartItems[i].quantityRequested,
+            price: item[i].price,
+            stock: item[i].quantity,
+          });
+        }
+        res.send(result);
+      });
+    }
+  });
+});
+
+router.post("/removefromcart", function (req, res) {
+  console.log("Remove items POST Request");
+  let token = req.headers.authorization;
+  var decoded = jwtDecode(token.split(" ")[1]);
+  let user_id = decoded._id;
+  let itemName = req.body.itemName;
+
+  Users.findOneAndUpdate(
+    { _id: user_id },
+    {
+      $pull: { cartItems: { itemName: itemName } },
+    },
+    (error, item) => {
+      if (error) {
+        res.status(500).send();
+      } else {
+        res.status(200).send();
+      }
+    }
+  );
 });
 
 export default router;

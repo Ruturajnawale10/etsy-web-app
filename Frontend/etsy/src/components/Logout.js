@@ -7,17 +7,20 @@ function Logout() {
 
   axios.defaults.headers.common["authorization"] =
     localStorage.getItem("token");
-  axios.post(process.env.REACT_APP_LOCALHOST + "/user/logout").then((response) => {
-    if (response.status === 200) {
-      console.log("Loggout out dude!");
-      localStorage.removeItem("token");
-      localStorage.removeItem("user_id");
-      localStorage.removeItem("username");
-      setAuthMsg(true);
-    } else {
-      setAuthMsg(false);
-    }
-  });
+  localStorage.removeItem("token");
+  localStorage.removeItem("user_id");
+  localStorage.removeItem("username");
+  axios
+    .post(process.env.REACT_APP_LOCALHOST + "/user/logout")
+    .then((response) => {
+      if (response.status === 200) {
+        console.log("Loggout out dude!");
+
+        setAuthMsg(true);
+      } else {
+        setAuthMsg(false);
+      }
+    });
 
   return (
     <div>

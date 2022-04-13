@@ -16,7 +16,8 @@ var usersSchema = new Schema({
     birthdate: {type: String},
     gender: {type: String},
     imageName: {type: String},
-    shop: {type: Object}
+    shop: {type: Object},
+    cartItems: {type: [Object]}
 },
 {
     versionKey: false
