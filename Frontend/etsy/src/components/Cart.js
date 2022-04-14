@@ -61,7 +61,7 @@ function Favourites() {
     axios.defaults.headers.common["authorization"] =
     localStorage.getItem("token");
 
-    axios.post(process.env.REACT_APP_LOCALHOST + "/checkout", data).then((response) => {
+    axios.post(process.env.REACT_APP_LOCALHOST + "/orders/checkout", data).then((response) => {
       if (response.data === "FILL ADDRESS") {
         setMsg(
           <p style={{ color: "red", fontSize: "20px", marginLeft:"50px" }}>

@@ -5,6 +5,7 @@ import config from "../configs/config_mongo.js";
 const secret = config.secret;
 import Users from "../Models/UserModel.js";
 import Favourites from "../Models/FavouritesModel.js";
+import Orders from "../Models/OrderModel.js";
 import jwt from "jsonwebtoken";
 import { checkAuth } from "../configs/passport.js";
 import { auth } from "../configs/passport.js";
@@ -59,6 +60,10 @@ router.post("/login", function (req, res) {
       userName: username,
       items: []
     });
+    var orders = new Orders({
+      userName: username,
+      orderItems: []
+    });
 
     Users.findOne({ username: username }, (error, user) => {
       if (error) {
@@ -66,15 +71,21 @@ router.post("/login", function (req, res) {
       } else if (user) {
         res.send("ALREADY EXISTS");
       } else {
-        new_user.save((error, data) => {
+        new_user.save((error) => {
           if (error) {
             res.send("FAILURE");
           } else {
-            favourites.save((error1, data1) => {
+            favourites.save((error1) => {
               if (error1) {
                 res.send("FAILURE");
               } else {
-                res.send("SUCCESS");
+                orders.save((error2) => {
+                  if (error2) {
+                    res.send("FAILURE");
+                  } else {
+                    res.send("SUCCESS");
+                  }
+                })
               }
             })
           }
