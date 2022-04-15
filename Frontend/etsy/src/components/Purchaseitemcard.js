@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import cookie from "react-cookies";
-import { Redirect } from "react-router";
-import favouritesicon from "../images/favouritesicon.jpg";
-import nonfavouritesicon from "../images/nonfavouritesicon.jpg";
+import React from "react";
 
 function Purchaseitemcard(props) {
+  let d = Date.parse(props.item.date);
+  let date = new Intl.DateTimeFormat('en-GB', {dateStyle:'medium'}).format(d);
+
   return (
     <div>
       <div className="card" style={{ width: "100%" }}>
@@ -37,7 +35,7 @@ function Purchaseitemcard(props) {
             </div>
             <div class="row" style={{ marginTop: "50px" }}>
               <div class="col-4" style={{fontSize:"20px"}}>Shop: {props.item.shopName}</div>
-              <div class="col" style={{fontSize:"20px"}}>Date of Purchase: {props.item.date}</div>
+              <div class="col" style={{fontSize:"20px"}}>Date of Purchase: {date}</div>
             </div>
           </div>
         </div>

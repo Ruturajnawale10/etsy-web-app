@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import cookie from "react-cookies";
-import { Redirect } from "react-router";
 import favouritesicon from "../images/favouritesicon.jpg";
 import nonfavouritesicon from "../images/nonfavouritesicon.jpg";
 
@@ -72,8 +70,8 @@ function Itemsoverview(props) {
 
   const addToCart = (e) => {
     e.preventDefault();
-    if (quantityRequested > item.quantity) {
-      setAlert(<h6 style={{ color: "red" }}>Out of Stock</h6>);
+    if (parseInt(quantityRequested) > parseInt(item.quantity)) {
+      setAlert(<h6 style={{ color: "red" }}>Out of stock</h6>);
     } else {
       //call POST API to add to cart
       const data = {

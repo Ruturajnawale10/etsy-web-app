@@ -76,69 +76,6 @@ app.use("/items", DashboardItems);
 app.use("/items", Item);
 app.use("/orders", Order);
 
-// app.get("/purchasehistory", function (req, res, next) {
-//   console.log("Inside GET Purchase history Request");
-//   let token = 
-//req.headers.authorization;
-  //var decoded = jwtDecode(token.split(" ")[1]);
-//  let user_id = decoded._id;
-//   let sql = "select *from purchases where username=?";
-//   con.query(sql, username, function (err, result, fields) {
-//     if (err) {
-//       console.log(err);
-//     } else {
-//       console.log("Items reveived");
-
-//       function fetchImage(i, images_arr, imageName) {
-//         return new Promise((resolve) => {
-//           imagesService.getImage(imageName).then((imageData) => {
-//             let buf = Buffer.from(imageData.Body);
-//             let base64Image = buf.toString("base64");
-//             images_arr[i] = base64Image;
-//             resolve(base64Image);
-//           });
-//         });
-//       }
-
-//       let total_items = result.length;
-//       //multiple fetches, use allpromise here!
-//       let images_arr = [];
-//       let promises = [];
-
-//       sql =
-//         "select key_image_name, shopName from item, purchases where purchases.username=? and purchases.itemName=item.itemName";
-//       con.query(sql, username, function (err, result2, fields) {
-//         if (err) {
-//           console.log(err);
-//         } else {
-//           console.log("Image names and shop names fetched");
-//           for (let i = 0; i < total_items; i++) {
-//             result[i].shopName = result2[i].shopName;
-//           }
-
-//           //fetch image using image_name
-//           for (let i = 0; i < total_items; i++) {
-//             let imageName = result2[i].key_image_name;
-//             promises.push(fetchImage(i, images_arr, imageName));
-//           }
-
-//           Promise.all(promises)
-//             .then(() => {
-//               for (let i = 0; i < result.length; i++) {
-//                 result[i].image = images_arr[i];
-//               }
-//               res.send(result);
-//             })
-//             .catch((e) => {
-//               // Handle errors here
-//               res.send("FAILURE");
-//             });
-//         }
-//       });
-//     }
-//   });
-// });
-
 // app.get("/search", function (req, res, next) {
 //   console.log("Inside GET SEARCHED items Request");
 //   let token = 

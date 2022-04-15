@@ -6,7 +6,9 @@ var itemOrderSchema = new Schema({
     itemName: {type: String},
     price: {type: String},
     quantity: {type: String},
-    date: {type: String}
+    date: {type: Date},
+    imageName: {type: String},
+    shopName: {type: String}
 },
 {
     versionKey: false

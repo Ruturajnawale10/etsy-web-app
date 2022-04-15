@@ -1,5 +1,5 @@
 "use strict";
-import express, { response } from "express";
+import express from "express";
 const router = express.Router();
 import Items from "../Models/ItemModel.js";
 import ItemOrders from "../Models/ItemOrderModel.js";
@@ -7,6 +7,7 @@ import Orders from "../Models/OrderModel.js";
 import Users from "../Models/UserModel.js";
 import { checkAuth } from "../configs/passport.js";
 import jwtDecode from "jwt-decode";
+import imagesService from "../imagesService.js";
 
 router.post("/checkout", checkAuth, async (req, res, next) => {
   console.log("Inside Checkout POST Request");
@@ -16,15 +17,9 @@ router.post("/checkout", checkAuth, async (req, res, next) => {
   let userName = decoded.username;
   let orderID = req.body.orderID;
 
-  //get current order date
-  var date = new Date();
-  var dd = String(date.getDate()).padStart(2, "0");
-  var mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
-  var yyyy = date.getFullYear();
-  date = mm + "/" + dd + "/" + yyyy;
-
-  let items = req.body.items;
-  let total_items = items.length;
+  let date = new Intl.DateTimeFormat("en-GB", { dateStyle: "medium" }).format(
+    Date.now()
+  );
 
   Users.findOne({ _id: userID }, function (err, user) {
     if (err) {
@@ -39,7 +34,6 @@ router.post("/checkout", checkAuth, async (req, res, next) => {
         }
 
         Items.find({ itemName: { $in: itemNameArr } }, function (err, item) {
-          console.log(item);
           let result = [];
           let orderList = [];
           for (let i = 0; i < item.length; i++) {
@@ -47,8 +41,10 @@ router.post("/checkout", checkAuth, async (req, res, next) => {
               orderID: orderID,
               itemName: item[i].itemName,
               price: item[i].price,
-              quantity: item[i].quantity,
+              quantity: user.cartItems[i].quantityRequested,
               date: date,
+              imageName: item[i].imageName,
+              shopName: item[i].shopName,
             });
             orderList.push(itemOrder);
           }
@@ -77,7 +73,41 @@ router.post("/checkout", checkAuth, async (req, res, next) => {
                     if (err) {
                       res.send("FAILURE");
                     } else {
-                      res.send("SUCCESS");
+                      function updateStock(item, i) {
+                        return new Promise((resolve) => {
+                          Items.findOneAndUpdate(
+                            { itemName: item[i].itemName },
+                            {
+                              $set: {
+                                quantity:
+                                  parseInt(item[i].quantity) -
+                                  parseInt(user.cartItems[i].quantityRequested),
+                              },
+                            },
+                            function (err, item3) {
+                              if (err) {
+                                res.send("FAILURE");
+                              } else {
+                                console.log("Updated the quantity!");
+                                resolve(item3);
+                              }
+                            }
+                          );
+                        });
+                      }
+
+                      let promises = [];
+                      for (let i = 0; i < item.length; i++) {
+                        promises.push(updateStock(item, i));
+                      }
+
+                      Promise.all(promises)
+                        .then(() => {
+                          res.send("SUCCESS");
+                        })
+                        .catch((e) => {
+                          res.send("FAILURE");
+                        });
                     }
                   }
                 );
@@ -86,6 +116,50 @@ router.post("/checkout", checkAuth, async (req, res, next) => {
           );
         });
       }
+    }
+  });
+});
+
+router.get("/history", function (req, res, next) {
+  console.log("Inside GET Purchase history Request");
+  let token = req.headers.authorization;
+  var decoded = jwtDecode(token.split(" ")[1]);
+  let userName = decoded.username;
+
+  Orders.findOne({ userName: userName }, function (err, order) {
+    if (err) {
+      res.send("FAILURE");
+    } else {
+      console.log("Order Items received.");
+
+      function fetchImage(i, imageName) {
+        return new Promise((resolve) => {
+          imagesService.getImage(imageName).then((imageData) => {
+            let buf = Buffer.from(imageData.Body);
+            let base64Image = buf.toString("base64");
+            order.orderItems[i].image = base64Image;
+            resolve(base64Image);
+          });
+        });
+      }
+
+      let total_items = order.orderItems.length;
+
+      //multiple fetches, use allpromise here!
+      let promises = [];
+      //fetch image using image_name
+      for (let i = 0; i < total_items; i++) {
+        let imageName = order.orderItems[i].imageName;
+        promises.push(fetchImage(i, imageName));
+      }
+
+      Promise.all(promises)
+        .then(() => {
+          res.send(order.orderItems);
+        })
+        .catch((e) => {
+          res.send("FAILURE");
+        });
     }
   });
 });

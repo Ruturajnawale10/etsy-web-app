@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import cookie from "react-cookies";
-import { Redirect } from "react-router";
-import favouritesicon from "../images/favouritesicon.jpg";
-import nonfavouritesicon from "../images/nonfavouritesicon.jpg";
 
 function Cartitemcard(props) {
   const [outOfStock, setOutOfStock] = useState("");
   const [msg, setMsg] = useState();
 
   useEffect(() => {
-    if (parseInt(props.item.quantityRequested) > parseInt(props.item.stock)) {
+    if (parseInt(props.item.quantityRequested) > parseInt(props.item.quantity)) {
       setOutOfStock(<h6 style={{ color: "red" }}>Insufficient stock</h6>);
     }
   }, []);

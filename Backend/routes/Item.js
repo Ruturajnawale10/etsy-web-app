@@ -1,5 +1,5 @@
 "use strict";
-import express, { response } from "express";
+import express from "express";
 const router = express.Router();
 import Items from "../Models/ItemModel.js";
 import Users from "../Models/UserModel.js";
@@ -140,7 +140,7 @@ router.get("/getcartitems", function (req, res, next) {
             itemName: itemNameArr[i],
             quantityRequested: user.cartItems[i].quantityRequested,
             price: item[i].price,
-            stock: item[i].quantity,
+            quantity: item[i].quantity,
           });
         }
         res.send(result);
