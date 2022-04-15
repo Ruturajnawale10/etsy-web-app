@@ -1,15 +1,11 @@
 import React, { Component } from "react";
 import "../App.css";
 import axios from "axios";
-import cookie from "react-cookies";
 import { Redirect } from "react-router";
 
 class Register extends Component {
-  //call the constructor method
   constructor(props) {
-    //Call the constrictor of Super class i.e The Component
     super(props);
-    //maintain the state required for this component
     this.state = {
       username: "",
       email: "",
@@ -59,9 +55,7 @@ class Register extends Component {
     axios
       .post(process.env.REACT_APP_LOCALHOST + "/user/register", data)
       .then((response) => {
-        console.log(response.data);
         if (response.data === "ALREADY EXISTS") {
-          console.log("Ohk");
           this.setState({
             authMsg: <p style={{ color: "red" }}>Username already exists!</p>,
           });
@@ -135,5 +129,5 @@ class Register extends Component {
     );
   }
 }
-//export Login Component
+
 export default Register;

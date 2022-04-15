@@ -11,7 +11,6 @@ router.get("/profile", checkAuth, async (req, res) => {
   let token = req.headers.authorization;
   var decoded = jwtDecode(token.split(" ")[1]);
   let user_id = decoded._id;
-  console.log(user_id);
 
   Users.findOne({ _id: user_id }, (error, user) => {
     if (error) {
@@ -29,7 +28,6 @@ router.get("/profile", checkAuth, async (req, res) => {
           res.status(200).send(user._doc);
         });
       } else {
-        console.log(user);
         res.status(200).send(user);
       }
     } else {
@@ -57,12 +55,10 @@ router.post("/profile", checkAuth, async (req, res, next) => {
   let token = req.headers.authorization;
   var decoded = jwtDecode(token.split(" ")[1]);
   let user_id = decoded._id;
-  console.log(user_id);
 
   const base64Image = req.body.image;
 
   if (base64Image === null) {
-    console.log("Updating...");
     Users.findOneAndUpdate(
       { _id: user_id },
       {
@@ -108,9 +104,9 @@ router.post("/profile", checkAuth, async (req, res, next) => {
         },
         function (err, doc) {
           if (err) {
-            console.log("Updation failed");
+            console.log("User update failed");
           } else {
-            console.log("1 record updated");
+            console.log("User updated");
             res.end("SUCCESS");
           }
         }

@@ -1,7 +1,6 @@
 import React from "react";
 import { useState } from "react";
 import axios from "axios";
-import cookie from "react-cookies";
 import { Redirect } from "react-router";
 import "../App.css";
 
@@ -55,12 +54,9 @@ function Newshop() {
   };
 
   const submitShopName = (e) => {
-    //prevent page from refresh
     e.preventDefault();
-    //set the with credentials to true
     axios.defaults.headers.common["authorization"] =
       localStorage.getItem("token");
-    //make a post request with the user data
     axios
       .post(process.env.REACT_APP_LOCALHOST + "/your/shop/createshop", {
         shopName: shopName,

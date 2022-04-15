@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import cookie from "react-cookies";
 import { Redirect } from "react-router";
 import Additem from "./Popup/Additem";
 import "../App.css";
@@ -28,7 +27,6 @@ function Shophome(props) {
         },
       })
       .then((response) => {
-        console.log(response.data);
         let total = 0;
         for (let i = 0; i <  response.data.items.length; i++) {
           total += parseInt(response.data.items[i].sales);
@@ -78,7 +76,6 @@ function Shophome(props) {
   const setProfileImage = async (e) => {
     e.preventDefault();
     const convertedFile = await convertToBase64(imageFile);
-    console.log("Hello")
     axios.defaults.headers.common["authorization"] =
     localStorage.getItem("token");
     const s3URL = await axios.post(

@@ -16,11 +16,9 @@ function Purchases() {
     axios.defaults.headers.common["authorization"] =
     localStorage.getItem("token");
     axios.get(process.env.REACT_APP_LOCALHOST + "/orders/history").then((response) => {
-      console.log(response.data);
       if(response.data === "FAILURE") {
           console.log("Failed to order");
       } else {
-        console.log(response.data);
         let total = 0;
         for (let i = 0; i < response.data.length; i++) {
           total += parseInt(response.data[i].price* response.data[i].quantity);

@@ -1,10 +1,4 @@
 import React, { useState } from "react";
-import Dashboard from "./Dashboard";
-import Login from "./Login";
-import Register from "./Register";
-import { Link } from "react-router-dom";
-import cookie from "react-cookies";
-import { Redirect } from "react-router";
 import favouritesicon from "../images/favouritesicon.jpg";
 import etsyicon from "../images/etsy-icon.png";
 import cartsicon from "../images/carts-icon.png";
@@ -14,7 +8,6 @@ import "../App.css";
 
 function Navbar() {
   let [searchContent, setSearchContent] = useState(null);
-  let redirectVar = null;
   let loginLink = null;
   let registerLink = null;
   let favouritesLink = null;

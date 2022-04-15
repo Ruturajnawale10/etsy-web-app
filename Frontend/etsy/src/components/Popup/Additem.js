@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { Container } from "./Container";
 import "./index.css";
@@ -19,8 +19,6 @@ const Additem = (props) => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    console.log("onSubmit line");
-    console.log(e.target);
 
     let data = {
       itemName: e.target.name.value,
@@ -70,7 +68,6 @@ const Additem = (props) => {
 
     let imageFile = e.target[0].files[0];
     if (imageFile !== undefined) {
-      console.log("hahahaha");
       const convertedFile = await convertToBase64(imageFile);
       const response = await axios.post(
         process.env.REACT_APP_LOCALHOST + "/updateitem",

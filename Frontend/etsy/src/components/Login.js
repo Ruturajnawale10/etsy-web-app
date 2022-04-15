@@ -1,17 +1,13 @@
 import React, { Component } from "react";
 import "../App.css";
 import axios from "axios";
-import cookie from "react-cookies";
 import { Redirect } from "react-router";
 import jwtDecode from "jwt-decode";
 
 //Define a Login Component
 class Login extends Component {
-  //call the constructor method
   constructor(props) {
-    //Call the constrictor of Super class i.e The Component
     super(props);
-    //maintain the state required for this component
     this.state = {
       username: "",
       password: "",
@@ -51,7 +47,6 @@ class Login extends Component {
     //make a post request with the user data
     axios.post(process.env.REACT_APP_LOCALHOST + "/user/login", data)
       .then((response) => {
-        console.log(response.data, "Ohh");
         if (response.data === "Invalid credentials") {
           this.setState({
             authMsg: (
@@ -62,8 +57,6 @@ class Login extends Component {
             ),
           });
         } else {
-          console.log("response is::");
-          console.log(response.data);
           this.setState({
             token: response.data,
           });
@@ -75,7 +68,6 @@ class Login extends Component {
     //redirect based on successful login
     let redirectVar = null;
     if (this.state.token.length > 0) {
-      console.log("hehe");
       localStorage.setItem("token", this.state.token);
 
       var decoded = jwtDecode(this.state.token.split(" ")[1]);
@@ -83,9 +75,6 @@ class Login extends Component {
       localStorage.setItem("username", decoded.username);
 
       redirectVar = <Redirect to="/home" />;
-      // this.setState ({
-      //   redirectVar1:  <Redirect to="/home" />
-      // });
     }
 
     return (

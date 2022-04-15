@@ -106,7 +106,6 @@ router.get("/getitems", checkAuth, function (req, res, next) {
   console.log("Inside shop GET items Request");
 
   let shopName = req.query.shopName;
-  console.log(shopName);
 
   Items.find({shopName: shopName}, (error, item) => {
       if (error) {
@@ -192,7 +191,6 @@ router.post("/updateitem", checkAuth, async (req, res, next) => {
   imageName = `items/${imageName}`;
   
   if (base64Image === null) {
-    console.log("Updating...");
     Items.findOneAndUpdate(
       { itemName: itemName },
       {

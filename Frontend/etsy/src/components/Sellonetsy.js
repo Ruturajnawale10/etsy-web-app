@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import cookie from "react-cookies";
 import { Redirect } from "react-router";
 import Newshop from "./Newshop";
 import Shophome from "./Shophome";
@@ -22,7 +21,6 @@ function Sellonetsy() {
         setShophome(<Newshop />);
       } else {
         let shopName = response.data;
-        console.log(response.data);
         setNewShop(<Shophome name={shopName} />);
       }
     });

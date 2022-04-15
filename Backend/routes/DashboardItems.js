@@ -73,7 +73,6 @@ router.post("/addtofavourites", checkAuth, function (req, res) {
     );
   } else {
     console.log("Adding to favourites");
-    console.log(userName);
     Favourites.findOneAndUpdate(
       { userName: userName },
       {

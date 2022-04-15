@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import cookie from "react-cookies";
 import { Redirect } from "react-router";
 import Cartitemcard from "./Cartitemcard";
 
@@ -20,7 +19,6 @@ function Favourites() {
     localStorage.getItem("token");
     axios.get(process.env.REACT_APP_LOCALHOST + "/items/getcartitems").then((response) => {
       let total = 0;
-      console.log(response.data);
       for (let item of response.data) {
         total += item.price * item.quantityRequested;
       }

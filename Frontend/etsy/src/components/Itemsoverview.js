@@ -17,8 +17,6 @@ function Itemsoverview(props) {
   useEffect(() => {
     axios.defaults.headers.common["authorization"] =
       localStorage.getItem("token");
-    console.log(itemName);
-    console.log(url);
 
     axios
       .get(process.env.REACT_APP_LOCALHOST + "/items/checkfavourite", {
@@ -41,7 +39,6 @@ function Itemsoverview(props) {
         },
       })
       .then((response) => {
-        console.log(response.data);
         setItem(response.data);
       });
   }, []);

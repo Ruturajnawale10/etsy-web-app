@@ -27,7 +27,6 @@ async function upload(imageName, base64Image, type) {
         data = await promiseUpload(params);
     } catch (err) {
         console.error(err);
-
         return "";
     }
 

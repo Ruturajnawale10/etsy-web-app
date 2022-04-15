@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import cookie from "react-cookies";
 import { Redirect } from "react-router";
-import Additem from "./Popup/Additem";
 import "../App.css";
 
 function ShopDetails() {
