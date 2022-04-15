@@ -86,3 +86,10 @@ h1 {
   background-color: orangered;
   color: white;
 }
+
+#quantity_options {
+  font-size: 14px;
+    padding: 5px;
+    background: #ece8e8;
+    border-radius: 5pt;
+}

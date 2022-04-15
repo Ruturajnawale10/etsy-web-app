@@ -82,6 +82,9 @@ router.post("/checkout", checkAuth, async (req, res, next) => {
                                 quantity:
                                   parseInt(item[i].quantity) -
                                   parseInt(user.cartItems[i].quantityRequested),
+                                sales: 
+                                  parseInt(item[i].sales) +
+                                  parseInt(user.cartItems[i].quantityRequested)
                               },
                             },
                             function (err, item3) {

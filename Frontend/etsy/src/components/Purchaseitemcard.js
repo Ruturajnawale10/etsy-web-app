@@ -28,6 +28,9 @@ function Purchaseitemcard(props) {
             </div>
           </div>
           <div class="col-md-8">
+          <div class="row" style={{ marginTop: "50px" }}>
+          <div class="col" style={{fontSize:"20px"}}>Order ID: {props.item.orderID}</div>
+            </div>
             <div class="row" style={{ marginTop: "50px" }}>
               <div class="col" style={{fontSize:"20px"}}>Name: {props.item.itemName}</div>
               <div class="col" style={{fontSize:"20px"}}>Price: {props.item.price}$</div>

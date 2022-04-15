@@ -1,13 +1,23 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import "../App.css";
 
 function Cartitemcard(props) {
   const [outOfStock, setOutOfStock] = useState("");
   const [msg, setMsg] = useState();
+  const [options, setOptions] = useState("");
+  let arr = [];
+  for (let i = 0; i < props.item.quantity; i++) {
+    arr.push(i + 1);
+  }
 
   useEffect(() => {
-    if (parseInt(props.item.quantityRequested) > parseInt(props.item.quantity)) {
+    if (
+      parseInt(props.item.quantityRequested) > parseInt(props.item.quantity)
+    ) {
       setOutOfStock(<h6 style={{ color: "red" }}>Insufficient stock</h6>);
+    } else {
+      setOptions(arr.map((val) => <option>{val}</option>));
     }
   }, []);
 
@@ -31,6 +41,27 @@ function Cartitemcard(props) {
       });
   };
 
+  const changeQuantity = (e) => {
+    e.preventDefault();
+    axios.defaults.headers.common["authorization"] =
+      localStorage.getItem("token");
+
+    axios
+      .post(process.env.REACT_APP_LOCALHOST + "/items/change/quantity", {
+        itemName: props.item.itemName,
+        newQuantity: e.target.options[e.target.selectedIndex].text
+      })
+      .then((response) => {
+        if (response.status == 200) {
+          setMsg(
+            <p style={{ color: "blue", fontSize: "20px", marginLeft: "50px" }}>
+             {e.target.options[e.target.selectedIndex].text}
+            </p>
+          );
+        }
+      });
+  };
+
   return (
     <div>
       <div class="row">
@@ -46,7 +77,11 @@ function Cartitemcard(props) {
                   Price: $ {props.item.price}
                 </div>
                 <div style={{ display: "inline-block", marginLeft: "150px" }}>
-                  Quantity: {props.item.quantityRequested}
+                  Quantity: &emsp;
+                  <select id="quantity_options" onChange={changeQuantity}>
+                    <option>{props.item.quantityRequested}</option>
+                    {options}
+                  </select>
                 </div>
                 <div style={{ display: "inline-block", marginLeft: "150px" }}>
                   {outOfStock}

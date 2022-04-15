@@ -171,4 +171,45 @@ router.post("/removefromcart", function (req, res) {
   );
 });
 
+router.post("/change/quantity", function (req, res) {
+  console.log("Change items quantity POST Request");
+  let token = req.headers.authorization;
+  var decoded = jwtDecode(token.split(" ")[1]);
+  let user_id = decoded._id;
+  let itemName = req.body.itemName;
+  let newQuantity = req.body.newQuantity;
+
+  Users.findOneAndUpdate(
+    { _id: user_id },
+    {
+      $pull: { cartItems: { itemName: itemName } },
+    },
+    (error, item) => {
+      if (error) {
+        res.status(500).send();
+      } else {
+        Users.findOneAndUpdate(
+          { _id: user_id },
+          {
+            $push: {
+              cartItems: {
+                itemName: itemName,
+                quantityRequested: newQuantity
+              },
+            },
+          },
+          (error, item) => {
+            if (error) {
+              res.status(500).send();
+            } else {
+              res.status(200).send();
+            }
+          }
+        );
+        res.status(200).send();
+      }
+    }
+  );
+});
+
 export default router;
