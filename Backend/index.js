@@ -4,10 +4,8 @@ var app = express();
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { localhost } from "./configs/localhost.js";
 import mongoose from "mongoose";
-import config from "./configs/config_mongo.js";
-const mongoDB = config.mongoDB;
+import config from "./configs/config.js";
 
 app.use(cookieParser());
 app.set("view engine", "ejs");
@@ -16,7 +14,7 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb" }));
 
 //use cors to allow cross origin resource sharing
-app.use(cors({ origin: localhost, credentials: true }));
+app.use(cors({ origin: config.localhost, credentials: true }));
 
 //use express session to maintain session data
 app.use(
@@ -33,7 +31,7 @@ app.use(express.json());
 
 //Allow Access Control
 app.use(function (req, res, next) {
-  res.setHeader("Access-Control-Allow-Origin", localhost);
+  res.setHeader("Access-Control-Allow-Origin", config.localhost);
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader(
     "Access-Control-Allow-Methods",
@@ -52,7 +50,7 @@ var options = {
   useUnifiedTopology: true,
 };
 
-mongoose.connect(mongoDB, options, (err, res) => {
+mongoose.connect(config.mongo.mongoDBURL, options, (err, res) => {
   if (err) {
     console.log(err);
     console.log("MongoDB connection Failed");

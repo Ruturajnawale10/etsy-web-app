@@ -1,11 +1,11 @@
 "use strict";
 import express from "express";
 const router = express.Router();
-import Items from "../Models/ItemModel.js";
-import Favourites from "../Models/FavouritesModel.js";
-import { checkAuth } from "../configs/passport.js";
+import Items from "../models/ItemModel.js";
+import Favourites from "../models/FavouritesModel.js";
+import { checkAuth } from "../utils/passport.js";
 import jwtDecode from "jwt-decode";
-import imagesService from "../imagesService.js";
+import imagesService from "../utils/imagesService.js";
 
 router.get("/getallitems", checkAuth, function (req, res) {
   console.log("Inside GET all items dashboard Request");

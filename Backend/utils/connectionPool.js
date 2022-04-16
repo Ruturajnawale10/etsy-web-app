@@ -1,7 +1,7 @@
-import config_rds from "./configs/config_rds.js";
+import config from "../configs/config.js";
 import mysql from "mysql";
 
-var pool = mysql.createPool({...config_rds, connectionLimit:4});
+var pool = mysql.createPool({...config.awsRDS, connectionLimit:4});
 
 pool.getConnection((err,connection)=> {
   if(err)

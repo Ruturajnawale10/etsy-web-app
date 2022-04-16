@@ -1,10 +1,8 @@
-//const AWS = require('aws-sdk');
 import AWS from 'aws-sdk';
-import creds from './configs/config.js';
+import config from '../configs/config.js';
 const BUCKET_NAME = 'etsy-bucket';
-// const s3 = new S3({});
 
-const s3 = new AWS.S3(creds);
+const s3 = new AWS.S3(config);
 
 /**
  * @description Uploads an image to S3

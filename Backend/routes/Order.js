@@ -1,13 +1,13 @@
 "use strict";
 import express from "express";
 const router = express.Router();
-import Items from "../Models/ItemModel.js";
-import ItemOrders from "../Models/ItemOrderModel.js";
-import Orders from "../Models/OrderModel.js";
-import Users from "../Models/UserModel.js";
-import { checkAuth } from "../configs/passport.js";
+import Items from "../models/ItemModel.js";
+import ItemOrders from "../models/ItemOrderModel.js";
+import Orders from "../models/OrderModel.js";
+import Users from "../models/UserModel.js";
+import { checkAuth } from "../utils/passport.js";
 import jwtDecode from "jwt-decode";
-import imagesService from "../imagesService.js";
+import imagesService from "../utils/imagesService.js";
 
 router.post("/checkout", checkAuth, async (req, res, next) => {
   console.log("Inside Checkout POST Request");

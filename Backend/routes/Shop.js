@@ -1,12 +1,12 @@
 "use strict";
 import express from "express";
 const router = express.Router();
-import Shops from "../Models/ShopModel.js";
-import Items from "../Models/ItemModel.js";
-import Users from "../Models/UserModel.js";
-import { checkAuth } from "../configs/passport.js";
+import Shops from "../models/ShopModel.js";
+import Items from "../models/ItemModel.js";
+import Users from "../models/UserModel.js";
+import { checkAuth } from "../utils/passport.js";
 import jwtDecode from "jwt-decode";
-import imagesService from "../imagesService.js";
+import imagesService from "../utils/imagesService.js";
 
 router.get("/checkavailibility", checkAuth, function (req, res) {
   console.log("Inside check availibility GET Request");

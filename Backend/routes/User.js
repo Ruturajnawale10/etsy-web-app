@@ -1,10 +1,10 @@
 "use strict";
 import express from "express";
 const router = express.Router();
-import Users from "../Models/UserModel.js";
-import { checkAuth } from "../configs/passport.js";
+import Users from "../models/UserModel.js";
+import { checkAuth } from "../utils/passport.js";
 import jwtDecode from "jwt-decode";
-import imagesService from "../imagesService.js";
+import imagesService from "../utils/imagesService.js";
 
 router.get("/profile", checkAuth, async (req, res) => {
   console.log("Inside Profile GET Request");

@@ -1,14 +1,13 @@
 "use strict";
 import express from "express";
 const router = express.Router();
-import config from "../configs/config_mongo.js";
-const secret = config.secret;
-import Users from "../Models/UserModel.js";
-import Favourites from "../Models/FavouritesModel.js";
-import Orders from "../Models/OrderModel.js";
+import config from "../configs/config.js";
+import Users from "../models/UserModel.js";
+import Favourites from "../models/FavouritesModel.js";
+import Orders from "../models/OrderModel.js";
 import jwt from "jsonwebtoken";
-import { checkAuth } from "../configs/passport.js";
-import { auth } from "../configs/passport.js";
+import { checkAuth } from "../utils/passport.js";
+import { auth } from "../utils/passport.js";
 auth();
 
 router.post("/login", function (req, res) {
@@ -24,7 +23,7 @@ router.post("/login", function (req, res) {
         res.end("Error occurred");
       } else if (user) {
         const payload = { _id: user._id, username: user.username };
-        const token = jwt.sign(payload, secret, {
+        const token = jwt.sign(payload, config.mongo.secret, {
         });
         res.status(200).end("JWT " + token);
       } else {

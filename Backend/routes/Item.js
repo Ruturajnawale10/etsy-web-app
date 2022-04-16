@@ -1,11 +1,11 @@
 "use strict";
 import express from "express";
 const router = express.Router();
-import Items from "../Models/ItemModel.js";
-import Users from "../Models/UserModel.js";
-import { checkAuth } from "../configs/passport.js";
+import Items from "../models/ItemModel.js";
+import Users from "../models/UserModel.js";
+import { checkAuth } from "../utils/passport.js";
 import jwtDecode from "jwt-decode";
-import imagesService from "../imagesService.js";
+import imagesService from "../utils/imagesService.js";
 
 router.get("/details", checkAuth, function (req, res, next) {
   console.log("Items overview GET Request");
@@ -137,7 +137,7 @@ router.get("/getcartitems", function (req, res, next) {
         let result = [];
         for (let i = 0; i < item.length; i++) {
           result.push({
-            itemName: itemNameArr[i],
+            itemName: user.cartItems[i].itemName,
             quantityRequested: user.cartItems[i].quantityRequested,
             price: item[i].price,
             quantity: item[i].quantity,
@@ -194,7 +194,7 @@ router.post("/change/quantity", function (req, res) {
             $push: {
               cartItems: {
                 itemName: itemName,
-                quantityRequested: newQuantity
+                quantityRequested: newQuantity,
               },
             },
           },
