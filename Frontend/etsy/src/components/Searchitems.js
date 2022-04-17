@@ -15,9 +15,10 @@ function Searchitems() {
     localStorage.getItem("token");
     let url_arr = document.location.href.split("/");
     let itemname = url_arr[url_arr.length - 1];
+    itemname = itemname.replace("%20", " ");
     itemname = itemname.slice(0, itemname.length - 1);
 
-    axios.get(process.env.REACT_APP_LOCALHOST + "/search", {
+    axios.get(process.env.REACT_APP_LOCALHOST + "/items/search", {
         params: {itemName: itemname,}
   },
     ).then((response) => {
