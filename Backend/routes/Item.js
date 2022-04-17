@@ -124,27 +124,44 @@ router.get("/getcartitems", function (req, res, next) {
   var decoded = jwtDecode(token.split(" ")[1]);
   let user_id = decoded._id;
 
+  //this function gets the item details with the latest updated item price
+  function getItem(itemName, quantityRequested, items) {
+    return new Promise((resolve) => {
+      Items.findOne({ itemName: itemName }, function (req, item) {
+        items.push({
+          itemName: itemName,
+          quantityRequested: quantityRequested,
+          price: item.price,
+          quantity: item.quantity,
+        });
+        resolve(item);
+      });
+    });
+  }
+
   Users.findOne({ _id: user_id }, function (err, user) {
     if (err) {
       res.send("FAILURE");
     } else {
-      let itemNameArr = [];
+      let items = [];
+      let promises = [];
       for (let i = 0; i < user.cartItems.length; i++) {
-        itemNameArr.push(user.cartItems[i].itemName);
+        promises.push(
+          getItem(
+            user.cartItems[i].itemName,
+            user.cartItems[i].quantityRequested,
+            items
+          )
+        );
       }
 
-      Items.find({ itemName: { $in: itemNameArr } }, function (err, item) {
-        let result = [];
-        for (let i = 0; i < item.length; i++) {
-          result.push({
-            itemName: user.cartItems[i].itemName,
-            quantityRequested: user.cartItems[i].quantityRequested,
-            price: item[i].price,
-            quantity: item[i].quantity,
-          });
-        }
-        res.send(result);
-      });
+      Promise.all(promises)
+        .then(() => {
+          res.send(items);
+        })
+        .catch((e) => {
+          res.send("FAILURE");
+        });
     }
   });
 });

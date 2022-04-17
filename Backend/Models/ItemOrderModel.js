@@ -8,7 +8,8 @@ var itemOrderSchema = new Schema({
     quantity: {type: String},
     date: {type: Date},
     imageName: {type: String},
-    shopName: {type: String}
+    shopName: {type: String},
+    isGift: {type: String}
 },
 {
     versionKey: false
