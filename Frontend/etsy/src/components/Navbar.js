@@ -126,7 +126,7 @@ function Navbar() {
                   type="text"
                   placeholder="Search for anything"
                   size={90}
-                  onChange= {(e) => { setSearchContent("search/" +e.target.value)} }
+                  onChange= {(e) => { setSearchContent("items/search/" +e.target.value)} }
                 ></input>
                 <button type="submit"> 
                  {/* onSubmit={onSearchClick} */}

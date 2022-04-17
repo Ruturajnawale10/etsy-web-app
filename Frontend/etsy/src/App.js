@@ -31,9 +31,9 @@ function App() {
               <Route path="/your/shop" component={Sellonetsy}/>
               <Route path="/cart" component={Cart}/>
               <Route path="/items/shopdetails" component={ShopDetails}/>
+              <Route path="/items/search" component={Searchitems}/>
               <Route path="/items" component={Itemsoverview}/>
               <Route path="/purchases" component={Purchases}/>
-              <Route path="/search" component={Searchitems}/>
               <Redirect from='*' to='/items' />    {/*redirects any other url other then above to / path i.e. login*/}
         </Switch>
       </div>
