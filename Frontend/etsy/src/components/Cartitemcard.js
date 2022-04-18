@@ -1,23 +1,33 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../App.css";
+import { useDispatch } from "react-redux";
+import { setCannotCheckOut } from "../reducers/checkoutSlice";
 
 function Cartitemcard(props) {
   const [outOfStock, setOutOfStock] = useState("");
   const [msg, setMsg] = useState();
   const [options, setOptions] = useState("");
+
+  const dispatch = useDispatch();
+
   let arr = [];
   for (let i = 0; i < props.item.quantity; i++) {
     arr.push(i + 1);
   }
 
   useEffect(() => {
+    setOptions(arr.map((val) => <option>{val}</option>));
     if (
       parseInt(props.item.quantityRequested) > parseInt(props.item.quantity)
     ) {
-      setOutOfStock(<h6 style={{ color: "red" }}>Insufficient stock</h6>);
-    } else {
-      setOptions(arr.map((val) => <option>{val}</option>));
+      setOutOfStock(
+        <h6 style={{ color: "red" }}>
+          Sorry, these items got sold. Please request for different quantity if
+          available.{" "}
+        </h6>
+      );
+      dispatch(setCannotCheckOut());
     }
   }, []);
 
@@ -49,13 +59,13 @@ function Cartitemcard(props) {
     axios
       .post(process.env.REACT_APP_LOCALHOST + "/items/change/quantity", {
         itemName: props.item.itemName,
-        newQuantity: e.target.options[e.target.selectedIndex].text
+        newQuantity: e.target.options[e.target.selectedIndex].text,
       })
       .then((response) => {
         if (response.status == 200) {
           setMsg(
             <p style={{ color: "blue", fontSize: "20px", marginLeft: "50px" }}>
-             {e.target.options[e.target.selectedIndex].text}
+              {e.target.options[e.target.selectedIndex].text}
             </p>
           );
         }

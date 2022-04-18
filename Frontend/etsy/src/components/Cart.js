@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import { Redirect } from "react-router";
 import Cartitemcard from "./Cartitemcard";
@@ -9,6 +10,8 @@ function Favourites() {
   const [total, setTotal] = useState(0);
   const [itemsData, setItemsData] = useState(null);
   const [msg, setMsg] = useState(null);
+
+  const canCheckout = useSelector(state => state.checkoutSlice.canCheckout);
 
   if (!localStorage.getItem("token")) {
     setRedirectVar = <Redirect to="/login" />;
@@ -51,6 +54,14 @@ function Favourites() {
   }
 
   const checkout = (e) => {
+    if (canCheckout === "NO") {
+      setMsg(
+        <p style={{ color: "red", fontSize: "20px", marginLeft:"50px" }}>
+          Cannot checkout. Please remove the items with Insufficient requested quantities or request for different quantity if available.
+        </p>
+      );
+      return;
+    }
     let orderID = makeid(10);
     let data = {
       items: itemsData,
