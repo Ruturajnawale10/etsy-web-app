@@ -5,7 +5,7 @@ import { Redirect } from "react-router";
 import Cartitemcard from "./Cartitemcard";
 
 function Favourites() {
-  const [redirectVar, setRedirectVar] = useState(null);
+  var [redirectVar, setRedirectVar] = useState(null);
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [itemsData, setItemsData] = useState(null);

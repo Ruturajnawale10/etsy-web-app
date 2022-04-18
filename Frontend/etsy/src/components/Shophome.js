@@ -13,7 +13,6 @@ function Shophome(props) {
   const [items, setItems] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [displayButton, setDisplayButton] = useState("none");
-  const [msg, setMsg] = useState(null);
   const [fetchedImage, setFetchedImage] = useState(null);
   const [totalSales, setTotalSales] = useState(null);
 
@@ -85,11 +84,7 @@ function Shophome(props) {
         imageName: imageFile.name,
       }
     );
-    setMsg(
-      <p style={{ fontSize: 30, color: "green", marginRight: 50 }}>
-        Shop Image updated!
-      </p>
-    );
+    window.location.reload(false);
   };
 
   return (
@@ -121,7 +116,6 @@ function Shophome(props) {
             Update
           </button>
         </div>
-        {msg}
         <br></br>
 
         <Additem name={props.name} />

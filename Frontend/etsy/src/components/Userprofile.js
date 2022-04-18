@@ -6,7 +6,6 @@ function Userprofile() {
   var [profileData, setProfileData] = useState([]);
   let [imageFile, setImageFile] = useState(null);
   let [fetchedImage, setFetchedImage] = useState(null);
-  let [alert, setAlert] = useState(null);
 
   let redirectVar = null;
   if (!localStorage.getItem("token")) {
@@ -74,13 +73,7 @@ function Userprofile() {
         }
       );
     }
-
-    setAlert(
-      <p style={{ fontSize: 30, color: "green", marginRight: 50 }}>
-        {" "}
-        Profile Updated!
-      </p>
-    );
+    window.location.reload(false);
   };
 
   return (
@@ -622,7 +615,6 @@ function Userprofile() {
           <button type="submit" class="btn btn-dark">
             Save Changes
           </button>
-          {alert}
         </div>
       </form>
     </div>

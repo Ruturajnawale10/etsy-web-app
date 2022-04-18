@@ -6,17 +6,15 @@ import { setCannotCheckOut } from "../reducers/checkoutSlice";
 
 function Cartitemcard(props) {
   const [outOfStock, setOutOfStock] = useState("");
-  const [msg, setMsg] = useState();
   const [options, setOptions] = useState("");
 
   const dispatch = useDispatch();
 
-  let arr = [];
-  for (let i = 0; i < props.item.quantity; i++) {
-    arr.push(i + 1);
-  }
-
   useEffect(() => {
+    let arr = [];
+    for (let i = 0; i < props.item.quantity; i++) {
+      arr.push(i + 1);
+    }
     setOptions(arr.map((val) => <option>{val}</option>));
     if (
       parseInt(props.item.quantityRequested) > parseInt(props.item.quantity)
@@ -29,7 +27,7 @@ function Cartitemcard(props) {
       );
       dispatch(setCannotCheckOut());
     }
-  }, []);
+  }, [dispatch, props.item.quantity, props.item.quantityRequested]);
 
   const removeItem = (e) => {
     e.preventDefault();
@@ -41,12 +39,8 @@ function Cartitemcard(props) {
         itemName: props.item.itemName,
       })
       .then((response) => {
-        if (response.status == 200) {
-          setMsg(
-            <p style={{ color: "blue", fontSize: "20px", marginLeft: "50px" }}>
-              Item removed from cart
-            </p>
-          );
+        if (response.status === 200) {
+          window.location.reload(false);
         }
       });
   };
@@ -61,21 +55,11 @@ function Cartitemcard(props) {
         itemName: props.item.itemName,
         newQuantity: e.target.options[e.target.selectedIndex].text,
       })
-      .then((response) => {
-        if (response.status == 200) {
-          setMsg(
-            <p style={{ color: "blue", fontSize: "20px", marginLeft: "50px" }}>
-              {e.target.options[e.target.selectedIndex].text}
-            </p>
-          );
-        }
-      });
   };
 
   return (
     <div>
       <div class="row">
-        {msg}
         <div className="card" style={{ width: "100%" }}>
           <div class="col-md-8">
             <div class="thumbnail">
