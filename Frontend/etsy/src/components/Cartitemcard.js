@@ -17,7 +17,7 @@ function Cartitemcard(props) {
     }
     setOptions(arr.map((val) => <option>{val}</option>));
     if (
-      parseInt(props.item.quantityRequested) > parseInt(props.item.quantity)
+      parseInt(props.item.quantityRequested) > props.item.quantity
     ) {
       setOutOfStock(
         <h6 style={{ color: "red" }}>
@@ -50,11 +50,12 @@ function Cartitemcard(props) {
     axios.defaults.headers.common["authorization"] =
       localStorage.getItem("token");
 
-    axios
-      .post(process.env.REACT_APP_LOCALHOST + "/items/change/quantity", {
-        itemName: props.item.itemName,
-        newQuantity: e.target.options[e.target.selectedIndex].text,
-      })
+    axios.post(process.env.REACT_APP_LOCALHOST + "/items/change/quantity", {
+      itemName: props.item.itemName,
+      newQuantity: e.target.options[e.target.selectedIndex].text,
+    }).then(() => {
+      window.location.reload(false);
+    });
   };
 
   return (
@@ -80,6 +81,13 @@ function Cartitemcard(props) {
                 <div style={{ display: "inline-block", marginLeft: "150px" }}>
                   {outOfStock}
                 </div>
+                <label
+                  class="container"
+                  style={{ marginLeft: "100px", marginTop: "20px" }}
+                >
+                  <input type="checkbox" /> This order is a gift
+                  <span class="checkmark"></span>
+                </label>
                 <div style={{ marginLeft: "850px" }}>
                   <button
                     type="button"

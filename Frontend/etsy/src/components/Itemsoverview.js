@@ -67,7 +67,7 @@ function Itemsoverview(props) {
 
   const addToCart = (e) => {
     e.preventDefault();
-    if (parseInt(quantityRequested) > parseInt(item.quantity)) {
+    if (parseInt(quantityRequested) > item.quantity) {
       setAlert(<h6 style={{ color: "red" }}>Out of stock</h6>);
     } else {
       //call POST API to add to cart

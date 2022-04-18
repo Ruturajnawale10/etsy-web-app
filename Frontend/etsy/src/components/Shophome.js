@@ -28,7 +28,7 @@ function Shophome(props) {
       .then((response) => {
         let total = 0;
         for (let i = 0; i <  response.data.items.length; i++) {
-          total += parseInt(response.data.items[i].sales);
+          total += response.data.items[i].sales;
         }
         setTotalSales(total);
         setItems(

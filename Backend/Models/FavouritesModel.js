@@ -1,14 +1,15 @@
 import mongoose from "mongoose";
+import ItemOrderModel from "./ItemOrderModel.js";
 const Schema = mongoose.Schema;
 
 var favouritesSchema = new Schema({
     userName: {type: String},
-    items: {type: [Object]},
+    items: {type: [ItemOrderModel.schema]},
 },
 {
     versionKey: false
 });
 
-const favouritesModel = mongoose.model('favourites', favouritesSchema);
+const FavouritesModel = mongoose.model('favourites', favouritesSchema);
 
-export default favouritesModel;
+export default FavouritesModel;

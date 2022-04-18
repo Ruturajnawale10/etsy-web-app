@@ -1,14 +1,15 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
+import ItemOrderModel from "./ItemOrderModel.js";
 
 var orderSchema = new Schema({
     userName: {type: String},
-    orderItems: {type: [Object]}
+    orderItems: {type: [ItemOrderModel.schema]}
 },
 {
     versionKey: false
 });
 
-const orderModel = mongoose.model('order', orderSchema);
+const OrderModel = mongoose.model('order', orderSchema);
 
-export default orderModel;
+export default OrderModel;

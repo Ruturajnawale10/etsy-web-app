@@ -4,13 +4,13 @@ const Schema = mongoose.Schema;
 var shopSchema = new Schema({
     shopName: {type: String},
     shopOwner: {type: String},
-    totalSales: {type: String},
+    totalSales: {type: Number},
     imageName: {type: String}
 },
 {
     versionKey: false
 });
 
-const shopModel = mongoose.model('shop', shopSchema);
+const ShopModel = mongoose.model('shop', shopSchema);
 
-export default shopModel;
+export default ShopModel;

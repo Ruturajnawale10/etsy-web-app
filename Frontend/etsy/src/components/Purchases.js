@@ -21,7 +21,7 @@ function Purchases() {
       } else {
         let total = 0;
         for (let i = 0; i < response.data.length; i++) {
-          total += parseInt(response.data[i].price* response.data[i].quantity);
+          total += response.data[i].price* response.data[i].quantity;
         }
         setTotalPurchases(total);
       setItems(

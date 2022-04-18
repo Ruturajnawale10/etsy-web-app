@@ -36,7 +36,7 @@ function ShopDetails() {
         setUser(response.data.user);
 
         for (let sales in response.data.items) {
-          total += parseInt(sales);
+          total += sales;
         }
         setTotalSales(total);
         setItems(

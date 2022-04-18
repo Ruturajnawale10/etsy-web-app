@@ -33,7 +33,7 @@ function Purchaseitemcard(props) {
             </div>
             <div class="row" style={{ marginTop: "50px" }}>
               <div class="col" style={{fontSize:"20px"}}>Name: {props.item.itemName}</div>
-              <div class="col" style={{fontSize:"20px"}}>Price: {props.item.price}$</div>
+              <div class="col" style={{fontSize:"20px"}}>Price: $ {props.item.price}</div>
               <div class="col" style={{fontSize:"20px"}}>Quantity: {props.item.quantity}</div>
             </div>
             <div class="row" style={{ marginTop: "50px" }}>

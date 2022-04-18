@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { Object } from "mongoose/lib/schema/index.js";
 const Schema = mongoose.Schema;
 
 var usersSchema = new Schema({
@@ -22,6 +21,6 @@ var usersSchema = new Schema({
 {
     versionKey: false
 });
-const userModel= mongoose.model('user', usersSchema);
+const UserModel= mongoose.model('user', usersSchema);
 
-export default userModel; 
+export default UserModel; 

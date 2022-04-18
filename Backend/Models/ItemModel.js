@@ -8,14 +8,14 @@ var itemSchema = new Schema({
     category: {type: String},
     description: {type: String},
     price: {type: String},
-    quantity: {type: String},
-    sales: {type: String, default: 0},
+    quantity: {type: Number},
+    sales: {type: Number, default: 0},
     imageName: {type: String}
 },
 {
     versionKey: false
 });
 
-const itemModel = mongoose.model('item', itemSchema);
+const ItemModel = mongoose.model('item', itemSchema);
 
-export default itemModel;
+export default ItemModel;

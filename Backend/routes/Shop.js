@@ -43,7 +43,7 @@ router.post("/createshop", checkAuth, function (req, res) {
     { username: userName },
     {
       $set: {
-        shop: shop
+        shop: shop,
       },
     },
     function (err, doc) {
@@ -107,33 +107,33 @@ router.get("/getitems", checkAuth, function (req, res, next) {
 
   let shopName = req.query.shopName;
 
-  Items.find({shopName: shopName}, (error, item) => {
-      if (error) {
-          res.end("Items fetching FAILURE");
-      } else {
-        Users.findOne({ "shop.shopName": shopName }, (error, user) => {
-            if (user) {
-              let fetched_image_name = user.shop.imageName;
-              if (fetched_image_name) {
-                imagesService
-                  .getImage(fetched_image_name)
-                  .then((imageData) => {
-                    let buf = Buffer.from(imageData.Body);
-                    let base64Image = buf.toString("base64");
-                    console.log("Image fetched SUCCESS");
-                    res.send({items: item, image: base64Image});
-                  })
-                  .catch((e) => {
-                    res.send("Error", e.message);
-                  });
-              } else {
-                res.status(200).send(item);
-              }
-            } else {
-              res.send("shopname not registered");
-            }
-          });
-      }
+  Items.find({ shopName: shopName }, (error, item) => {
+    if (error) {
+      res.end("Items fetching FAILURE");
+    } else {
+      Users.findOne({ "shop.shopName": shopName }, (error, user) => {
+        if (user) {
+          let fetched_image_name = user.shop.imageName;
+          if (fetched_image_name !== undefined) {
+            imagesService
+              .getImage(fetched_image_name)
+              .then((imageData) => {
+                let buf = Buffer.from(imageData.Body);
+                let base64Image = buf.toString("base64");
+                console.log("Image fetched SUCCESS");
+                res.send({ items: item, image: base64Image });
+              })
+              .catch((e) => {
+                res.send("Error", e.message);
+              });
+          } else {
+            res.status(200).send({ items: item });
+          }
+        } else {
+          res.send("shopname not registered");
+        }
+      });
+    }
   });
 });
 
@@ -147,7 +147,7 @@ router.post("/additem", checkAuth, async (req, res) => {
   let quantity = req.body.quantity;
   let token = req.headers.authorization;
   var decoded = jwtDecode(token.split(" ")[1]);
-  let username = decoded.username; 
+  let username = decoded.username;
   let imageName = req.body.imageName;
   const base64Image = req.body.image;
   imageName = `items/${imageName}`;
@@ -156,14 +156,14 @@ router.post("/additem", checkAuth, async (req, res) => {
     let response = await imagesService.upload(imageName, base64Image);
 
     let item = new Items({
-        itemName: itemName,
-        shopName: shopName,
-        itemOwner: username,
-        category: category,
-        description: description,
-        price: price,
-        quantity: quantity,
-        imageName: imageName
+      itemName: itemName,
+      shopName: shopName,
+      itemOwner: username,
+      category: category,
+      description: description,
+      price: price,
+      quantity: quantity,
+      imageName: imageName,
     });
     item.save(item, (error, shop) => {
       if (item) {
@@ -189,7 +189,7 @@ router.post("/updateitem", checkAuth, async (req, res, next) => {
   let imageName = req.body.imageName;
   const base64Image = req.body.image;
   imageName = `items/${imageName}`;
-  
+
   if (base64Image === null) {
     Items.findOneAndUpdate(
       { itemName: itemName },
@@ -198,7 +198,7 @@ router.post("/updateitem", checkAuth, async (req, res, next) => {
           category: category,
           description: description,
           price: price,
-          quantity: quantity
+          quantity: quantity,
         },
       },
       function (err, doc) {
@@ -221,7 +221,7 @@ router.post("/updateitem", checkAuth, async (req, res, next) => {
             description: description,
             price: price,
             quantity: quantity,
-            imageName: imageName
+            imageName: imageName,
           },
         },
         function (err, doc) {
