@@ -44,7 +44,6 @@ function Purchases() {
       {redirectVar}
       <h1>Past Purchases</h1>
       {items}
-      <h1 style={{color: "blue"}}>Total amount of all items purchased is: $ {totalPurchases}</h1>
     </div>
   );
 }

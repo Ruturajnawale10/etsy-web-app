@@ -45,6 +45,7 @@ router.post("/checkout", checkAuth, async (req, res, next) => {
               date: date,
               imageName: item[i].imageName,
               shopName: item[i].shopName,
+              isGift: user.cartItems[i].isGift
             });
             orderList.push(itemOrder);
           }

@@ -105,6 +105,7 @@ router.post("/addtocart", async (req, res, next) => {
         cartItems: {
           itemName: itemName,
           quantityRequested: quantityRequested,
+          isGift: false
         },
       },
     },
@@ -125,7 +126,7 @@ router.get("/getcartitems", function (req, res, next) {
   let user_id = decoded._id;
 
   //this function gets the item details with the latest updated item price
-  function getItem(itemName, quantityRequested, items) {
+  function getItem(itemName, quantityRequested, isGift, items) {
     return new Promise((resolve) => {
       Items.findOne({ itemName: itemName }, function (req, item) {
         items.push({
@@ -133,6 +134,7 @@ router.get("/getcartitems", function (req, res, next) {
           quantityRequested: quantityRequested,
           price: item.price,
           quantity: item.quantity,
+          isGift: isGift
         });
         resolve(item);
       });
@@ -150,6 +152,7 @@ router.get("/getcartitems", function (req, res, next) {
           getItem(
             user.cartItems[i].itemName,
             user.cartItems[i].quantityRequested,
+            user.cartItems[i].isGift,
             items
           )
         );
@@ -212,6 +215,49 @@ router.post("/change/quantity", function (req, res) {
               cartItems: {
                 itemName: itemName,
                 quantityRequested: newQuantity,
+              },
+            },
+          },
+          (error, item) => {
+            if (error) {
+              res.status(500).send();
+            } else {
+              res.status(200).send();
+            }
+          }
+        );
+        res.status(200).send();
+      }
+    }
+  );
+});
+
+router.post("/change/giftoption", function (req, res) {
+  console.log("Change gift option POST Request");
+  let token = req.headers.authorization;
+  var decoded = jwtDecode(token.split(" ")[1]);
+  let user_id = decoded._id;
+  let itemName = req.body.itemName;
+  let quantityRequested = req.body.quantityRequested;
+  let isGift = req.body.isGift;
+
+  Users.findOneAndUpdate(
+    { _id: user_id },
+    {
+      $pull: { cartItems: { itemName: itemName } },
+    },
+    (error, item) => {
+      if (error) {
+        res.status(500).send();
+      } else {
+        Users.findOneAndUpdate(
+          { _id: user_id },
+          {
+            $push: {
+              cartItems: {
+                itemName: itemName,
+                quantityRequested: quantityRequested,
+                isGift: isGift,
               },
             },
           },

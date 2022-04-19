@@ -7,6 +7,7 @@ import { setCannotCheckOut } from "../reducers/checkoutSlice";
 function Cartitemcard(props) {
   const [outOfStock, setOutOfStock] = useState("");
   const [options, setOptions] = useState("");
+  const [isGift, setIsGift] = useState(props.item.isGift);
 
   const dispatch = useDispatch();
 
@@ -16,9 +17,7 @@ function Cartitemcard(props) {
       arr.push(i + 1);
     }
     setOptions(arr.map((val) => <option>{val}</option>));
-    if (
-      parseInt(props.item.quantityRequested) > props.item.quantity
-    ) {
+    if (parseInt(props.item.quantityRequested) > props.item.quantity) {
       setOutOfStock(
         <h6 style={{ color: "red" }}>
           Sorry, these items got sold. Please request for different quantity if
@@ -50,12 +49,31 @@ function Cartitemcard(props) {
     axios.defaults.headers.common["authorization"] =
       localStorage.getItem("token");
 
-    axios.post(process.env.REACT_APP_LOCALHOST + "/items/change/quantity", {
-      itemName: props.item.itemName,
-      newQuantity: e.target.options[e.target.selectedIndex].text,
-    }).then(() => {
-      window.location.reload(false);
-    });
+    axios
+      .post(process.env.REACT_APP_LOCALHOST + "/items/change/quantity", {
+        itemName: props.item.itemName,
+        newQuantity: e.target.options[e.target.selectedIndex].text,
+      })
+      .then(() => {
+        window.location.reload(false);
+      });
+  };
+
+  const changeGiftOption = (e) => {
+    axios.defaults.headers.common["authorization"] =
+      localStorage.getItem("token");
+
+    let isGift = e.target.checked;
+    setIsGift(isGift);
+    axios
+      .post(process.env.REACT_APP_LOCALHOST + "/items/change/giftoption", {
+        itemName: props.item.itemName,
+        quantityRequested: props.item.quantityRequested,
+        isGift: isGift,
+      })
+      .then(() => {
+        //window.location.reload(false);
+      });
   };
 
   return (
@@ -85,7 +103,8 @@ function Cartitemcard(props) {
                   class="container"
                   style={{ marginLeft: "100px", marginTop: "20px" }}
                 >
-                  <input type="checkbox" /> This order is a gift
+                  <input type="checkbox" checked={isGift} onChange={changeGiftOption} /> This
+                  order is a gift
                   <span class="checkmark"></span>
                 </label>
                 <div style={{ marginLeft: "850px" }}>
