@@ -41,9 +41,6 @@ class Login extends Component {
       username: this.state.username,
       password: this.state.password,
     };
-    //set the with credentials to true
-    axios.defaults.headers.common["authorization"] =
-    localStorage.getItem("token");
     //make a post request with the user data
     axios.post(process.env.REACT_APP_LOCALHOST + "/user/login", data)
       .then((response) => {
@@ -57,8 +54,10 @@ class Login extends Component {
             ),
           });
         } else {
+          localStorage.setItem("currency", response.data.currency);
+          localStorage.setItem("country", response.data.country);
           this.setState({
-            token: response.data,
+            token: response.data.jwt,
           });
         }
       });

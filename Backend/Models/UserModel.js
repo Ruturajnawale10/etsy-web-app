@@ -16,7 +16,8 @@ var usersSchema = new Schema({
     gender: {type: String},
     imageName: {type: String},
     shop: {type: Object},
-    cartItems: {type: [Object]}
+    cartItems: {type: [Object]},
+    currency: {type: String, default: "$ (USD)"}
 },
 {
     versionKey: false

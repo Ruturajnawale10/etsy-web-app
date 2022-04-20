@@ -25,7 +25,8 @@ router.post("/login", function (req, res) {
         const payload = { _id: user._id, username: user.username };
         const token = jwt.sign(payload, config.mongo.secret, {
         });
-        res.status(200).end("JWT " + token);
+        let JWT = "JWT " + token;
+        res.status(200).send({jwt: JWT, currency: user.currency, country: user.country});
       } else {
         res.send("Invalid credentials");
       }

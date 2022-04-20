@@ -49,6 +49,7 @@ function Userprofile() {
   const submitData = async (e) => {
     e.preventDefault();
 
+    localStorage.setItem("country", profileData.country);
     if (imageFile !== null) {
       const convertedFile = await convertToBase64(imageFile);
       axios.defaults.headers.common["authorization"] =

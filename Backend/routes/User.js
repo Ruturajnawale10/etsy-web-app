@@ -24,7 +24,7 @@ router.get("/profile", checkAuth, async (req, res) => {
           let buf = Buffer.from(imageData.Body);
           let base64Image = buf.toString("base64");
           console.log("Data fetched successful");
-          user._doc = {...user._doc, image: base64Image};
+          user._doc = { ...user._doc, image: base64Image };
           res.status(200).send(user._doc);
         });
       } else {
@@ -115,6 +115,28 @@ router.post("/profile", checkAuth, async (req, res, next) => {
       console.error(`Error uploading image: ${err.message}`);
       return next(new Error(`Error uploading image: ${req.body.imageName}`));
     }
+  }
+});
+
+router.post("/change/currency", checkAuth, async (req, res) => {
+  console.log("Inside change currency POST Request");
+  let token = req.headers.authorization;
+  var decoded = jwtDecode(token.split(" ")[1]);
+  let user_id = decoded._id;
+
+  let user = await Users.findOneAndUpdate(
+    { _id: user_id },
+    {
+      $set: {
+        currency: req.body.currency,
+      },
+    }
+  );
+
+  if (user) {
+    res.status(200).send();
+  } else {
+    res.status(400).send();
   }
 });
 

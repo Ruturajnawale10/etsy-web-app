@@ -5,6 +5,7 @@ import nonfavouritesicon from "../images/nonfavouritesicon.jpg";
 
 function Itemcard(props) {
   const [favouritesIconSRC, setFavouritesIconSRC] = useState(nonfavouritesicon);
+  const currency = localStorage.getItem("currency").split(" ")[0];
 
   useEffect(() => {
     axios.defaults.headers.common["authorization"] =
@@ -87,7 +88,7 @@ function Itemcard(props) {
                     {props.item._doc.itemName}
                   </div>
                   <div style={{ display: "inline-block", marginLeft: "200px" }}>
-                    Price: $ {props.item._doc.price}
+                    Price: {currency} {props.item._doc.price}
                   </div>
                   <div>
                     <p></p>

@@ -5,6 +5,7 @@ function Purchaseitemcard(props) {
   let date = new Intl.DateTimeFormat('en-GB', {dateStyle:'medium'}).format(d);
   let isGift = props.item.isGift;
   let gift = null;
+  const currency = localStorage.getItem("currency").split(" ")[0];
 
   if (isGift) {
     gift = (
@@ -43,7 +44,7 @@ function Purchaseitemcard(props) {
             </div>
             <div class="row" style={{ marginTop: "50px" }}>
               <div class="col" style={{fontSize:"20px"}}>Name: {props.item.itemName}</div>
-              <div class="col" style={{fontSize:"20px"}}>Price: $ {props.item.price}</div>
+              <div class="col" style={{fontSize:"20px"}}>Price: {currency} {props.item.price}</div>
               <div class="col" style={{fontSize:"20px"}}>Quantity: {props.item.quantity}</div>
             </div>
             <div class="row" style={{ marginTop: "50px" }}>

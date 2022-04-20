@@ -8,6 +8,7 @@ function Cartitemcard(props) {
   const [outOfStock, setOutOfStock] = useState("");
   const [options, setOptions] = useState("");
   const [isGift, setIsGift] = useState(props.item.isGift);
+  const currency = localStorage.getItem("currency").split(" ")[0];
 
   const dispatch = useDispatch();
 
@@ -87,7 +88,7 @@ function Cartitemcard(props) {
                   Name: {props.item.itemName}
                 </div>
                 <div style={{ display: "inline-block", marginLeft: "150px" }}>
-                  Price: $ {props.item.price}
+                  Price: {currency} {props.item.price}
                 </div>
                 <div style={{ display: "inline-block", marginLeft: "150px" }}>
                   Quantity: &emsp;
