@@ -129,8 +129,10 @@ router.get("/history", function (req, res, next) {
   let token = req.headers.authorization;
   var decoded = jwtDecode(token.split(" ")[1]);
   let userName = decoded.username;
-
-  Orders.findOne({ userName: userName }, function (err, order) {
+  // let ord = Orders.findOne({ userName: userName, orderItems: { $slice: [2]} });
+  // console.log(ord);
+  Orders.findOne({ userName: userName }).slice("orderItems", -2).exec(function (err, order) {
+    console.log(order);
     if (err) {
       res.send("FAILURE");
     } else {
