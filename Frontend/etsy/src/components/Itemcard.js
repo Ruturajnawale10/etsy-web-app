@@ -36,8 +36,15 @@ function Itemcard(props) {
       setFavouritesIconSRC(favouritesicon);
     }
 
+    let dataItem = {
+      itemName: props.item.itemName,
+      price: props.item.price,
+      quantity: props.item.quantity,
+      imageName: props.item.imageName,
+      shopName: props.item.shopName
+    };
     const data = {
-      item: props.item,
+      item:dataItem,
       isFavourite: isFavourite
     };
 
