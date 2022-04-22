@@ -6,6 +6,7 @@ import Favourites from "../models/FavouritesModel.js";
 import { checkAuth } from "../utils/passport.js";
 import jwtDecode from "jwt-decode";
 import imagesService from "../utils/imagesService.js";
+import kafka from "../kafka/client.js";
 
 router.get("/getallitems", checkAuth, function (req, res) {
   console.log("Inside GET all items dashboard Request");
@@ -38,7 +39,7 @@ router.get("/getallitems", checkAuth, function (req, res) {
         .then(() => {
           console.log("All images fetched successfully!");
           for (let i = 0; i < item.length; i++) {
-            item[i] = { ...item[i], image: images_arr[i] };
+            item[i].image = images_arr[i];
           }
           res.status(200).send(item);
         })
@@ -145,14 +146,10 @@ router.get("/favourites", checkAuth, function (req, res, next) {
       Promise.all(promises)
         .then(() => {
           console.log("All images fetched successfully!");
-          let doc = new Array(favourite[0].items.length);
           for (let i = 0; i < favourite[0].items.length; i++) {
-            doc[i] = { _doc: favourite[0].items[i] };
+            favourite[0].items[i].image = images_arr[i];
           }
-          for (let i = 0; i < favourite[0].items.length; i++) {
-            doc[i] = { ...doc[i], image: images_arr[i] };
-          }
-          res.status(200).send(doc);
+          res.status(200).send(favourite[0].items);
         })
         .catch((e) => {
           res.end("Error", e);
