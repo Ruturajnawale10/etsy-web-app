@@ -22,7 +22,7 @@ router.get("/details", checkAuth, function (req, res, next) {
             let buf = Buffer.from(imageData.Body);
             let base64Image = buf.toString("base64");
             console.log("Data fetched successful");
-            item._doc.image = base64Image;
+            item.image = base64Image;
             res.send(item);
           })
           .catch((e) => {

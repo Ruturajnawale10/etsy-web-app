@@ -10,7 +10,8 @@ var itemSchema = new Schema({
     price: {type: String},
     quantity: {type: Number},
     sales: {type: Number, default: 0},
-    imageName: {type: String}
+    imageName: {type: String},
+    image: {type: Object},
 },
 {
     versionKey: false
