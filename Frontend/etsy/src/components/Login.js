@@ -13,7 +13,7 @@ class Login extends Component {
       password: "",
       authMsg: null,
       token: "",
-      redirectVar1: null
+      redirectVar1: null,
     };
     //Bind the handlers to this class
     this.usernameChangeHandler = this.usernameChangeHandler.bind(this);
@@ -42,7 +42,8 @@ class Login extends Component {
       password: this.state.password,
     };
     //make a post request with the user data
-    axios.post(process.env.REACT_APP_LOCALHOST + "/user/login", data)
+    axios
+      .post(process.env.REACT_APP_LOCALHOST + "/user/login", data)
       .then((response) => {
         if (response.data === "Invalid credentials") {
           this.setState({
@@ -56,6 +57,8 @@ class Login extends Component {
         } else {
           localStorage.setItem("currency", response.data.currency);
           localStorage.setItem("country", response.data.country);
+          localStorage.setItem("pageSize", 5);
+          localStorage.setItem("pageNum", 1);
           this.setState({
             token: response.data.jwt,
           });

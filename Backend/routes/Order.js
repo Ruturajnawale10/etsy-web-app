@@ -126,11 +126,16 @@ router.post("/checkout", checkAuth, async (req, res, next) => {
 
 router.get("/history", function (req, res, next) {
   console.log("Inside GET Purchase history Request");
+  let pageNum = parseInt(req.query.pageNum);
+  let pageSize = parseInt(req.query.pageSize);
+  let numbersToSkip = (pageNum - 1)* pageSize;
+  let numbersToReturn = pageSize;
+
   let token = req.headers.authorization;
   var decoded = jwtDecode(token.split(" ")[1]);
   let userName = decoded.username;
 
-  Orders.findOne({ userName: userName }, function (err, order) {
+  Orders.findOne({ userName: userName }).slice("orderItems", numbersToSkip, numbersToReturn).exec(function (err, order) {
     if (err) {
       res.send("FAILURE");
     } else {

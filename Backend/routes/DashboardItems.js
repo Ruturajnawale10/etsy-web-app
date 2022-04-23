@@ -174,7 +174,7 @@ router.get("/search", function (req, res, next) {
         .then(() => {
           console.log("All images fetched successfully!");
           for (let i = 0; i < item.length; i++) {
-            item[i] = { ...item[i], image: images_arr[i] };
+            item[i].image = images_arr[i];
           }
           res.status(200).send(item);
         })

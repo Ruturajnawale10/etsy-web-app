@@ -46,23 +46,19 @@ function Navbar() {
 
     cartsLink = (
       <a href="/cart" class="navbar-brand">
-        <img
-          src={cartsicon}
-          width={40}
-          height={40}
-          class="img-fluid"
-        ></img>
+        <img src={cartsicon} width={40} height={40} class="img-fluid"></img>
       </a>
     );
 
     purchasesLink = (
-      <a href="/purchases" class="navbar-brand">
-        <img
-          src={cart}
-          width={40}
-          height={40}
-          class="img-fluid"
-        ></img>
+      <a
+        href="/purchases"
+        class="navbar-brand"
+        onClick={() => {
+          localStorage.setItem("pageNum", 1);
+        }}
+      >
+        <img src={cart} width={40} height={40} class="img-fluid"></img>
       </a>
     );
 
@@ -77,10 +73,6 @@ function Navbar() {
         Logout
       </a>
     );
-  }
-
-  const onSearchClick = (e) => {
-
   }
 
   return (
@@ -126,10 +118,11 @@ function Navbar() {
                   type="text"
                   placeholder="Search for anything"
                   size={90}
-                  onChange= {(e) => { setSearchContent("items/search/" +e.target.value)} }
+                  onChange={(e) => {
+                    setSearchContent("items/search/" + e.target.value);
+                  }}
                 ></input>
-                <button type="submit"> 
-                 {/* onSubmit={onSearchClick} */}
+                <button type="submit">
                   <i class="fa fa-search"></i>
                 </button>
               </form>
