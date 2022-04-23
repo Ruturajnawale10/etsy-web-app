@@ -50,7 +50,7 @@ var options = {
   useUnifiedTopology: true,
 };
 
-mongoose.connect(config.mongo.mongoDBURL, options, (err, res) => {
+mongoose.connect(config.mongo.mongoDBURL, {maxPoolSize: 10}, options, (err, res) => {
   if (err) {
     console.log(err);
     console.log("MongoDB connection Failed");
