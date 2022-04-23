@@ -1,6 +1,7 @@
 import connection from "./kafka/Connection.js";
 //topics files
 import fav_items from "./services/favourites.js";
+import add_item from "./services/additem.js";
 import config from "./configs/config.js";
 import mongoose from "mongoose";
 
@@ -56,3 +57,4 @@ function handleTopicRequest(topic_name, fname) {
 //first argument is topic name
 //second argument is a function that will handle this topic request
 handleTopicRequest("favourite_items", fav_items);
+handleTopicRequest("shop", add_item);

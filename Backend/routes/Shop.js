@@ -7,6 +7,7 @@ import Users from "../models/UserModel.js";
 import { checkAuth } from "../utils/passport.js";
 import jwtDecode from "jwt-decode";
 import imagesService from "../utils/imagesService.js";
+import kafka from "../kafka/client.js";
 
 router.get("/checkavailibility", checkAuth, function (req, res) {
   console.log("Inside check availibility GET Request");
@@ -139,15 +140,35 @@ router.get("/getitems", checkAuth, function (req, res, next) {
 
 router.post("/additem", checkAuth, async (req, res) => {
   console.log("Inside AddItem Post Request");
+  let token = req.headers.authorization;
+  var decoded = jwtDecode(token.split(" ")[1]);
+  let username = decoded.username;
+  req.body.userName = username;
+
+  kafka('shop', req.body, function (err, item) {
+    console.log("in result");
+    if (err) {
+      console.log("Inside err", err);
+      res.end("FAILURE");
+    } else {
+      console.log("Inside else");
+      if (item) {
+        res.end("SUCCESS");
+      } else {
+        res.end("FAILURE");
+      }
+    }
+  });
+
   let itemName = req.body.itemName;
   let shopName = req.body.shopName;
   let category = req.body.category;
   let description = req.body.description;
   let price = req.body.price;
   let quantity = req.body.quantity;
-  let token = req.headers.authorization;
-  var decoded = jwtDecode(token.split(" ")[1]);
-  let username = decoded.username;
+  // let token = req.headers.authorization;
+  // var decoded = jwtDecode(token.split(" ")[1]);
+  // let username = decoded.username;
   let imageName = req.body.imageName;
   const base64Image = req.body.image;
   imageName = `items/${imageName}`;
