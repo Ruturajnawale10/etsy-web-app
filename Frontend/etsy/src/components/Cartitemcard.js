@@ -8,6 +8,7 @@ function Cartitemcard(props) {
   const [outOfStock, setOutOfStock] = useState("");
   const [options, setOptions] = useState("");
   const [isGift, setIsGift] = useState(props.item.isGift);
+  const [note, setNote] = useState(props.item.note);
   const currency = localStorage.getItem("currency").split(" ")[0];
 
   const dispatch = useDispatch();
@@ -65,12 +66,18 @@ function Cartitemcard(props) {
       localStorage.getItem("token");
 
     let isGift = e.target.checked;
+    let note1 = note;
+    if (!isGift) {
+      note1 = "";
+      setNote("");
+    }
     setIsGift(isGift);
     axios
       .post(process.env.REACT_APP_LOCALHOST + "/items/change/giftoption", {
         itemName: props.item.itemName,
         quantityRequested: props.item.quantityRequested,
         isGift: isGift,
+        note: note1,
       })
       .then(() => {
         //window.location.reload(false);
@@ -104,10 +111,33 @@ function Cartitemcard(props) {
                   class="container"
                   style={{ marginLeft: "100px", marginTop: "20px" }}
                 >
-                  <input type="checkbox" checked={isGift} onChange={changeGiftOption} /> This
-                  order is a gift
+                  <input
+                    type="checkbox"
+                    checked={isGift}
+                    onChange={changeGiftOption}
+                  />{" "}
+                  This order is a gift
                   <span class="checkmark"></span>
                 </label>
+
+                <div class="col-auto">
+                  <label for="name" class="col-form-label fw-bold">
+                    Add a note
+                  </label>
+                </div>
+
+                <div class="col-auto">
+                  <input
+                    type="text"
+                    id="name"
+                    class="form-control"
+                    value={note}
+                    onChange={(e) => {
+                      setNote(e.target.value);
+                    }}
+                  />
+                </div>
+
                 <div style={{ marginLeft: "850px" }}>
                   <button
                     type="button"

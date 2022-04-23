@@ -45,7 +45,8 @@ router.post("/checkout", checkAuth, async (req, res, next) => {
               date: date,
               imageName: item[i].imageName,
               shopName: item[i].shopName,
-              isGift: user.cartItems[i].isGift
+              isGift: user.cartItems[i].isGift,
+              note: user.cartItems[i].note,
             });
             orderList.push(itemOrder);
           }
@@ -83,9 +84,9 @@ router.post("/checkout", checkAuth, async (req, res, next) => {
                                 quantity:
                                   item[i].quantity -
                                   parseInt(user.cartItems[i].quantityRequested),
-                                sales: 
+                                sales:
                                   item[i].sales +
-                                  parseInt(user.cartItems[i].quantityRequested)
+                                  parseInt(user.cartItems[i].quantityRequested),
                               },
                             },
                             function (err, item3) {
@@ -128,49 +129,51 @@ router.get("/history", function (req, res, next) {
   console.log("Inside GET Purchase history Request");
   let pageNum = parseInt(req.query.pageNum);
   let pageSize = parseInt(req.query.pageSize);
-  let numbersToSkip = (pageNum - 1)* pageSize;
+  let numbersToSkip = (pageNum - 1) * pageSize;
   let numbersToReturn = pageSize;
 
   let token = req.headers.authorization;
   var decoded = jwtDecode(token.split(" ")[1]);
   let userName = decoded.username;
 
-  Orders.findOne({ userName: userName }).slice("orderItems", numbersToSkip, numbersToReturn).exec(function (err, order) {
-    if (err) {
-      res.send("FAILURE");
-    } else {
-      console.log("Order Items received.");
+  Orders.findOne({ userName: userName })
+    .slice("orderItems", numbersToSkip, numbersToReturn)
+    .exec(function (err, order) {
+      if (err) {
+        res.send("FAILURE");
+      } else {
+        console.log("Order Items received.");
 
-      function fetchImage(i, imageName) {
-        return new Promise((resolve) => {
-          imagesService.getImage(imageName).then((imageData) => {
-            let buf = Buffer.from(imageData.Body);
-            let base64Image = buf.toString("base64");
-            order.orderItems[i].image = base64Image;
-            resolve(base64Image);
+        function fetchImage(i, imageName) {
+          return new Promise((resolve) => {
+            imagesService.getImage(imageName).then((imageData) => {
+              let buf = Buffer.from(imageData.Body);
+              let base64Image = buf.toString("base64");
+              order.orderItems[i].image = base64Image;
+              resolve(base64Image);
+            });
           });
-        });
+        }
+
+        let total_items = order.orderItems.length;
+
+        //multiple fetches, use allpromise here!
+        let promises = [];
+        //fetch image using image_name
+        for (let i = 0; i < total_items; i++) {
+          let imageName = order.orderItems[i].imageName;
+          promises.push(fetchImage(i, imageName));
+        }
+
+        Promise.all(promises)
+          .then(() => {
+            res.send(order.orderItems);
+          })
+          .catch((e) => {
+            res.send("FAILURE");
+          });
       }
-
-      let total_items = order.orderItems.length;
-
-      //multiple fetches, use allpromise here!
-      let promises = [];
-      //fetch image using image_name
-      for (let i = 0; i < total_items; i++) {
-        let imageName = order.orderItems[i].imageName;
-        promises.push(fetchImage(i, imageName));
-      }
-
-      Promise.all(promises)
-        .then(() => {
-          res.send(order.orderItems);
-        })
-        .catch((e) => {
-          res.send("FAILURE");
-        });
-    }
-  });
+    });
 });
 
 export default router;

@@ -105,7 +105,7 @@ router.post("/addtocart", async (req, res, next) => {
         cartItems: {
           itemName: itemName,
           quantityRequested: quantityRequested,
-          isGift: false
+          isGift: false,
         },
       },
     },
@@ -134,7 +134,7 @@ router.get("/getcartitems", function (req, res, next) {
           quantityRequested: quantityRequested,
           price: item.price,
           quantity: item.quantity,
-          isGift: isGift
+          isGift: isGift,
         });
         resolve(item);
       });
@@ -240,6 +240,7 @@ router.post("/change/giftoption", function (req, res) {
   let itemName = req.body.itemName;
   let quantityRequested = req.body.quantityRequested;
   let isGift = req.body.isGift;
+  let note = req.body.note;
 
   Users.findOneAndUpdate(
     { _id: user_id },
@@ -258,6 +259,7 @@ router.post("/change/giftoption", function (req, res) {
                 itemName: itemName,
                 quantityRequested: quantityRequested,
                 isGift: isGift,
+                note: note,
               },
             },
           },
