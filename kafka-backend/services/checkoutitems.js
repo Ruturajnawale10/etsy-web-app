@@ -5,7 +5,7 @@ import ItemOrders from "../models/ItemOrderModel.js";
 import Orders from "../models/OrderModel.js";
 
 async function handle_request(msg, callback) {
-  console.log("In handle request:" + JSON.stringify(msg));
+  console.log("In Kafka handle request:" + JSON.stringify(msg));
   console.log("Checking out items request...");
   let userID = msg.userID;
   let userName = msg.userName;

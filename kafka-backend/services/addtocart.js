@@ -2,7 +2,7 @@
 import Users from "../models/UserModel.js";
 
 async function handle_request(msg, callback) {
-  console.log("In handle request:" + JSON.stringify(msg));
+  console.log("In Kafka handle request:" + JSON.stringify(msg));
   let userID = msg.userID;
   let itemName = msg.itemName;
   let quantityRequested = msg.quantityRequested;

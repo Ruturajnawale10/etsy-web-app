@@ -4,6 +4,8 @@ import fav_items from "./services/favourites.js";
 import add_item from "./services/additem.js";
 import add_to_cart from "./services/addtocart.js";
 import checkout_items from "./services/checkoutitems.js";
+import update_item from "./services/updateitem.js";
+import update_profile from "./services/updateprofile.js";
 import config from "./configs/config.js";
 import mongoose from "mongoose";
 
@@ -62,3 +64,5 @@ handleTopicRequest("favourite_items", fav_items);
 handleTopicRequest("shop", add_item);
 handleTopicRequest("item", add_to_cart);
 handleTopicRequest("checkout", checkout_items);
+handleTopicRequest("shop", update_item);
+handleTopicRequest("user", update_profile);

@@ -3,7 +3,7 @@ import Items from "../models/ItemModel.js";
 import imagesService from "../utils/imagesService.js";
 
 async function handle_request(msg, callback) {
-  console.log("In handle request:" + JSON.stringify(msg));
+  console.log("In Kafka handle request:" + JSON.stringify(msg));
   let userName = msg.userName;
   let itemName = msg.itemName;
   let shopName = msg.shopName;

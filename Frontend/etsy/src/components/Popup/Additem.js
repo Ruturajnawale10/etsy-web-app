@@ -86,9 +86,7 @@ const Additem = (props) => {
           imageName: null,
         }
       );
-      if (response.data === "SUCCESS") {
-        window.location.reload(false);
-      }
+      window.location.reload(false);
     }
   };
 

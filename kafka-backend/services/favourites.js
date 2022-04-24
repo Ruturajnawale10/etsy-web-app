@@ -2,7 +2,7 @@
 import Favourites from "../models/FavouritesModel.js";
 
 function handle_request(msg, callback) {
-  console.log("In handle request:" + JSON.stringify(msg));
+  console.log("In Kafka handle request:" + JSON.stringify(msg));
   console.log("Adding item to favourites request...");
   let userName = msg.userName;
 

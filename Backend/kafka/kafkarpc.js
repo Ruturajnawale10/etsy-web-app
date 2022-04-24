@@ -43,7 +43,7 @@ KafkaRPC.prototype.makeRequest = function (topic_name, content, callback) {
   self.requests[correlationId] = entry;
 
   //make sure we have a response topic
-  console.log("Make sure topic is : ", topic_name);
+  console.log("The request is posted in Kafka queue on the topic : ", topic_name);
   self.setupResponseQueue(self.producer, topic_name, function () {
     console.log("in response");
     //put the request on a topic
