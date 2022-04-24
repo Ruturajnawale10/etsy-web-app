@@ -8,118 +8,29 @@ import Users from "../models/UserModel.js";
 import { checkAuth } from "../utils/passport.js";
 import jwtDecode from "jwt-decode";
 import imagesService from "../utils/imagesService.js";
+import kafka from "../kafka/client.js";
 
 router.post("/checkout", checkAuth, async (req, res, next) => {
   console.log("Inside Checkout POST Request");
   let token = req.headers.authorization;
   var decoded = jwtDecode(token.split(" ")[1]);
-  let userID = decoded._id;
-  let userName = decoded.username;
-  let orderID = req.body.orderID;
+  req.body.userID = decoded._id;
+  req.body.userName = decoded.username;
+  req.body.orderID = req.body.orderID;
 
-  let date = new Intl.DateTimeFormat("en-GB", { dateStyle: "medium" }).format(
-    Date.now()
-  );
-
-  Users.findOne({ _id: userID }, function (err, user) {
+  kafka("checkout", req.body, function (err, result) {
+    console.log("in result");
     if (err) {
-      res.send("FAILURE");
+      console.log("Inside err", err);
+      res.end("FAILURE");
     } else {
-      if (!user.address) {
-        res.send("FILL ADDRESS");
+      console.log("Inside else");
+      if (result === "SUCCESS") {
+        res.end("SUCCESS");
+      } else if (result === "FILL ADDRESS") {
+        res.send(result);
       } else {
-        let itemNameArr = [];
-        for (let i = 0; i < user.cartItems.length; i++) {
-          itemNameArr.push(user.cartItems[i].itemName);
-        }
-
-        Items.find({ itemName: { $in: itemNameArr } }, function (err, item) {
-          let result = [];
-          let orderList = [];
-          for (let i = 0; i < item.length; i++) {
-            let itemOrder = new ItemOrders({
-              orderID: orderID,
-              itemName: item[i].itemName,
-              price: item[i].price,
-              quantity: user.cartItems[i].quantityRequested,
-              date: date,
-              imageName: item[i].imageName,
-              shopName: item[i].shopName,
-              isGift: user.cartItems[i].isGift,
-              note: user.cartItems[i].note,
-            });
-            orderList.push(itemOrder);
-          }
-
-          Orders.findOneAndUpdate(
-            { userName: userName },
-            {
-              $push: {
-                orderItems: {
-                  $each: orderList,
-                },
-              },
-            },
-            (error) => {
-              if (error) {
-                res.end("FAILURE");
-              } else {
-                Users.findOneAndUpdate(
-                  { username: userName },
-                  {
-                    $set: {
-                      cartItems: [],
-                    },
-                  },
-                  function (err, doc) {
-                    if (err) {
-                      res.send("FAILURE");
-                    } else {
-                      function updateStock(item, i) {
-                        return new Promise((resolve) => {
-                          Items.findOneAndUpdate(
-                            { itemName: item[i].itemName },
-                            {
-                              $set: {
-                                quantity:
-                                  item[i].quantity -
-                                  parseInt(user.cartItems[i].quantityRequested),
-                                sales:
-                                  item[i].sales +
-                                  parseInt(user.cartItems[i].quantityRequested),
-                              },
-                            },
-                            function (err, item3) {
-                              if (err) {
-                                res.send("FAILURE");
-                              } else {
-                                console.log("Updated the quantity!");
-                                resolve(item3);
-                              }
-                            }
-                          );
-                        });
-                      }
-
-                      let promises = [];
-                      for (let i = 0; i < item.length; i++) {
-                        promises.push(updateStock(item, i));
-                      }
-
-                      Promise.all(promises)
-                        .then(() => {
-                          res.send("SUCCESS");
-                        })
-                        .catch((e) => {
-                          res.send("FAILURE");
-                        });
-                    }
-                  }
-                );
-              }
-            }
-          );
-        });
+        res.send(result);
       }
     }
   });

@@ -78,7 +78,7 @@ function Favourites() {
             Please fill your address in the profile for completing the order
           </p>
         );
-      } else {
+      } else if (response.data === "SUCCESS"){
         console.log("Order placed successfully!");
         setRedirectVar(<Redirect to="/purchases" />);
       }
