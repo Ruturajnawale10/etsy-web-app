@@ -15,7 +15,6 @@ function Navbar() {
   let purchasesLink = null;
   let sellOnEtsyLink = null;
   let logoutLink = null;
-  let searchBar = null;
 
   if (!localStorage.getItem("token")) {
     loginLink = (
@@ -74,25 +73,6 @@ function Navbar() {
         Logout
       </a>
     );
-
-    searchBar = (
-      <div class="search-container">
-        <form action={searchContent}>
-          <input
-            id="searchbarid"
-            type="text"
-            placeholder="Search for items"
-            size={90}
-            onChange={(e) => {
-              setSearchContent("items/search/" + e.target.value);
-            }}
-          ></input>
-          <button type="submit">
-            <i class="fa fa-search"></i>
-          </button>
-        </form>
-      </div>
-    );
   }
 
   return (
@@ -131,7 +111,22 @@ function Navbar() {
               <span class="navbar-toggler-icon"></span>
             </button>
 
-            {searchBar}
+            <div class="search-container">
+              <form action={searchContent}>
+                <input
+                  id="searchbarid"
+                  type="text"
+                  placeholder="Search for items"
+                  size={90}
+                  onChange={(e) => {
+                    setSearchContent("items/search/" + e.target.value);
+                  }}
+                ></input>
+                <button type="submit">
+                  <i class="fa fa-search"></i>
+                </button>
+              </form>
+            </div>
             <div class="collapse navbar-collapse" id="navmenu">
               <ul class="navbar-nav ms-auto navbar-nav-scroll">
                 {loginLink}

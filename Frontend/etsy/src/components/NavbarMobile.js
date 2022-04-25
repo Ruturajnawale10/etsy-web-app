@@ -15,7 +15,6 @@ function Navbar() {
   let purchasesLink = null;
   let sellOnEtsyLink = null;
   let logoutLink = null;
-  let searchBar = null;
 
   if (!localStorage.getItem("token")) {
     loginLink = (
@@ -65,27 +64,6 @@ function Navbar() {
         Logout
       </a>
     );
-
-    searchBar = (
-      <div
-        class="search-container"
-        style={{ marginTop: "6px", marginRight: "10px" }}
-      >
-        <form action={searchContent}>
-          <input
-            id="searchbarid"
-            type="text"
-            placeholder="Search for items"
-            onChange={(e) => {
-              setSearchContent("items/search/" + e.target.value);
-            }}
-          ></input>
-          <button type="submit">
-            <i class="fa fa-search"></i>
-          </button>
-        </form>
-      </div>
-    );
   }
 
   return (
@@ -114,7 +92,24 @@ function Navbar() {
             <a href="/" style={{ marginLeft: "10px" }}>
               <img src={etsyicon} width={35} height={35}></img>
             </a>
-            {searchBar}
+            <div
+              class="search-container"
+              style={{ marginTop: "6px", marginRight: "10px" }}
+            >
+              <form action={searchContent}>
+                <input
+                  id="searchbarid"
+                  type="text"
+                  placeholder="Search for items"
+                  onChange={(e) => {
+                    setSearchContent("items/search/" + e.target.value);
+                  }}
+                ></input>
+                <button type="submit">
+                  <i class="fa fa-search"></i>
+                </button>
+              </form>
+            </div>
           </div>
           {loginLink}
           {registerLink}

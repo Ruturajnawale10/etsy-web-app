@@ -8,6 +8,7 @@ export const Additemform = ({ onSubmit }) => {
       <div className="form-group">
         <p>Add item image</p>
         <input className="form-control" type="file" id="imageFile"/>
+        <p style={{color:"#808080"}}>Upload image less than 1 MB</p>
       </div>
 
       <div className="form-group">

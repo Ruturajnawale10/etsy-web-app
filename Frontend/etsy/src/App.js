@@ -17,16 +17,18 @@ import Searchitems from './components/Searchitems';
 import ShopDetails from './components/ShopDetails';
 
 function App() {
-  let NavBar = (<Navbar/>);
+  var NavBar1 = null;
   if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-   NavBar = (<NavbarMobile/>);
+   NavBar1 = (<NavbarMobile/>);
+   } else {
+    NavBar1 = (<Navbar/>)
    }
    
   return (
     //Use Browser Router to route to different pages
     <Router>
     <div>
-      {NavBar}
+      {NavBar1}
         <Switch>
               <Route exact path="/items" component={Dashboard}/>
               <Route path="/login" component={Login}/>
