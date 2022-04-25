@@ -83,37 +83,39 @@ class Login extends Component {
       <div>
         {redirectVar}
         <div class="container">
-          <div class="login-form">
-            <div class="main-div">
-              <div class="panel">
-                <h2>Login</h2>
-                <p>Please enter your username and password</p>
-              </div>
-
-              <div class="form-group">
-                <input
-                  onChange={this.usernameChangeHandler}
-                  type="text"
-                  class="form-control"
-                  name="username"
-                  placeholder="Username"
-                />
-              </div>
-              <div class="form-group">
-                <input
-                  onChange={this.passwordChangeHandler}
-                  type="password"
-                  class="form-control"
-                  name="password"
-                  placeholder="Password"
-                />
-              </div>
-              <button onClick={this.submitLogin} class="btn btn-primary">
-                Login
-              </button>
-              {this.state.authMsg}
+          <h2>Login</h2>
+          <form>
+            <div class="mb-3">
+              <label for="userName" class="form-label">
+                Username
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="userName"
+                onChange={this.usernameChangeHandler}
+              />
             </div>
-          </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">
+                Password
+              </label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                onChange={this.passwordChangeHandler}
+              />
+            </div>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              style={{ backgroundColor: "darkorange" }}
+              onClick={this.submitLogin}
+            >
+              Submit
+            </button>
+          </form>
         </div>
       </div>
     );

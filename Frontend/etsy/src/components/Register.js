@@ -50,7 +50,7 @@ class Register extends Component {
     };
     //set the with credentials to true
     axios.defaults.headers.common["authorization"] =
-    localStorage.getItem("token");
+      localStorage.getItem("token");
     //make a post request with the user data
     axios
       .post(process.env.REACT_APP_LOCALHOST + "/user/register", data)
@@ -77,54 +77,41 @@ class Register extends Component {
     return (
       <div>
         {redirectVar}
-        <form onSubmit={this.submitRegister}>
-          <div class="container">
-            <div class="login-form">
-              <div class="main-div">
-                <div class="panel">
-                  <h2>Registration</h2>
-                  <p>Please enter these details</p>
-                </div>
-
-                <div class="form-group">
-                  <input
-                    onChange={this.usernameChangeHandler}
-                    type="text"
-                    class="form-control"
-                    name="username"
-                    placeholder="Username"
-                    required
-                    autoFocus
-                  />
-                </div>
-                <div class="form-group">
-                  <input
-                    onChange={this.emailChangeHandler}
-                    type="email"
-                    class="form-control"
-                    name="email"
-                    placeholder="Email ID"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <input
-                    onChange={this.passwordChangeHandler}
-                    type="password"
-                    class="form-control"
-                    name="password"
-                    placeholder="Password"
-                    required
-                  />
-                </div>
-                <button type="submit" class="btn btn-primary">
-                  Register
-                </button>
-                {this.state.authMsg}
-              </div>
+        <div class="container">
+          <h2>Register</h2>
+          <form>
+            <div class="mb-3">
+              <label for="userName" class="form-label">
+                Username
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="userName"
+                onChange={this.usernameChangeHandler}
+              />
             </div>
-          </div>
-        </form>
+            <div class="mb-3">
+              <label for="password" class="form-label">
+                Password
+              </label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                onChange={this.passwordChangeHandler}
+              />
+            </div>
+            <button
+              class="btn btn-primary"
+              style={{ backgroundColor: "darkorange" }}
+              onClick={this.submitRegister}
+            >
+              Register
+            </button>
+            {this.state.authMsg}
+          </form>
+        </div>
       </div>
     );
   }
