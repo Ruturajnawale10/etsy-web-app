@@ -92,6 +92,17 @@ class Register extends Component {
               />
             </div>
             <div class="mb-3">
+              <label for="email" class="form-label">
+                Email
+              </label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                onChange={this.emailChangeHandler}
+              />
+            </div>
+            <div class="mb-3">
               <label for="password" class="form-label">
                 Password
               </label>
@@ -104,7 +115,7 @@ class Register extends Component {
             </div>
             <button
               class="btn btn-primary"
-              style={{ backgroundColor: "darkorange" }}
+              style={{ backgroundColor: "#e65c00" }}
               onClick={this.submitRegister}
             >
               Register

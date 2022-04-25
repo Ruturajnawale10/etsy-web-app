@@ -1,6 +1,7 @@
 import './App.css';
 import React, {Component} from 'react';
 import Navbar from './components/Navbar';
+import NavbarMobile from './components/NavbarMobile';
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
 import Logout from './components/Logout';
@@ -16,11 +17,16 @@ import Searchitems from './components/Searchitems';
 import ShopDetails from './components/ShopDetails';
 
 function App() {
+  let NavBar = (<Navbar/>);
+  if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+   NavBar = (<NavbarMobile/>);
+   }
+   
   return (
     //Use Browser Router to route to different pages
     <Router>
     <div>
-      <Navbar/>
+      {NavBar}
         <Switch>
               <Route exact path="/items" component={Dashboard}/>
               <Route path="/login" component={Login}/>
