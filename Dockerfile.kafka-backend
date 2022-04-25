@@ -5,5 +5,5 @@ ADD ./kafka-backend/ /root/
 
 WORKDIR /root/
 
-EXPOSE 9092
+EXPOSE 9090
 ENTRYPOINT [ "node", "server.js"]
