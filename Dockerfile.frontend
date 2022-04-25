@@ -1,0 +1,9 @@
+FROM node:latest
+
+# ENV PATH=/usr/local/lib:/usr/local/lib/node_modules:/bin:/bin/sh
+ADD ./Frontend/etsy/ /root/
+
+WORKDIR /root/
+
+EXPOSE 3000
+ENTRYPOINT [ "npm", "start"]

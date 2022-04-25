@@ -1,49 +1,55 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import cookie from "react-cookies";
-import { Redirect } from "react-router";
 import favouritesicon from "../images/favouritesicon.jpg";
 import nonfavouritesicon from "../images/nonfavouritesicon.jpg";
 
 function Itemsoverview(props) {
   let url = document.location.href;
   let url_arr = url.split("/");
-  let item_name = url_arr.pop();
-  item_name = item_name.replaceAll("%20", " ").trim();
-  const [item, setItem] = useState({ item_name: "Item Name", price: 20 });
+  let itemName = url_arr.pop();
+  itemName = itemName.replaceAll("%20", " ").trim();
+  const [item, setItem] = useState({ itemName: "Item Name", price: 0 });
   const [quantityRequested, setQuantityRequested] = useState(1);
 
-  const [favouritesIconSRC, setFavouritesIconSRC] = useState("");
+  const [favouritesIconSRC, setFavouritesIconSRC] = useState(nonfavouritesicon);
   const [alert, setAlert] = useState(null);
+  const [shopLink, setShopLink] = useState(null);
+  const [displayButton, setDisplayButton] = useState("none");
 
   useEffect(() => {
-    axios.defaults.withCredentials = true;
-    console.log(item_name);
-    console.log(url);
+    axios.defaults.headers.common["authorization"] =
+      localStorage.getItem("token");
 
     axios
-      .get(process.env.REACT_APP_LOCALHOST + "/checkfavourite", {
+      .get(process.env.REACT_APP_LOCALHOST + "/items/details", {
         params: {
-          item_name: item_name,
+          itemName: itemName,
         },
       })
       .then((response) => {
-        if (response.data === "IS FAVOURITE") {
+        setItem(response.data);
+
+        setShopLink(
+          <a href={`/items/shopdetails/${response.data.shopName}`}>
+            {" "}
+            Shop: {response.data.shopName}
+          </a>
+        );
+        setDisplayButton("block");
+      });
+
+    axios
+      .get(process.env.REACT_APP_LOCALHOST + "/items/checkfavourite", {
+        params: {
+          itemName: itemName,
+        },
+      })
+      .then((response) => {
+        if (response.data === "ITEM IS FAVOURITE") {
           setFavouritesIconSRC(favouritesicon);
         } else {
           setFavouritesIconSRC(nonfavouritesicon);
         }
-      });
-
-    axios
-      .get(process.env.REACT_APP_LOCALHOST + "/itemdetails", {
-        params: {
-          item_name: item_name,
-        },
-      })
-      .then((response) => {
-        console.log(response.data[0]);
-        setItem(response.data[0]);
       });
   }, []);
 
@@ -56,10 +62,11 @@ function Itemsoverview(props) {
     }
 
     const data = {
-      item_name: item_name,
+      itemName: itemName,
     };
 
-    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common["authorization"] =
+      localStorage.getItem("token");
 
     axios
       .post(process.env.REACT_APP_LOCALHOST + "/addtofavourites", data)
@@ -69,36 +76,37 @@ function Itemsoverview(props) {
   };
 
   const addToCart = (e) => {
-      e.preventDefault();
-      if (quantityRequested > item.quantity) {
-            setAlert(<h6 style={{color:"red"}}>Out of Stock</h6>);
-      } else {
-        //call POST API to add to cart
-        const data = {
-            itemName: item.item_name,
-            price: item.price,
-            quantityRequested: quantityRequested
-          };
-      
-          axios.defaults.withCredentials = true;
-          axios
-            .post(process.env.REACT_APP_LOCALHOST + "/addtocart", data)
-            .then((response) => {
-              setAlert(<h6 style={{color:"green"}}>Added to cart</h6>);
-            });
-      }
-  }
+    e.preventDefault();
+    if (parseInt(quantityRequested) > item.quantity) {
+      setAlert(<h6 style={{ color: "red" }}>Out of stock</h6>);
+    } else {
+      //call POST API to add to cart
+      const data = {
+        itemName: item.itemName,
+        price: item.price,
+        quantityRequested: quantityRequested,
+      };
+
+      axios.defaults.headers.common["authorization"] =
+        localStorage.getItem("token");
+      axios
+        .post(process.env.REACT_APP_LOCALHOST + "/items/addtocart", data)
+        .then((response) => {
+          setAlert(<h6 style={{ color: "green" }}>Added to cart</h6>);
+        });
+    }
+  };
 
   return (
     <div>
       <div className="card" style={{ width: "100%" }}>
         <div class="row">
-          <div class="col-md-5" style={{ marginLeft:"50px"}}>
+          <div class="col-md-5" style={{ marginLeft: "50px" }}>
             <div class="thumbnail">
               <a href="#" class="navbar-brand">
                 <img
                   src={favouritesIconSRC}
-                  style={{ marginLeft: "450px", marginTop:"20px" }}
+                  style={{ marginLeft: "450px", marginTop: "20px" }}
                   alt="fav"
                   width={40}
                   height={40}
@@ -122,25 +130,37 @@ function Itemsoverview(props) {
               </a>
             </div>
           </div>
-          <div class="col-md-4" style={{ marginLeft:"150px", marginTop:"100px"}}>
-            <a href={`/shopdetails/${item.shop_name}`}> Shop: {item.shop_name}</a>
+          <div
+            class="col-md-4"
+            style={{ marginLeft: "150px", marginTop: "100px" }}
+          >
+            {shopLink}
             <h6> Sales: {item.sales}</h6>
             <br></br>
             <h2>
-              {item.item_name} | {item.description}
+              {item.itemName} | {item.description}
             </h2>
-            <h2>{item.price} $</h2>
+            <h2>$ {item.price}</h2>
             <br></br>
-            <input type="text"class="form-control" name="username" placeholder="Enter quantity" style={{width:"200px"}}
-                value={quantityRequested} onChange = {(e) => {setQuantityRequested(e.target.value); setAlert(null)}}
+            <input
+              type="text"
+              class="form-control"
+              name="username"
+              placeholder="Enter quantity"
+              style={{ width: "200px" }}
+              value={quantityRequested}
+              onChange={(e) => {
+                setQuantityRequested(e.target.value);
+                setAlert(null);
+              }}
             />
-            <br/>
+            <br />
             {alert}
-            <br/>
+            <br />
             <button
               type="button"
               class="btn btn-dark rounded-pill"
-              style={{ width: "400px", height: "50px", fontSize: "22px" }}
+              style={{ width: "400px", height: "50px", fontSize: "22px", display: displayButton }}
               onClick={addToCart}
             >
               Add to Cart

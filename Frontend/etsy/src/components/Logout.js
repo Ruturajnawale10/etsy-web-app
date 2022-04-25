@@ -5,22 +5,27 @@ import { Redirect } from "react-router";
 function Logout() {
   const [authMsg, setAuthMsg] = useState(null);
 
-  axios.defaults.withCredentials = true;
-  //make a post request with the user data
-  axios.post(process.env.REACT_APP_LOCALHOST + "/logout").then((response) => {
-    console.log("Data isss: ", response.data);
-    console.log("Status Code : ", response.status);
-    if (response.status === 200) {
-      setAuthMsg(true);
-    } else {
-      setAuthMsg(false);
-    }
-  });
+  axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
+  localStorage.removeItem("token");
+  localStorage.removeItem("user_id");
+  localStorage.removeItem("username");
+  axios
+    .post(process.env.REACT_APP_LOCALHOST + "/user/logout")
+    .then((response) => {
+      if (response.status === 200) {
+        console.log("Loggout out");
+
+        setAuthMsg(true);
+      } else {
+        setAuthMsg(false);
+      }
+    });
 
   return (
     <div>
       {authMsg}
-      <Redirect to="/login" />
+      <Redirect to="/user/login" />
     </div>
   );
 }

@@ -1,36 +1,34 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import cookie from "react-cookies";
 import { Redirect } from "react-router";
 import Additem from "./Popup/Additem";
 import "../App.css";
 
 function Shophome(props) {
   let redirectVar = null;
-  if (!cookie.load("cookie")) {
+  if (!localStorage.getItem("token")) {
     redirectVar = <Redirect to="/login" />;
   }
 
   const [items, setItems] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [displayButton, setDisplayButton] = useState("none");
-  const [msg, setMsg] = useState(null);
   const [fetchedImage, setFetchedImage] = useState(null);
   const [totalSales, setTotalSales] = useState(null);
 
   useEffect(() => {
-    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
     axios
-      .get(process.env.REACT_APP_LOCALHOST + "/getitems", {
+      .get(process.env.REACT_APP_LOCALHOST + "/your/shop/getitems", {
         params: {
           shopName: props.name,
         },
       })
       .then((response) => {
-
         let total = 0;
-        for (let sales in response.data) {
-          total += parseInt(sales);
+        for (let i = 0; i <  response.data.items.length; i++) {
+          total += response.data.items[i].sales;
         }
         setTotalSales(total);
         setItems(
@@ -39,10 +37,10 @@ function Shophome(props) {
               <th>Item name</th>
               <th>Sales</th>
             </tr>
-            {response.data.map((item, i) => {
+            {response.data.items.map((item, i) => {
               return (
                 <tr key={i} value={item}>
-                  <td>{item.item_name}</td>
+                  <td>{item.itemName}</td>
                   <td>{item.sales}</td>
                 </tr>
               );
@@ -50,10 +48,10 @@ function Shophome(props) {
           </table>
         );
 
-        if (response.data[0].image != null) {
+        if (response.data.image != null) {
           setFetchedImage(
             <img
-              src={"data:image/jpeg;base64," + response.data[0].image}
+              src={"data:image/jpeg;base64," + response.data.image}
               alt="Red dot"
               width={300}
               height={300}
@@ -77,18 +75,16 @@ function Shophome(props) {
   const setProfileImage = async (e) => {
     e.preventDefault();
     const convertedFile = await convertToBase64(imageFile);
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
     const s3URL = await axios.post(
-      process.env.REACT_APP_LOCALHOST + "/upload",
+      process.env.REACT_APP_LOCALHOST + "/your/shop/uploadshopimage",
       {
         image: convertedFile,
         imageName: imageFile.name,
       }
     );
-    setMsg(
-      <p style={{ fontSize: 30, color: "green", marginRight: 50 }}>
-        Shop Image updated!
-      </p>
-    );
+    window.location.reload(false);
   };
 
   return (
@@ -120,7 +116,6 @@ function Shophome(props) {
             Update
           </button>
         </div>
-        {msg}
         <br></br>
 
         <Additem name={props.name} />

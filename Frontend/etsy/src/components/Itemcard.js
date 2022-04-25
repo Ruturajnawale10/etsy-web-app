@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import cookie from "react-cookies";
-import { Redirect } from "react-router";
 import favouritesicon from "../images/favouritesicon.jpg";
 import nonfavouritesicon from "../images/nonfavouritesicon.jpg";
 
 function Itemcard(props) {
-  const [favouritesIconSRC, setFavouritesIconSRC] = useState("");
+  const [favouritesIconSRC, setFavouritesIconSRC] = useState(nonfavouritesicon);
+  const currency = localStorage.getItem("currency").split(" ")[0];
 
   useEffect(() => {
-    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
     axios
-      .get(process.env.REACT_APP_LOCALHOST + "/checkfavourite", {
+      .get(process.env.REACT_APP_LOCALHOST + "/items/checkfavourite", {
         params: {
-          item_name: props.item.item_name,
+          itemName: props.item.itemName,
         },
       })
       .then((response) => {
-        if (response.data === "IS FAVOURITE") {
+        if (response.data === "ITEM IS FAVOURITE") {
           setFavouritesIconSRC(favouritesicon);
         } else {
           setFavouritesIconSRC(nonfavouritesicon);
@@ -27,20 +27,32 @@ function Itemcard(props) {
 
   const addToFavourites = (e) => {
     e.preventDefault();
+    let isFavourite;
     if (favouritesIconSRC === favouritesicon) {
+      isFavourite = "YES";
       setFavouritesIconSRC(nonfavouritesicon);
     } else {
+      isFavourite = "NO";
       setFavouritesIconSRC(favouritesicon);
     }
 
+    let dataItem = {
+      itemName: props.item.itemName,
+      price: props.item.price,
+      quantity: props.item.quantity,
+      imageName: props.item.imageName,
+      shopName: props.item.shopName
+    };
     const data = {
-      item_name: props.item.item_name,
+      item:dataItem,
+      isFavourite: isFavourite
     };
 
-    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
 
     axios
-      .post(process.env.REACT_APP_LOCALHOST + "/addtofavourites", data)
+      .post(process.env.REACT_APP_LOCALHOST + "/items/addtofavourites", data)
       .then((response) => {
         console.log("Added to favourites");
       });
@@ -64,7 +76,7 @@ function Itemcard(props) {
               </a>
 
               <a
-                href={`/itemsoverview/${props.item.item_name}`}
+                href={`/items/${props.item.itemName}`}
                 target="_blank"
                 style={{
                   textDecoration: "none",
@@ -80,10 +92,10 @@ function Itemcard(props) {
 
                 <div>
                   <div style={{ display: "inline-block" }}>
-                    {props.item.item_name}
+                    {props.item.itemName}
                   </div>
                   <div style={{ display: "inline-block", marginLeft: "200px" }}>
-                    Price: {props.item.price}$
+                    Price: {currency} {props.item.price}
                   </div>
                   <div>
                     <p></p>

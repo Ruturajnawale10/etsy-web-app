@@ -1,15 +1,11 @@
 import React, { Component } from "react";
 import "../App.css";
 import axios from "axios";
-import cookie from "react-cookies";
 import { Redirect } from "react-router";
 
 class Register extends Component {
-  //call the constructor method
   constructor(props) {
-    //Call the constrictor of Super class i.e The Component
     super(props);
-    //maintain the state required for this component
     this.state = {
       username: "",
       email: "",
@@ -53,29 +49,28 @@ class Register extends Component {
       password: this.state.password,
     };
     //set the with credentials to true
-    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
     //make a post request with the user data
-    axios.post(process.env.REACT_APP_LOCALHOST + "/register", data).then((response) => {
-      if (response.data === "Login Failed") {
-        this.setState({
-          authMsg: (
-            <div class="invalid-feedback">
-              Invalid credentials. Please relogin.
-            </div>
-          ),
-        });
-      } else {
-        this.setState({
-          authMsg: <Redirect to="/login" />,
-        });
-      }
-    });
+    axios
+      .post(process.env.REACT_APP_LOCALHOST + "/user/register", data)
+      .then((response) => {
+        if (response.data === "ALREADY EXISTS") {
+          this.setState({
+            authMsg: <p style={{ color: "red" }}>Username already exists!</p>,
+          });
+        } else {
+          this.setState({
+            authMsg: <Redirect to="/login" />,
+          });
+        }
+      });
   };
 
   render() {
     //redirect based on successful login
     let redirectVar = null;
-    if (cookie.load("cookie")) {
+    if (localStorage.getItem("token")) {
       redirectVar = <Redirect to="/home" />;
     }
 
@@ -134,5 +129,5 @@ class Register extends Component {
     );
   }
 }
-//export Login Component
+
 export default Register;

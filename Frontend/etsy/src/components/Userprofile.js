@@ -1,42 +1,39 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import cookie from "react-cookies";
 import { Redirect } from "react-router";
 
 function Userprofile() {
   var [profileData, setProfileData] = useState([]);
   let [imageFile, setImageFile] = useState(null);
   let [fetchedImage, setFetchedImage] = useState(null);
-  let [alert, setAlert] = useState(null);
 
   let redirectVar = null;
-  if (!cookie.load("cookie")) {
+  if (!localStorage.getItem("token")) {
     redirectVar = <Redirect to="/login" />;
   }
 
   useEffect(() => {
-    axios.defaults.withCredentials = true;
-    axios.get(process.env.REACT_APP_LOCALHOST + "/profile").then((response) => {
-      if (response.data[0].birthdate !== null) {
-        let bday = response.data[0].birthdate.split(" ");
-        setProfileData({ ...response.data[0], month: bday[0], day: bday[1] });
-      } else {
-        setProfileData(response.data[0]);
-      }
-      setFetchedImage(
-        <img
-          src={"data:image/jpeg;base64," + response.data[0].image}
-          alt="Red dot"
-          width={130}
-          height={130}
-          class="img-fluid"
-        ></img>
-      );
-      let date = response.data[0].birthdate;
-      //setProfileData({...profileData, month: date[0]});
-      //setProfileData({...profileData, day: date[1]});
-      console.log(response.data[0]);
-    });
+    axios.defaults.headers.common["authorization"] =
+      localStorage.getItem("token");
+    axios
+      .get(process.env.REACT_APP_LOCALHOST + "/your/profile")
+      .then((response) => {
+        if (response.data.birthdate) {
+          let bday = response.data.birthdate.split(" ");
+          setProfileData({ ...response.data, month: bday[0], day: bday[1] });
+        } else {
+          setProfileData(response.data);
+        }
+        setFetchedImage(
+          <img
+            src={"data:image/jpeg;base64," + response.data.image}
+            alt="Red dot"
+            width={130}
+            height={130}
+            class="img-fluid"
+          ></img>
+        );
+      });
   }, []);
 
   const convertToBase64 = (imageFile) => {
@@ -52,27 +49,32 @@ function Userprofile() {
   const submitData = async (e) => {
     e.preventDefault();
 
+    localStorage.setItem("country", profileData.country);
     if (imageFile !== null) {
       const convertedFile = await convertToBase64(imageFile);
-      const s3URL = await axios.post(process.env.REACT_APP_LOCALHOST + "/profile", {
-        ...profileData,
-        image: convertedFile,
-        imageName: imageFile.name,
-      });
+      axios.defaults.headers.common["authorization"] =
+        localStorage.getItem("token");
+      const s3URL = await axios.post(
+        process.env.REACT_APP_LOCALHOST + "/your/profile",
+        {
+          ...profileData,
+          image: convertedFile,
+          imageName: imageFile.name,
+        }
+      );
     } else {
-      const s3URL = await axios.post(process.env.REACT_APP_LOCALHOST + "/profile", {
-        ...profileData,
-        image: null,
-        imageName: null,
-      });
+      axios.defaults.headers.common["authorization"] =
+        localStorage.getItem("token");
+      const s3URL = await axios.post(
+        process.env.REACT_APP_LOCALHOST + "/your/profile",
+        {
+          ...profileData,
+          image: null,
+          imageName: null,
+        }
+      );
     }
-
-    setAlert(
-      <p style={{ fontSize: 30, color: "green", marginRight: 50 }}>
-        {" "}
-        Profile Updated!
-      </p>
-    );
+    window.location.reload(false);
   };
 
   return (
@@ -614,7 +616,6 @@ function Userprofile() {
           <button type="submit" class="btn btn-dark">
             Save Changes
           </button>
-          {alert}
         </div>
       </form>
     </div>

@@ -1,26 +1,30 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import axios from "axios";
-import cookie from "react-cookies";
 import { Redirect } from "react-router";
 import Cartitemcard from "./Cartitemcard";
 
 function Favourites() {
-  const [redirectVar, setRedirectVar] = useState(null);
+  var [redirectVar, setRedirectVar] = useState(null);
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [itemsData, setItemsData] = useState(null);
   const [msg, setMsg] = useState(null);
 
-  if (!cookie.load("cookie")) {
-    setRedirectVar(<Redirect to="/login" />);
+  const canCheckout = useSelector(state => state.checkoutSlice.canCheckout);
+
+  if (!localStorage.getItem("token")) {
+    setRedirectVar = <Redirect to="/login" />;
   }
 
   useEffect(() => {
-    axios.defaults.withCredentials = true;
-    axios.get(process.env.REACT_APP_LOCALHOST + "/getcartitems").then((response) => {
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
+    axios.get(process.env.REACT_APP_LOCALHOST + "/items/getcartitems").then((response) => {
       let total = 0;
+      console.log(response.data)
       for (let item of response.data) {
-        total += item.price * item.quantity;
+        total += item.price * item.quantityRequested;
       }
       setTotal(total);
       setItemsData(response.data);
@@ -28,7 +32,7 @@ function Favourites() {
         <div className="container">
           <div className="row">
             {response.data.map((item) => (
-              <div key={item.item_name} id="cartitemcard" className="col-xs-4">
+              <div key={item.itemName} id="cartitemcard" className="col-xs-4">
                 <Cartitemcard item={item} />
               </div>
             ))}
@@ -50,22 +54,31 @@ function Favourites() {
   }
 
   const checkout = (e) => {
+    if (canCheckout === "NO") {
+      setMsg(
+        <p style={{ color: "red", fontSize: "20px", marginLeft:"50px" }}>
+          Cannot checkout. Please remove the items with Insufficient requested quantities or request for different quantity if available.
+        </p>
+      );
+      return;
+    }
     let orderID = makeid(10);
     let data = {
       items: itemsData,
-      order_id: orderID,
+      orderID: orderID,
     };
 
-    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
 
-    axios.post(process.env.REACT_APP_LOCALHOST + "/checkout", data).then((response) => {
+    axios.post(process.env.REACT_APP_LOCALHOST + "/orders/checkout", data).then((response) => {
       if (response.data === "FILL ADDRESS") {
         setMsg(
           <p style={{ color: "red", fontSize: "20px", marginLeft:"50px" }}>
             Please fill your address in the profile for completing the order
           </p>
         );
-      } else {
+      } else if (response.data === "SUCCESS"){
         console.log("Order placed successfully!");
         setRedirectVar(<Redirect to="/purchases" />);
       }
@@ -78,7 +91,7 @@ function Favourites() {
       <h1>Your Cart</h1>
       {items}
 
-      <h3 style={{ marginTop: "60px", marginLeft: "50px" }}>Total: {total}</h3>
+      <h3 style={{ marginTop: "60px", marginLeft: "50px" }}>Total: $ {total}</h3>
 
       <button
         type="button"

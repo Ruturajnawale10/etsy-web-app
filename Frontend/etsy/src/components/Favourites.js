@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import cookie from "react-cookies";
 import { Redirect } from "react-router";
 import Itemcard from "./Itemcard";
 
 function Favourites() {
   let redirectVar = null;
   const [items, setItems] = useState([]);
-  if (!cookie.load("cookie")) {
+  if (!localStorage.getItem("token")) {
     redirectVar = <Redirect to="/login" />;
   }
 
   useEffect(() => {
-    axios.defaults.withCredentials = true;
-    axios.get(process.env.REACT_APP_LOCALHOST + "/getfavouriteitems").then((response) => {
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
+    axios.get(process.env.REACT_APP_LOCALHOST + "/items/favourites").then((response) => {
       setItems(
         <div className="container">
           <div className="row">
             {response.data.map((item) => (
-              <div key={item.item_name} id="cardItem" className="col-xs-4">
+              <div key={item.itemName} id="cardItem" className="col-xs-4">
                 <Itemcard item={item} />
               </div>
             ))}

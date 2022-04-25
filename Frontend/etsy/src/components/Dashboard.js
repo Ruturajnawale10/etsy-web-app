@@ -1,30 +1,34 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import cookie from "react-cookies";
 import { Redirect } from "react-router";
 import Itemcard from "./Itemcard";
+import Footer from "../components/Footer.js";
 
 function Dashboard() {
   let redirectVar = null;
   const [items, setItems] = useState([]);
-  if (!cookie.load("cookie")) {
+  const [footer, setFooter] = useState(null);
+
+  if (!localStorage.getItem("token")) {
     redirectVar = <Redirect to="/login" />;
   }
 
   useEffect(() => {
-    axios.defaults.withCredentials = true;
-    axios.get(process.env.REACT_APP_LOCALHOST + "/getallitems").then((response) => {
+    axios.defaults.headers.common["authorization"] =
+    localStorage.getItem("token");
+    axios.get(process.env.REACT_APP_LOCALHOST + "/items/getallitems").then((response) => {
       setItems(
         <div className="container">
           <div className="row">
             {response.data.map((item) => (
-              <div key={item.item_name} id="cardItem" className="col-xs-4">
+              <div key={item.itemName} id="cardItem" className="col-xs-4">
                 <Itemcard item={item} />
               </div>
             ))}
           </div>
         </div>
       );
+      setFooter(<Footer/>);
     });
   }, []);
 
@@ -33,6 +37,7 @@ function Dashboard() {
       {redirectVar}
       <h1>Explore a variety of products</h1>
       {items}
+      {footer}
     </div>
   );
 }

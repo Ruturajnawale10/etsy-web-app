@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import React, {Component} from 'react';
 import Navbar from './components/Navbar';
@@ -23,19 +22,19 @@ function App() {
     <div>
       <Navbar/>
         <Switch>
-              <Route exact path="/" component={Dashboard}/>
+              <Route exact path="/items" component={Dashboard}/>
               <Route path="/login" component={Login}/>
               <Route path="/logout" component={Logout}/>
               <Route path="/register" component={Register}/>
-              <Route path="/profile" component={Userprofile}/>
-              <Route path="/favourites" component={Favourites}/>
-              <Route path="/shopexists" component={Sellonetsy}/>
+              <Route path="/your/profile" component={Userprofile}/>
+              <Route exact path="/items/favourites" component={Favourites}/>
+              <Route path="/your/shop" component={Sellonetsy}/>
               <Route path="/cart" component={Cart}/>
-              <Route path="/itemsoverview" component={Itemsoverview}/>
+              <Route path="/items/shopdetails" component={ShopDetails}/>
+              <Route path="/items/search" component={Searchitems}/>
+              <Route path="/items" component={Itemsoverview}/>
               <Route path="/purchases" component={Purchases}/>
-              <Route path="/search" component={Searchitems}/>
-              <Route path="/shopdetails" component={ShopDetails}/>
-              <Redirect from='*' to='/' />    {/*redirects any other url other then above to / path i.e. login*/}
+              <Redirect from='*' to='/items' />    {/*redirects any other url other then above to / path i.e. login*/}
         </Switch>
       </div>
     </Router>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { Container } from "./Container";
 import "./index.css";
@@ -19,12 +19,10 @@ const Additem = (props) => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    console.log("onSubmit line");
-    console.log(e.target);
 
     let data = {
-      item_name: e.target.name.value,
-      shop_name: props.name,
+      itemName: e.target.name.value,
+      shopName: props.name,
       category: e.target.category.value,
       description: e.target.description.value,
       price: e.target.price.value,
@@ -34,11 +32,14 @@ const Additem = (props) => {
     let imageFile = e.target[0].files[0];
     if (imageFile === undefined) {
       setAlert("Please add an image of the item");
+      //window.location.reload(false);
     } else {
       const convertedFile = await convertToBase64(imageFile);
+      axios.defaults.headers.common["authorization"] =
+        localStorage.getItem("token");
 
       const s3URL = await axios.post(
-        process.env.REACT_APP_LOCALHOST + "/additem",
+        process.env.REACT_APP_LOCALHOST + "/your/shop/additem",
         {
           ...data,
           image: convertedFile,
@@ -46,11 +47,7 @@ const Additem = (props) => {
         }
       );
 
-      setAlert(
-        <p style={{ fontSize: 30, color: "green", marginRight: 50 }}>
-          Item Inserted!
-        </p>
-      );
+      window.location.reload(false);
     }
   };
 
@@ -58,8 +55,8 @@ const Additem = (props) => {
     e.preventDefault();
 
     let data = {
-      item_name: e.target.name.value,
-      shop_name: props.name,
+      itemName: e.target.name.value,
+      shopName: props.name,
       category: e.target.category.value,
       description: e.target.description.value,
       price: e.target.price.value,
@@ -68,39 +65,28 @@ const Additem = (props) => {
 
     let imageFile = e.target[0].files[0];
     if (imageFile !== undefined) {
-      console.log("hahahaha");
       const convertedFile = await convertToBase64(imageFile);
       const response = await axios.post(
-        process.env.REACT_APP_LOCALHOST + "/updateitem",
+        process.env.REACT_APP_LOCALHOST + "/your/shop/updateitem",
         {
           ...data,
           image: convertedFile,
           imageName: imageFile.name,
         }
       );
-      if (response === "SUCCESS") {
-        setUpdatealert(
-          <p style={{ fontSize: 30, color: "green", marginRight: 50 }}>
-            Item Updated!
-          </p>
-        );
+      if (response.data === "SUCCESS") {
+        window.location.reload(false);
       }
     } else {
       const response = await axios.post(
-        process.env.REACT_APP_LOCALHOST + "/updateitem",
+        process.env.REACT_APP_LOCALHOST + "/your/shop/updateitem",
         {
           ...data,
           image: null,
           imageName: null,
         }
       );
-      if (response === "SUCCESS") {
-        setUpdatealert(
-          <p style={{ fontSize: 30, color: "green", marginRight: 50 }}>
-            Item Updated!
-          </p>
-        );
-      }
+      window.location.reload(false);
     }
   };
 

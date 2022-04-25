@@ -1,10 +1,4 @@
 import React, { useState } from "react";
-import Dashboard from "./Dashboard";
-import Login from "./Login";
-import Register from "./Register";
-import { Link } from "react-router-dom";
-import cookie from "react-cookies";
-import { Redirect } from "react-router";
 import favouritesicon from "../images/favouritesicon.jpg";
 import etsyicon from "../images/etsy-icon.png";
 import cartsicon from "../images/carts-icon.png";
@@ -14,7 +8,6 @@ import "../App.css";
 
 function Navbar() {
   let [searchContent, setSearchContent] = useState(null);
-  let redirectVar = null;
   let loginLink = null;
   let registerLink = null;
   let favouritesLink = null;
@@ -23,7 +16,7 @@ function Navbar() {
   let sellOnEtsyLink = null;
   let logoutLink = null;
 
-  if (!cookie.load("cookie")) {
+  if (!localStorage.getItem("token")) {
     loginLink = (
       <li class="nav-item">
         <a href="/login" class="nav-link">
@@ -41,7 +34,7 @@ function Navbar() {
     );
   } else {
     favouritesLink = (
-      <a href="/favourites" class="navbar-brand">
+      <a href="/items/favourites" class="navbar-brand">
         <img
           src={favouritesicon}
           width={40}
@@ -53,28 +46,24 @@ function Navbar() {
 
     cartsLink = (
       <a href="/cart" class="navbar-brand">
-        <img
-          src={cartsicon}
-          width={40}
-          height={40}
-          class="img-fluid"
-        ></img>
+        <img src={cartsicon} width={40} height={40} class="img-fluid"></img>
       </a>
     );
 
     purchasesLink = (
-      <a href="/purchases" class="navbar-brand">
-        <img
-          src={cart}
-          width={40}
-          height={40}
-          class="img-fluid"
-        ></img>
+      <a
+        href="/purchases"
+        class="navbar-brand"
+        onClick={() => {
+          localStorage.setItem("pageNum", 1);
+        }}
+      >
+        <img src={cart} width={40} height={40} class="img-fluid"></img>
       </a>
     );
 
     sellOnEtsyLink = (
-      <a href="/shopexists" class="navbar-brand">
+      <a href="/your/shop" class="navbar-brand">
         Sell on Etsy
       </a>
     );
@@ -84,10 +73,6 @@ function Navbar() {
         Logout
       </a>
     );
-  }
-
-  const onSearchClick = (e) => {
-
   }
 
   return (
@@ -133,10 +118,11 @@ function Navbar() {
                   type="text"
                   placeholder="Search for anything"
                   size={90}
-                  onChange= {(e) => { setSearchContent("search/" +e.target.value)} }
+                  onChange={(e) => {
+                    setSearchContent("items/search/" + e.target.value);
+                  }}
                 ></input>
-                <button type="submit"> 
-                 {/* onSubmit={onSearchClick} */}
+                <button type="submit">
                   <i class="fa fa-search"></i>
                 </button>
               </form>
@@ -152,7 +138,7 @@ function Navbar() {
                 {sellOnEtsyLink}
                 {logoutLink}
 
-                <a href="/profile" class="navbar-brand">
+                <a href="/your/profile" class="navbar-brand">
                   <img
                     src={profileicon}
                     width={40}

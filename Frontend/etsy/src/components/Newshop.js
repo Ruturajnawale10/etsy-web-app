@@ -1,7 +1,6 @@
 import React from "react";
 import { useState } from "react";
 import axios from "axios";
-import cookie from "react-cookies";
 import { Redirect } from "react-router";
 import "../App.css";
 
@@ -11,44 +10,66 @@ function Newshop() {
   let [redirectVar, setRedirectVar] = useState(null);
   const [msg, setMsg] = useState(null);
 
-  if (!cookie.load("cookie")) {
+  if (!localStorage.getItem("token")) {
     setRedirectVar(<Redirect to="/login" />);
   }
 
   const checkAvailibility = (e) => {
     e.preventDefault();
-    axios.get(process.env.REACT_APP_LOCALHOST + "/checkavailibility", {
+    axios
+      .get(process.env.REACT_APP_LOCALHOST + "/your/shop/checkavailibility", {
         params: {
           shopName: shopName,
         },
       })
       .then((response) => {
         if (response.data === "available") {
-          setAvailable(<p style={{marginLeft:"600px", marginTop:"60px", color:"green", fontSize:"20px"}}>Available</p>);
+          setAvailable(
+            <p
+              style={{
+                marginLeft: "600px",
+                marginTop: "60px",
+                color: "green",
+                fontSize: "20px",
+              }}
+            >
+              Available
+            </p>
+          );
         } else {
-          setAvailable(<p style={{marginLeft:"600px", marginTop:"60px", color:"red", fontSize:"20px"}}>Shop name already taken!</p>);
+          setAvailable(
+            <p
+              style={{
+                marginLeft: "600px",
+                marginTop: "60px",
+                color: "red",
+                fontSize: "20px",
+              }}
+            >
+              Shop name already taken!
+            </p>
+          );
         }
       });
   };
 
   const submitShopName = (e) => {
-    //prevent page from refresh
     e.preventDefault();
-    //set the with credentials to true
-    axios.defaults.withCredentials = true;
-    //make a post request with the user data
+    axios.defaults.headers.common["authorization"] =
+      localStorage.getItem("token");
     axios
-      .post(process.env.REACT_APP_LOCALHOST + "/createshop", { shopname: shopName })
+      .post(process.env.REACT_APP_LOCALHOST + "/your/shop/createshop", {
+        shopName: shopName,
+      })
       .then((response) => {
         if (response.data === "FILL ADDRESS") {
           setMsg(
-            <p style={{ color: "red", fontSize: "20px", marginLeft:"50px" }}>
+            <p style={{ color: "red", fontSize: "20px", marginLeft: "50px" }}>
               Please fill your address in the profile for creating a new shop
             </p>
           );
-        }
-        else if (response.data === "SUCCESS") {
-          setRedirectVar(<Redirect to="/sellonetsy"/>);
+        } else if (response.data === "SUCCESS") {
+          window.location.reload(false);
         }
       });
   };

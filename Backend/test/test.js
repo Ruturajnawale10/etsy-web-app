@@ -14,7 +14,7 @@ describe("/Profile details authenticity", () => {
   it("to get the correct profile details", async () => {
     const res = await chai
       .request(service)
-      .get("/profile")
+      .get("/your/profile")
       .set("Cookie", "username=admin");
     equal(res.status, 200);
     equal(res.body[0].name, "Ruturaj Nawale");
@@ -27,7 +27,7 @@ describe("/Check if user has created the shop", () => {
   it("to check if user created shop", (done) => {
     chai
       .request(service)
-      .get("/shopexists")
+      .get("/your/shop")
       .set("Cookie", "username=xyzpqr")
       .end((err, res) => {
         equal(res.status, 200);
@@ -52,7 +52,7 @@ describe("/Check if favourite item", () => {
     const res = await chai
       .request(service)
       .get("/checkfavourite")
-      .query({ item_name: "ps4" })
+      .query({ itemName: "ps4" })
       .set("Cookie", "username=admin");
     equal(res.text, "IS FAVOURITE");
   });
@@ -60,7 +60,7 @@ describe("/Check if favourite item", () => {
     const res = await chai
       .request(service)
       .get("/checkfavourite")
-      .query({ item_name: "Bicycle" })
+      .query({ itemName: "Bicycle" })
       .set("Cookie", "username=admin");
     equal(res.text, "NOT FAVOURITE");
   });
@@ -70,9 +70,9 @@ describe("/Check item details", () => {
   it("to check item details", async () => {
     const res = await chai
       .request(service)
-      .get("/itemdetails")
-      .query({ item_name: "Bicycle" });
+      .get("/item/details")
+      .query({ itemName: "Bicycle" });
     equal(res.body[0].price, 300);
-    equal(res.body[0].shop_name, "Sony_tusa");
+    equal(res.body[0].shopName, "Sony_tusa");
   });
 });
