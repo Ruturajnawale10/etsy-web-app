@@ -6,6 +6,7 @@ import Users from "../models/UserModel.js";
 import { checkAuth } from "../utils/passport.js";
 import jwtDecode from "jwt-decode";
 import imagesService from "../utils/imagesService.js";
+import kafka from "../kafka/client.js";
 
 router.get("/details", checkAuth, function (req, res, next) {
   console.log("Items overview GET Request");
@@ -94,29 +95,22 @@ router.post("/addtocart", async (req, res, next) => {
   let token = req.headers.authorization;
   var decoded = jwtDecode(token.split(" ")[1]);
   let user_id = decoded._id;
-  let itemName = req.body.itemName;
-  let price = req.body.price;
-  let quantityRequested = req.body.quantityRequested;
+  req.body.userID = user_id;
 
-  Users.findOneAndUpdate(
-    { _id: user_id },
-    {
-      $push: {
-        cartItems: {
-          itemName: itemName,
-          quantityRequested: quantityRequested,
-          isGift: false
-        },
-      },
-    },
-    function (err, doc) {
-      if (err) {
-        res.send("FAILURE");
+  kafka("item", req.body, function (err, item) {
+    console.log("in result");
+    if (err) {
+      console.log("Inside err", err);
+      res.end("FAILURE");
+    } else {
+      console.log("Inside else");
+      if (item) {
+        res.end("SUCCESS");
       } else {
-        res.send("SUCCESS");
+        res.end("FAILURE");
       }
     }
-  );
+  });
 });
 
 router.get("/getcartitems", function (req, res, next) {
@@ -134,7 +128,7 @@ router.get("/getcartitems", function (req, res, next) {
           quantityRequested: quantityRequested,
           price: item.price,
           quantity: item.quantity,
-          isGift: isGift
+          isGift: isGift,
         });
         resolve(item);
       });
@@ -240,6 +234,7 @@ router.post("/change/giftoption", function (req, res) {
   let itemName = req.body.itemName;
   let quantityRequested = req.body.quantityRequested;
   let isGift = req.body.isGift;
+  let note = req.body.note;
 
   Users.findOneAndUpdate(
     { _id: user_id },
@@ -258,6 +253,7 @@ router.post("/change/giftoption", function (req, res) {
                 itemName: itemName,
                 quantityRequested: quantityRequested,
                 isGift: isGift,
+                note: note,
               },
             },
           },

@@ -5,6 +5,7 @@ import Users from "../models/UserModel.js";
 import { checkAuth } from "../utils/passport.js";
 import jwtDecode from "jwt-decode";
 import imagesService from "../utils/imagesService.js";
+import kafka from "../kafka/client.js";
 
 router.get("/profile", checkAuth, async (req, res) => {
   console.log("Inside Profile GET Request");
@@ -37,85 +38,25 @@ router.get("/profile", checkAuth, async (req, res) => {
 });
 
 router.post("/profile", checkAuth, async (req, res, next) => {
-  console.log("Inside Profile POST Request");
-
-  let name = req.body.name;
-  let about = req.body.about;
-  let city = req.body.city;
-  let email = req.body.email;
-  let phone = req.body.phone;
-  let address = req.body.address;
-  let country = req.body.country;
-  let birthdate;
-  if (req.body.month && req.body.day) {
-    birthdate = `${req.body.month} ${req.body.day}`;
-  }
-  let gender = req.body.gender;
-
+  console.log("Inside Profile update POST Request");
   let token = req.headers.authorization;
   var decoded = jwtDecode(token.split(" ")[1]);
-  let user_id = decoded._id;
+  req.body.userID = decoded._id;
 
-  const base64Image = req.body.image;
-
-  if (base64Image === null) {
-    Users.findOneAndUpdate(
-      { _id: user_id },
-      {
-        $set: {
-          name: name,
-          about: about,
-          city: city,
-          email: email,
-          phone: phone,
-          address: address,
-          country: country,
-          birthdate: birthdate,
-          gender: gender,
-        },
-      },
-      function (err, doc) {
-        if (err) {
-          res.send("FAILURE");
-        } else {
-          res.send("SUCCESS");
-        }
+  kafka("user", req.body, function (err, user) {
+    console.log("in result");
+    if (err) {
+      console.log("Inside err", err);
+      res.end("FAILURE");
+    } else {
+      console.log("Inside else");
+      if (user) {
+        res.end("SUCCESS");
+      } else {
+        res.end("FAILURE");
       }
-    );
-  } else {
-    try {
-      const imageName = "profile-pictures/" + req.body.imageName;
-      let response = await imagesService.upload(imageName, base64Image);
-      Users.findOneAndUpdate(
-        { _id: user_id },
-        {
-          $set: {
-            name: name,
-            about: about,
-            city: city,
-            email: email,
-            phone: phone,
-            address: address,
-            country: country,
-            birthdate: birthdate,
-            gender: gender,
-            imageName: imageName,
-          },
-        },
-        function (err, doc) {
-          if (err) {
-            console.log("User update failed");
-          } else {
-            console.log("User updated");
-            res.end("SUCCESS");
-          }
-        }
-      );
-    } catch (err) {
-      console.error(`Error uploading image: ${err.message}`);
-      return next(new Error(`Error uploading image: ${req.body.imageName}`));
     }
-  }
+  });
 });
 
 router.post("/change/currency", checkAuth, async (req, res) => {

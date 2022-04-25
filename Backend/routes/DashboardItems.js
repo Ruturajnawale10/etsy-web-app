@@ -50,44 +50,28 @@ router.get("/getallitems", checkAuth, function (req, res) {
   });
 });
 
-router.post("/addtofavourites", checkAuth, function (req, res) {
+router.post("/addtofavourites", function (req, res) {
   console.log("Inside Add to Favourites Post Request");
-  let item = req.body.item;
-  let isFavourite = req.body.isFavourite;
+
   let token = req.headers.authorization;
   var decoded = jwtDecode(token.split(" ")[1]);
-  let userName = decoded.username;
+  let username = decoded.username;
+  req.body.userName = username;
 
-  if (isFavourite === "YES") {
-    Favourites.findOneAndUpdate(
-      { userName: userName },
-      {
-        $pull: { items: { itemName: item.itemName } },
-      },
-      (error, result) => {
-        if (error) {
-          res.end("FAILURE");
-        } else {
-          res.send("SUCCESS");
-        }
+    kafka('favourite_items', req.body, function (err, item) {
+    console.log("in result");
+    if (err) {
+      console.log("Inside err", err);
+      res.end("FAILURE");
+    } else {
+      console.log("Inside else");
+      if (item) {
+        res.end("SUCCESS");
+      } else {
+        res.end("FAILURE");
       }
-    );
-  } else {
-    console.log("Adding to favourites");
-    Favourites.findOneAndUpdate(
-      { userName: userName },
-      {
-        $push: { items: item },
-      },
-      (error, result) => {
-        if (error) {
-          res.end("FAILURE");
-        } else {
-          res.send("SUCCESS");
-        }
-      }
-    );
-  }
+    }
+  });
 });
 
 router.get("/checkfavourite", checkAuth, function (req, res, next) {
@@ -190,7 +174,7 @@ router.get("/search", function (req, res, next) {
         .then(() => {
           console.log("All images fetched successfully!");
           for (let i = 0; i < item.length; i++) {
-            item[i] = { ...item[i], image: images_arr[i] };
+            item[i].image = images_arr[i];
           }
           res.status(200).send(item);
         })

@@ -1,0 +1,9 @@
+FROM node:latest
+
+# ENV PATH=/usr/local/lib:/usr/local/lib/node_modules:/bin:/bin/sh
+ADD ./kafka-backend/ /root/
+
+WORKDIR /root/
+
+EXPOSE 9092
+ENTRYPOINT [ "node", "server.js"]

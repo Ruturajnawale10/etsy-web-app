@@ -7,6 +7,7 @@ import Users from "../models/UserModel.js";
 import { checkAuth } from "../utils/passport.js";
 import jwtDecode from "jwt-decode";
 import imagesService from "../utils/imagesService.js";
+import kafka from "../kafka/client.js";
 
 router.get("/checkavailibility", checkAuth, function (req, res) {
   console.log("Inside check availibility GET Request");
@@ -139,104 +140,43 @@ router.get("/getitems", checkAuth, function (req, res, next) {
 
 router.post("/additem", checkAuth, async (req, res) => {
   console.log("Inside AddItem Post Request");
-  let itemName = req.body.itemName;
-  let shopName = req.body.shopName;
-  let category = req.body.category;
-  let description = req.body.description;
-  let price = req.body.price;
-  let quantity = req.body.quantity;
   let token = req.headers.authorization;
   var decoded = jwtDecode(token.split(" ")[1]);
   let username = decoded.username;
-  let imageName = req.body.imageName;
-  const base64Image = req.body.image;
-  imageName = `items/${imageName}`;
+  req.body.userName = username;
 
-  try {
-    let response = await imagesService.upload(imageName, base64Image);
-
-    let item = new Items({
-      itemName: itemName,
-      shopName: shopName,
-      itemOwner: username,
-      category: category,
-      description: description,
-      price: price,
-      quantity: quantity,
-      imageName: imageName,
-    });
-    item.save(item, (error, shop) => {
+  kafka("shop", req.body, function (err, item) {
+    console.log("in result");
+    if (err) {
+      console.log("Inside err", err);
+      res.end("FAILURE");
+    } else {
+      console.log("Inside else");
       if (item) {
-        res.send("SUCCESS");
+        res.end("SUCCESS");
       } else {
-        res.send("FAILURE");
+        res.end("FAILURE");
       }
-    });
-  } catch (err) {
-    console.error(`Error uploading image: ${err.message}`);
-    res.end("complete");
-  }
+    }
+  });
 });
 
 router.post("/updateitem", checkAuth, async (req, res, next) => {
   console.log("Inside Update Item Post Request");
-  let itemName = req.body.itemName;
-  let category = req.body.category;
-  let description = req.body.description;
-  let price = req.body.price;
-  let quantity = req.body.quantity;
-
-  let imageName = req.body.imageName;
-  const base64Image = req.body.image;
-  imageName = `items/${imageName}`;
-
-  if (base64Image === null) {
-    Items.findOneAndUpdate(
-      { itemName: itemName },
-      {
-        $set: {
-          category: category,
-          description: description,
-          price: price,
-          quantity: quantity,
-        },
-      },
-      function (err, doc) {
-        if (err) {
-          res.send("FAILURE");
-        } else {
-          res.send("SUCCESS");
-        }
+  kafka("shop", req.body, function (err, item) {
+    console.log("in result");
+    if (err) {
+      console.log("Inside err", err);
+      res.end("FAILURE");
+    } else {
+      console.log("Inside else");
+      if (item) {
+        res.end("SUCCESS");
+      } else {
+        res.end("FAILURE");
       }
-    );
-  } else {
-    try {
-      const imageName = "items/" + req.body.imageName;
-      let response = await imagesService.upload(imageName, base64Image);
-      Items.findOneAndUpdate(
-        { itemName: itemName },
-        {
-          $set: {
-            category: category,
-            description: description,
-            price: price,
-            quantity: quantity,
-            imageName: imageName,
-          },
-        },
-        function (err, doc) {
-          if (err) {
-            res.send("FAILURE");
-          } else {
-            res.send("SUCCESS");
-          }
-        }
-      );
-    } catch (err) {
-      console.error(`Error uploading image: ${err.message}`);
-      return next(new Error(`Error uploading image: ${req.body.imageName}`));
     }
-  }
+  });
 });
 
 export default router;

@@ -13,10 +13,30 @@ function Itemsoverview(props) {
 
   const [favouritesIconSRC, setFavouritesIconSRC] = useState(nonfavouritesicon);
   const [alert, setAlert] = useState(null);
+  const [shopLink, setShopLink] = useState(null);
+  const [displayButton, setDisplayButton] = useState("none");
 
   useEffect(() => {
     axios.defaults.headers.common["authorization"] =
       localStorage.getItem("token");
+
+    axios
+      .get(process.env.REACT_APP_LOCALHOST + "/items/details", {
+        params: {
+          itemName: itemName,
+        },
+      })
+      .then((response) => {
+        setItem(response.data);
+
+        setShopLink(
+          <a href={`/items/shopdetails/${response.data.shopName}`}>
+            {" "}
+            Shop: {response.data.shopName}
+          </a>
+        );
+        setDisplayButton("block");
+      });
 
     axios
       .get(process.env.REACT_APP_LOCALHOST + "/items/checkfavourite", {
@@ -30,16 +50,6 @@ function Itemsoverview(props) {
         } else {
           setFavouritesIconSRC(nonfavouritesicon);
         }
-      });
-
-    axios
-      .get(process.env.REACT_APP_LOCALHOST + "/items/details", {
-        params: {
-          itemName: itemName,
-        },
-      })
-      .then((response) => {
-        setItem(response.data);
       });
   }, []);
 
@@ -124,10 +134,7 @@ function Itemsoverview(props) {
             class="col-md-4"
             style={{ marginLeft: "150px", marginTop: "100px" }}
           >
-            <a href={`/items/shopdetails/${item.shopName}`}>
-              {" "}
-              Shop: {item.shopName}
-            </a>
+            {shopLink}
             <h6> Sales: {item.sales}</h6>
             <br></br>
             <h2>
@@ -153,7 +160,7 @@ function Itemsoverview(props) {
             <button
               type="button"
               class="btn btn-dark rounded-pill"
-              style={{ width: "400px", height: "50px", fontSize: "22px" }}
+              style={{ width: "400px", height: "50px", fontSize: "22px", display: displayButton }}
               onClick={addToCart}
             >
               Add to Cart

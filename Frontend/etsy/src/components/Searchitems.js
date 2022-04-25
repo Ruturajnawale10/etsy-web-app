@@ -22,6 +22,7 @@ function Searchitems() {
         params: {itemName: itemname,}
   },
     ).then((response) => {
+      console.log(response.data);
       setItems(
         <div className="container">
           <div className="row">
