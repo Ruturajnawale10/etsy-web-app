@@ -48,23 +48,31 @@ class Register extends Component {
       email: this.state.email,
       password: this.state.password,
     };
-    //set the with credentials to true
-    axios.defaults.headers.common["authorization"] =
-    localStorage.getItem("token");
-    //make a post request with the user data
-    axios
-      .post(process.env.REACT_APP_LOCALHOST + "/user/register", data)
-      .then((response) => {
-        if (response.data === "ALREADY EXISTS") {
-          this.setState({
-            authMsg: <p style={{ color: "red" }}>Username already exists!</p>,
-          });
-        } else {
-          this.setState({
-            authMsg: <Redirect to="/login" />,
-          });
-        }
+
+    const qlQuery = async (query, variables = {}) => {
+      const resp = await fetch("http://localhost:4001", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, variables }),
       });
+      return (await resp.json()).data;
+    };
+
+    (async () => {
+      // Mutation addUser
+      console.log(
+        await qlQuery(
+          "mutation _($userInput: UserInput) {addUser(user: $userInput) {id email}}",
+          {
+            userInput: {
+              username: this.state.username,
+              password: this.state.password,
+              email: this.state.email,
+            },
+          }
+        )
+      );
+    })();
   };
 
   render() {
