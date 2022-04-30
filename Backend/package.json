@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js",
+    "dev": "nodemon",
     "test": "mocha"
   },
   "repository": {
@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/Ruturajnawale10/etsy-web-app#readme",
   "dependencies": {
+    "apollo-server": "^3.7.0",
     "aws-sdk": "^2.1092.0",
     "chai-http": "^4.3.0",
     "cookie-parser": "^1.4.6",

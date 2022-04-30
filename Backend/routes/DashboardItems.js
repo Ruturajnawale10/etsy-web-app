@@ -6,7 +6,6 @@ import Favourites from "../models/FavouritesModel.js";
 import { checkAuth } from "../utils/passport.js";
 import jwtDecode from "jwt-decode";
 import imagesService from "../utils/imagesService.js";
-import kafka from "../kafka/client.js";
 
 router.get("/getallitems", checkAuth, function (req, res) {
   console.log("Inside GET all items dashboard Request");
