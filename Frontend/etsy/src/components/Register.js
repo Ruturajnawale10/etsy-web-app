@@ -60,18 +60,26 @@ class Register extends Component {
 
     (async () => {
       // Mutation addUser
-      console.log(
-        await qlQuery(
-          "mutation _($userInput: UserInput) {addUser(user: $userInput) {id email}}",
-          {
-            userInput: {
-              username: this.state.username,
-              password: this.state.password,
-              email: this.state.email,
-            },
-          }
-        )
+      let response = await qlQuery(
+        "mutation _($userInput: UserInput) {addUser(user: $userInput) }",
+        {
+          userInput: {
+            username: this.state.username,
+            password: this.state.password,
+            email: this.state.email,
+          },
+        }
       );
+
+      if (response.addUser === "SUCCESS") {
+        this.setState({
+          authMsg: <Redirect to="/login" />,
+        });
+      } else {
+        this.setState({
+          authMsg: <p style={{ color: "red" }}>Username already exists!</p>,
+        });
+      }
     })();
   };
 

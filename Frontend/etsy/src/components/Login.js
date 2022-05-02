@@ -13,7 +13,7 @@ class Login extends Component {
       password: "",
       authMsg: null,
       token: "",
-      redirectVar1: null
+      redirectVar1: null,
     };
     //Bind the handlers to this class
     this.usernameChangeHandler = this.usernameChangeHandler.bind(this);
@@ -41,26 +41,48 @@ class Login extends Component {
       username: this.state.username,
       password: this.state.password,
     };
-    //make a post request with the user data
-    axios.post(process.env.REACT_APP_LOCALHOST + "/user/login", data)
-      .then((response) => {
-        if (response.data === "Invalid credentials") {
-          this.setState({
-            authMsg: (
-              <p style={{ color: "red" }}>
-                Invalid credentials. Please check again, or register for new
-                account.
-              </p>
-            ),
-          });
-        } else {
-          localStorage.setItem("currency", response.data.currency);
-          localStorage.setItem("country", response.data.country);
-          this.setState({
-            token: response.data.jwt,
-          });
-        }
+
+    const qlQuery = async (query, variables = {}) => {
+      const resp = await fetch("http://localhost:4001", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, variables }),
       });
+      return (await resp.json()).data;
+    };
+
+    (async () => {
+      // Mutation addUser
+      let response = await qlQuery(
+        "mutation _($userInput: UserInput) {loginUser(user: $userInput) {id msg jwt}}",
+        {
+          userInput: {
+            username: this.state.username,
+            password: this.state.password,
+          },
+        }
+      );
+
+      console.log(response);
+
+      if (response.loginUser.msg === "Invalid credentials") {
+        this.setState({
+          authMsg: (
+            <p style={{ color: "red" }}>
+              Invalid credentials. Please check again, or register for new
+              account
+            </p>
+          ),
+        });
+      } else {
+        localStorage.setItem("currency", "$");
+        localStorage.setItem("country", "United Stated");
+        this.setState({
+          token: response.loginUser.jwt,
+        });
+        //authMsg: <Redirect to="/login" />,
+      }
+    })();
   };
 
   render() {

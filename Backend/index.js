@@ -6,6 +6,9 @@ import Favourites from "./models/FavouritesModel.js";
 import Items from "./models/ItemModel.js";
 import Orders from "./models/OrderModel.js";
 import Shops from "./models/ShopModel.js";
+import jwt from "jsonwebtoken";
+import { checkAuth } from "./utils/passport.js";
+import { auth } from "./utils/passport.js";
 
 var options = {
   useNewUrlParser: true,
@@ -33,17 +36,22 @@ const typeDefs = gql`
     itemId: String
     userId: String
   }
-  type User {
+  type LoginResponse {
     id: ID
-    name: String
+    msg: String
+    jwt: String
+  }
+  type User {
+    username: String
     email: String
     password: String
   }
   type Query {
-    users: [User]
+    users: String
   }
   type Mutation {
-    addUser(user: UserInput): User
+    loginUser(user: UserInput): LoginResponse
+    addUser(user: UserInput): String
     addOrder(itemId: ID): Order
   }
 `;
@@ -53,18 +61,38 @@ const orders = [];
 
 // A map of functions which return data for the schema.
 const resolvers = {
-  Query: {
-    users: async () => {
-      return users;
-    },
-  },
+  Query: {},
   Mutation: {
+    loginUser: async (parent, { user }, context) => {
+      console.log("Inside Login Query Request");
+      const { username, password } = user;
+      console.log(username, "  ", password);
+      const result = await Users.findOne({
+        username: username,
+        password: password,
+      });
+      if (result) {
+        console.log("Success");
+        const payload = { _id: user._id, username: user.username };
+        const token = jwt.sign(payload, config.mongo.secret, {});
+        let JWT = "JWT " + token;
+        return {
+          id: context.session.id,
+          msg: "SUCCESS",
+          jwt: JWT,
+        };
+      } else {
+        console.log("Invalid creds");
+        return {
+          msg: "Invalid credentials",
+          jwt: null,
+        };
+      }
+    },
     addUser: async (parent, { user }, context) => {
       console.log("Inside Register Mutation Request");
       console.log(user);
-      let username = user.username;
-      let password = user.password;
-      let email = user.email;
+      const { username, password, email } = user;
 
       var new_user = new Users({
         username: username,
@@ -80,39 +108,16 @@ const resolvers = {
         orderItems: [],
       });
 
-      Users.findOne({ username: username }, (error, user) => {
-        if (error) {
-          console.log("Failed", error);
-          return "FAILURE";
-        } else if (user) {
-          console.log("Duplicate");
-          return "ALREADY EXISTS";
-        } else {
-          console.log("New user");
-          new_user.save((error) => {
-            if (error) {
-              return "FAILURE";
-            } else {
-              favourites.save((error1) => {
-                if (error1) {
-                  return "FAILURE";
-                } else {
-                  orders.save((error2) => {
-                    if (error2) {
-                      return "FAILURE";
-                    } else {
-                      return "SUCCESS";
-                    }
-                  });
-                }
-              });
-            }
-          });
-        }
-      });
-      // const newUser = {...user, id: users.length};
-      // users.push(newUser);
-      // return newUser;
+      const result = await Users.findOne({ username: username });
+      if (result) {
+        return "ALREADY EXISTS";
+      } else {
+        console.log("New user");
+        new_user.save(new_user);
+        favourites.save(favourites);
+        orders.save(orders);
+        return "SUCCESS";
+      }
     },
     addOrder: async (parent, { itemId }, context) => {
       const newOrder = {
