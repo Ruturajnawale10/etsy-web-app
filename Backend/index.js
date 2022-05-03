@@ -27,9 +27,19 @@ mongoose.connect(config.mongo.mongoDBURL, options, (err, res) => {
 // The GraphQL schema
 const typeDefs = gql`
   input UserInput {
+    id: String
     username: String
     password: String
     email: String
+    name: String
+    about: String
+    city: String
+    phone: String
+    address: String
+    country: String
+    birthdate: String
+    gender: String
+    imageName: String
   }
   type Order {
     id: ID
@@ -42,16 +52,28 @@ const typeDefs = gql`
     jwt: String
   }
   type User {
+    id: String
     username: String
     email: String
     password: String
+    name: String
+    about: String
+    city: String
+    phone: String
+    address: String
+    country: String
+    birthdate: String
+    gender: String
+    imageName: String
   }
   type Query {
     users: String
+    getUser(user: UserInput): User
   }
   type Mutation {
     loginUser(user: UserInput): LoginResponse
     addUser(user: UserInput): String
+    updateUser(user: UserInput): String
     addOrder(itemId: ID): Order
   }
 `;
@@ -61,7 +83,16 @@ const orders = [];
 
 // A map of functions which return data for the schema.
 const resolvers = {
-  Query: {},
+  Query: {
+    getUser: async (parent, { user }, context) => {
+      console.log("Inside Get user profile Query Request");
+      const { id } = user;
+      console.log("Seee this dude: ", id);
+      const result = await Users.findOne({ _id: id });
+      console.log(result);
+      return result;
+    },
+  },
   Mutation: {
     loginUser: async (parent, { user }, context) => {
       console.log("Inside Login Query Request");
@@ -73,7 +104,7 @@ const resolvers = {
       });
       if (result) {
         console.log("Success");
-        const payload = { _id: user._id, username: user.username };
+        const payload = { _id: result._id, username: result.username };
         const token = jwt.sign(payload, config.mongo.secret, {});
         let JWT = "JWT " + token;
         return {
@@ -117,6 +148,44 @@ const resolvers = {
         favourites.save(favourites);
         orders.save(orders);
         return "SUCCESS";
+      }
+    },
+    updateUser: async (parent, { user }, context) => {
+      console.log("Inside Update User Mutation Request");
+      console.log(user);
+      const {
+        id,
+        name,
+        about,
+        city,
+        email,
+        phone,
+        address,
+        country,
+        birthdate,
+        gender,
+      } = user;
+
+      let result = await Users.findOneAndUpdate(
+        { _id: id },
+        {
+          $set: {
+            name: name,
+            about: about,
+            city: city,
+            email: email,
+            phone: phone,
+            address: address,
+            country: country,
+            birthdate: birthdate,
+            gender: gender,
+          },
+        }
+      );
+      if (result) {
+        return "SUCCESS";
+      } else {
+        return "FAILURE";
       }
     },
     addOrder: async (parent, { itemId }, context) => {

@@ -13,68 +13,86 @@ function Userprofile() {
   }
 
   useEffect(() => {
-    axios.defaults.headers.common["authorization"] =
-      localStorage.getItem("token");
-    axios
-      .get(process.env.REACT_APP_LOCALHOST + "/your/profile")
-      .then((response) => {
-        if (response.data.birthdate) {
-          let bday = response.data.birthdate.split(" ");
-          setProfileData({ ...response.data, month: bday[0], day: bday[1] });
-        } else {
-          setProfileData(response.data);
-        }
-        setFetchedImage(
-          <img
-            src={"data:image/jpeg;base64," + response.data.image}
-            alt="Red dot"
-            width={130}
-            height={130}
-            class="img-fluid"
-          ></img>
-        );
+    const qlQuery = async (query, variables = {}) => {
+      const resp = await fetch("http://localhost:4001", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, variables }),
       });
-  }, []);
+      return (await resp.json()).data;
+    };
 
-  const convertToBase64 = (imageFile) => {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(imageFile);
-      reader.onload = () => {
-        resolve(reader.result);
-      };
-    });
-  };
+    (async () => {
+      // Mutation addUser
+      let response = await qlQuery(
+        "query _($userInput: UserInput) {getUser(user: $userInput) {username, email, name, about, city, phone, address, country, birthdate, gender}}",
+        {
+          userInput: {
+            id: localStorage.getItem("user_id"),
+          },
+        }
+      );
+      let userDetails = response.getUser;
+      if (response.getUser.birthdate) {
+        let bday = response.updateUser.birthdate.split(" ");
+        setProfileData({
+          name: userDetails.name,
+          username: userDetails.username,
+          email: userDetails.email,
+          about: userDetails.about,
+          city: userDetails.city,
+          phone: userDetails.phone,
+          address: userDetails.address,
+          country: userDetails.country,
+          gender: userDetails.gender,
+          month: bday[0],
+          day: bday[1],
+        });
+      } else {
+        setProfileData({
+          name: userDetails.name,
+          username: userDetails.username,
+          email: userDetails.email,
+          about: userDetails.about,
+          city: userDetails.city,
+          phone: userDetails.phone,
+          address: userDetails.address,
+          country: userDetails.country,
+          gender: userDetails.gender,
+        });
+      }
+    })();
+  }, []);
 
   const submitData = async (e) => {
     e.preventDefault();
 
     localStorage.setItem("country", profileData.country);
-    if (imageFile !== null) {
-      const convertedFile = await convertToBase64(imageFile);
-      axios.defaults.headers.common["authorization"] =
-        localStorage.getItem("token");
-      const s3URL = await axios.post(
-        process.env.REACT_APP_LOCALHOST + "/your/profile",
+    const qlQuery = async (query, variables = {}) => {
+      const resp = await fetch("http://localhost:4001", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, variables }),
+      });
+      return (await resp.json()).data;
+    };
+
+    (async () => {
+      // Mutation addUser
+      console.log("Seee thissss");
+      console.log(profileData);
+      console.log("Hahahahah");
+      let response = await qlQuery(
+        "mutation _($userInput: UserInput) {updateUser(user: $userInput)}",
         {
-          ...profileData,
-          image: convertedFile,
-          imageName: imageFile.name,
+          userInput: {
+            id: localStorage.getItem("user_id"),
+            ...profileData,
+          },
         }
       );
-    } else {
-      axios.defaults.headers.common["authorization"] =
-        localStorage.getItem("token");
-      const s3URL = await axios.post(
-        process.env.REACT_APP_LOCALHOST + "/your/profile",
-        {
-          ...profileData,
-          image: null,
-          imageName: null,
-        }
-      );
-    }
-    window.location.reload(false);
+      window.location.reload(false);
+    })();
   };
 
   return (
