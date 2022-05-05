@@ -66,9 +66,15 @@ const typeDefs = gql`
     gender: String
     imageName: String
   }
+  type Shop {
+    shopName: String
+    shopOwner: String
+    totalSales: String
+  }
   type Query {
     users: String
     getUser(user: UserInput): User
+    checkShopExists(user: UserInput): String
   }
   type Mutation {
     loginUser(user: UserInput): LoginResponse
@@ -91,6 +97,16 @@ const resolvers = {
       const result = await Users.findOne({ _id: id });
       console.log(result);
       return result;
+    },
+    checkShopExists: async (parent, { user }, context) => {
+      console.log("Inside check if shop exists graphql query Request");
+      const { username } = user;
+      const result = await Users.findOne({ "shop.shopOwner": username });
+      if (result) {
+        return result.shop.shopName;
+      } else {
+        return "shopname not registered";
+      }
     },
   },
   Mutation: {

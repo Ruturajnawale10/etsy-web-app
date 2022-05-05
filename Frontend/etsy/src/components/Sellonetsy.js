@@ -14,16 +14,32 @@ function Sellonetsy() {
   }
 
   useEffect(() => {
-    axios.defaults.headers.common["authorization"] =
-    localStorage.getItem("token");
-    axios.get(process.env.REACT_APP_LOCALHOST + "/your/shop").then((response) => {
-      if (response.data === "shopname not registered") {
+    const qlQuery = async (query, variables = {}) => {
+      const resp = await fetch("http://localhost:4001", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, variables }),
+      });
+      return (await resp.json()).data;
+    };
+
+    (async () => {
+      let response = await qlQuery(
+        "query _($userInput: UserInput) {checkShopExists(user: $userInput)}",
+        {
+          userInput: {
+            username: localStorage.getItem("username"),
+          },
+        }
+      );
+
+      if (response.checkShopExists === "shopname not registered") {
         setShophome(<Newshop />);
       } else {
-        let shopName = response.data;
+        let shopName = response.checkShopExists;
         setNewShop(<Shophome name={shopName} />);
       }
-    });
+    })();
   }, []);
 
   return (
