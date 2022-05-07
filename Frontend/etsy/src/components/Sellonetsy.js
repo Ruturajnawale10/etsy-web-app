@@ -25,7 +25,7 @@ function Sellonetsy() {
 
     (async () => {
       let response = await qlQuery(
-        "query _($userInput: UserInput) {checkShopExists(user: $userInput)}",
+        "query _($userInput: UserInput) {checkIfUserCreatedShop(user: $userInput)}",
         {
           userInput: {
             username: localStorage.getItem("username"),
@@ -33,10 +33,10 @@ function Sellonetsy() {
         }
       );
 
-      if (response.checkShopExists === "shopname not registered") {
+      if (response.checkIfUserCreatedShop === "shopname not registered") {
         setShophome(<Newshop />);
       } else {
-        let shopName = response.checkShopExists;
+        let shopName = response.checkIfUserCreatedShop;
         setNewShop(<Shophome name={shopName} />);
       }
     })();

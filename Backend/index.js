@@ -66,6 +66,10 @@ const typeDefs = gql`
     gender: String
     imageName: String
   }
+  input ShopInput {
+    shopName: String
+    userName: String
+  }
   type Shop {
     shopName: String
     shopOwner: String
@@ -74,12 +78,14 @@ const typeDefs = gql`
   type Query {
     users: String
     getUser(user: UserInput): User
-    checkShopExists(user: UserInput): String
+    checkIfUserCreatedShop(user: UserInput): String
+    checkShopnameAvailability(shop: ShopInput): String
   }
   type Mutation {
     loginUser(user: UserInput): LoginResponse
     addUser(user: UserInput): String
     updateUser(user: UserInput): String
+    createShop(shop: ShopInput): String
     addOrder(itemId: ID): Order
   }
 `;
@@ -98,7 +104,7 @@ const resolvers = {
       console.log(result);
       return result;
     },
-    checkShopExists: async (parent, { user }, context) => {
+    checkIfUserCreatedShop: async (parent, { user }, context) => {
       console.log("Inside check if shop exists graphql query Request");
       const { username } = user;
       const result = await Users.findOne({ "shop.shopOwner": username });
@@ -106,6 +112,16 @@ const resolvers = {
         return result.shop.shopName;
       } else {
         return "shopname not registered";
+      }
+    },
+    checkShopnameAvailability: async (parent, { shop }, context) => {
+      console.log("Inside if shopname is available graphql query Request");
+      const { shopName } = shop;
+      const result = await Users.findOne({ "shop.shopName": shopName });
+      if (result) {
+        return "not available";
+      } else {
+        return "available";
       }
     },
   },
@@ -195,6 +211,29 @@ const resolvers = {
             country: country,
             birthdate: birthdate,
             gender: gender,
+          },
+        }
+      );
+      if (result) {
+        return "SUCCESS";
+      } else {
+        return "FAILURE";
+      }
+    },
+    createShop: async (parent, { shop }, context) => {
+      console.log("Inside create shop graphql mutation Request");
+      const { shopName, userName } = shop;
+      let newshop = new Shops({
+        shopName: shopName,
+        shopOwner: userName,
+        totalSales: 0,
+      });
+
+      const result = await Users.findOneAndUpdate(
+        { username: userName },
+        {
+          $set: {
+            shop: newshop,
           },
         }
       );

@@ -16,62 +16,78 @@ function Newshop() {
 
   const checkAvailibility = (e) => {
     e.preventDefault();
-    axios
-      .get(process.env.REACT_APP_LOCALHOST + "/your/shop/checkavailibility", {
-        params: {
-          shopName: shopName,
-        },
-      })
-      .then((response) => {
-        if (response.data === "available") {
-          setAvailable(
-            <p
-              style={{
-                marginLeft: "600px",
-                marginTop: "60px",
-                color: "green",
-                fontSize: "20px",
-              }}
-            >
-              Available
-            </p>
-          );
-        } else {
-          setAvailable(
-            <p
-              style={{
-                marginLeft: "600px",
-                marginTop: "60px",
-                color: "red",
-                fontSize: "20px",
-              }}
-            >
-              Shop name already taken!
-            </p>
-          );
-        }
+    const qlQuery = async (query, variables = {}) => {
+      const resp = await fetch("http://localhost:4001", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, variables }),
       });
+      return (await resp.json()).data;
+    };
+
+    (async () => {
+      let response = await qlQuery(
+        "query _($shopInput: ShopInput) {checkShopnameAvailability(shop: $shopInput)}",
+        {
+          shopInput: {
+            shopName: shopName,
+          },
+        }
+      );
+
+      if (response.checkShopnameAvailability === "available") {
+        setAvailable(
+          <p
+            style={{
+              marginLeft: "600px",
+              marginTop: "60px",
+              color: "green",
+              fontSize: "20px",
+            }}
+          >
+            Available
+          </p>
+        );
+      } else {
+        setAvailable(
+          <p
+            style={{
+              marginLeft: "600px",
+              marginTop: "60px",
+              color: "red",
+              fontSize: "20px",
+            }}
+          >
+            Shop name already taken!
+          </p>
+        );
+      }
+    })();
   };
 
   const submitShopName = (e) => {
     e.preventDefault();
-    axios.defaults.headers.common["authorization"] =
-      localStorage.getItem("token");
-    axios
-      .post(process.env.REACT_APP_LOCALHOST + "/your/shop/createshop", {
-        shopName: shopName,
-      })
-      .then((response) => {
-        if (response.data === "FILL ADDRESS") {
-          setMsg(
-            <p style={{ color: "red", fontSize: "20px", marginLeft: "50px" }}>
-              Please fill your address in the profile for creating a new shop
-            </p>
-          );
-        } else if (response.data === "SUCCESS") {
-          window.location.reload(false);
-        }
+    const qlQuery = async (query, variables = {}) => {
+      const resp = await fetch("http://localhost:4001", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, variables }),
       });
+      return (await resp.json()).data;
+    };
+
+    (async () => {
+      let response = await qlQuery(
+        "mutation _($shopInput: ShopInput) {createShop(shop: $shopInput)}",
+        {
+          shopInput: {
+            shopName: shopName,
+            userName: localStorage.getItem("username"),
+          },
+        }
+      );
+      window.location.reload(false);
+    })();
   };
 
   return (
