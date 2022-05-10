@@ -75,6 +75,28 @@ const typeDefs = gql`
     shopOwner: String
     totalSales: String
   }
+  input ItemInput {
+    itemName: String
+    shopName: String
+    username: String
+    category: String
+    description: String
+    price: Int
+    quantity: Int
+    sales: Int
+    imageName: String
+  }
+  type Item {
+    itemName: String
+    shopName: String
+    itemOwner: String
+    category: String
+    description: String
+    price: Int
+    quantity: Int
+    sales: Int
+    imageName: String
+  }
   type Query {
     users: String
     getUser(user: UserInput): User
@@ -86,6 +108,7 @@ const typeDefs = gql`
     addUser(user: UserInput): String
     updateUser(user: UserInput): String
     createShop(shop: ShopInput): String
+    addItem(item: ItemInput): String
     addOrder(itemId: ID): Order
   }
 `;
@@ -242,6 +265,22 @@ const resolvers = {
       } else {
         return "FAILURE";
       }
+    },
+    addItem: async (parent, { item }, context) => {
+      console.log("Inside AddItem mutation graphql Request");
+      const {itemName, shopName, username, category, description, price, quantity, imageName} = item;
+
+      let newitem = new Items({
+        itemName: itemName,
+        shopName: shopName,
+        itemOwner: username,
+        category: category,
+        description: description,
+        price: price,
+        quantity: quantity,
+        imageName: imageName,
+      });
+      newitem.save(newitem);
     },
     addOrder: async (parent, { itemId }, context) => {
       const newOrder = {
