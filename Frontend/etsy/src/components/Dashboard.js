@@ -14,13 +14,28 @@ function Dashboard() {
   }
 
   useEffect(() => {
-    axios.defaults.headers.common["authorization"] =
-    localStorage.getItem("token");
-    axios.get(process.env.REACT_APP_LOCALHOST + "/items/getallitems").then((response) => {
+    const qlQuery = async (query, variables = {}) => {
+      const resp = await fetch("http://localhost:4001", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, variables }),
+      });
+      return (await resp.json()).data;
+    };
+
+    (async () => {
+      let response = await qlQuery(
+        "query _($userInput: UserInput) {getAllItems(user: $userInput) {itemName, price, imageName}}",
+        {
+          userInput: {
+            id: localStorage.getItem("user_id"),
+          },
+        }
+      );
       setItems(
         <div className="container">
           <div className="row">
-            {response.data.map((item) => (
+            {response.getAllItems.map((item) => (
               <div key={item.itemName} id="cardItem" className="col-xs-4">
                 <Itemcard item={item} />
               </div>
@@ -28,8 +43,8 @@ function Dashboard() {
           </div>
         </div>
       );
-      setFooter(<Footer/>);
-    });
+      setFooter(<Footer />);
+    })();
   }, []);
 
   return (

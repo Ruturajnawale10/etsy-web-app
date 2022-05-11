@@ -102,6 +102,7 @@ const typeDefs = gql`
     getUser(user: UserInput): User
     checkIfUserCreatedShop(user: UserInput): String
     checkShopnameAvailability(shop: ShopInput): String
+    getAllItems(user: UserInput): [Item]
   }
   type Mutation {
     loginUser(user: UserInput): LoginResponse
@@ -146,6 +147,12 @@ const resolvers = {
       } else {
         return "available";
       }
+    },
+    getAllItems: async (parent, { user }, context) => {
+      console.log("Inside Get All items in dashboard Query Request");
+      const { username } = user;
+      const items = await Items.find({ itemOwner: { $ne: username } });
+      return items;
     },
   },
   Mutation: {
@@ -268,7 +275,16 @@ const resolvers = {
     },
     addItem: async (parent, { item }, context) => {
       console.log("Inside AddItem mutation graphql Request");
-      const {itemName, shopName, username, category, description, price, quantity, imageName} = item;
+      const {
+        itemName,
+        shopName,
+        username,
+        category,
+        description,
+        price,
+        quantity,
+        imageName,
+      } = item;
 
       let newitem = new Items({
         itemName: itemName,
