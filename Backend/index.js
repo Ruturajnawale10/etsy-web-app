@@ -103,6 +103,7 @@ const typeDefs = gql`
     checkIfUserCreatedShop(user: UserInput): String
     checkShopnameAvailability(shop: ShopInput): String
     getAllItems(user: UserInput): [Item]
+    getItemDetails(item: ItemInput): Item
   }
   type Mutation {
     loginUser(user: UserInput): LoginResponse
@@ -153,6 +154,13 @@ const resolvers = {
       const { username } = user;
       const items = await Items.find({ itemOwner: { $ne: username } });
       return items;
+    },
+    getItemDetails: async (parent, { item }, context) => {
+      console.log("Inside Get Item Details Query Request");
+      const { itemName } = item;
+
+      const itemDetails = await Items.findOne({ itemName: itemName });
+      return itemDetails;
     },
   },
   Mutation: {

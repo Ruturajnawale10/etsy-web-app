@@ -15,55 +15,27 @@ function Itemsoverview(props) {
   const [alert, setAlert] = useState(null);
 
   useEffect(() => {
-    axios.defaults.headers.common["authorization"] =
-      localStorage.getItem("token");
-
-    axios
-      .get(process.env.REACT_APP_LOCALHOST + "/items/checkfavourite", {
-        params: {
-          itemName: itemName,
-        },
-      })
-      .then((response) => {
-        if (response.data === "ITEM IS FAVOURITE") {
-          setFavouritesIconSRC(favouritesicon);
-        } else {
-          setFavouritesIconSRC(nonfavouritesicon);
-        }
+    const qlQuery = async (query, variables = {}) => {
+      const resp = await fetch("http://localhost:4001", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, variables }),
       });
-
-    axios
-      .get(process.env.REACT_APP_LOCALHOST + "/items/details", {
-        params: {
-          itemName: itemName,
-        },
-      })
-      .then((response) => {
-        setItem(response.data);
-      });
-  }, []);
-
-  const addToFavourites = (e) => {
-    e.preventDefault();
-    if (favouritesIconSRC === favouritesicon) {
-      setFavouritesIconSRC(nonfavouritesicon);
-    } else {
-      setFavouritesIconSRC(favouritesicon);
-    }
-
-    const data = {
-      itemName: itemName,
+      return (await resp.json()).data;
     };
 
-    axios.defaults.headers.common["authorization"] =
-      localStorage.getItem("token");
-
-    axios
-      .post(process.env.REACT_APP_LOCALHOST + "/addtofavourites", data)
-      .then((response) => {
-        console.log("Added to favourites");
-      });
-  };
+    (async () => {
+      let response = await qlQuery(
+        "query _($itemInput: ItemInput) {getItemDetails(item: $itemInput) {itemName, price, imageName, shopName, sales, description}}",
+        {
+          itemInput: {
+            itemName: itemName,
+          },
+        }
+      );
+      setItem(response.getItemDetails);
+    })();
+  }, []);
 
   const addToCart = (e) => {
     e.preventDefault();
@@ -93,18 +65,6 @@ function Itemsoverview(props) {
         <div class="row">
           <div class="col-md-5" style={{ marginLeft: "50px" }}>
             <div class="thumbnail">
-              <a href="#" class="navbar-brand">
-                <img
-                  src={favouritesIconSRC}
-                  style={{ marginLeft: "450px", marginTop: "20px" }}
-                  alt="fav"
-                  width={40}
-                  height={40}
-                  class="img-fluid"
-                  onClick={addToFavourites}
-                ></img>
-              </a>
-
               <a
                 style={{
                   textDecoration: "none",
@@ -113,7 +73,7 @@ function Itemsoverview(props) {
                 }}
               >
                 <img
-                  src={`data:image/jpeg;base64,${item.image}`}
+                  src={item.imageName}
                   alt="Unavailable"
                   style={{ width: "100%" }}
                 ></img>
