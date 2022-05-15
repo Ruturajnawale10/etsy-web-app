@@ -29,54 +29,6 @@ function Cartitemcard(props) {
     }
   }, [dispatch, props.item.quantity, props.item.quantityRequested]);
 
-  const removeItem = (e) => {
-    e.preventDefault();
-    axios.defaults.headers.common["authorization"] =
-      localStorage.getItem("token");
-
-    axios
-      .post(process.env.REACT_APP_LOCALHOST + "/items/removefromcart", {
-        itemName: props.item.itemName,
-      })
-      .then((response) => {
-        if (response.status === 200) {
-          window.location.reload(false);
-        }
-      });
-  };
-
-  const changeQuantity = (e) => {
-    e.preventDefault();
-    axios.defaults.headers.common["authorization"] =
-      localStorage.getItem("token");
-
-    axios
-      .post(process.env.REACT_APP_LOCALHOST + "/items/change/quantity", {
-        itemName: props.item.itemName,
-        newQuantity: e.target.options[e.target.selectedIndex].text,
-      })
-      .then(() => {
-        window.location.reload(false);
-      });
-  };
-
-  const changeGiftOption = (e) => {
-    axios.defaults.headers.common["authorization"] =
-      localStorage.getItem("token");
-
-    let isGift = e.target.checked;
-    setIsGift(isGift);
-    axios
-      .post(process.env.REACT_APP_LOCALHOST + "/items/change/giftoption", {
-        itemName: props.item.itemName,
-        quantityRequested: props.item.quantityRequested,
-        isGift: isGift,
-      })
-      .then(() => {
-        //window.location.reload(false);
-      });
-  };
-
   return (
     <div>
       <div class="row">
@@ -92,7 +44,7 @@ function Cartitemcard(props) {
                 </div>
                 <div style={{ display: "inline-block", marginLeft: "150px" }}>
                   Quantity: &emsp;
-                  <select id="quantity_options" onChange={changeQuantity}>
+                  <select id="quantity_options">
                     <option>{props.item.quantityRequested}</option>
                     {options}
                   </select>
@@ -104,16 +56,12 @@ function Cartitemcard(props) {
                   class="container"
                   style={{ marginLeft: "100px", marginTop: "20px" }}
                 >
-                  <input type="checkbox" checked={isGift} onChange={changeGiftOption} /> This
-                  order is a gift
+                  <input type="checkbox" checked={isGift} /> This order is a
+                  gift
                   <span class="checkmark"></span>
                 </label>
                 <div style={{ marginLeft: "850px" }}>
-                  <button
-                    type="button"
-                    class="btn btn-link"
-                    onClick={removeItem}
-                  >
+                  <button type="button" class="btn btn-link">
                     Remove
                   </button>
                 </div>

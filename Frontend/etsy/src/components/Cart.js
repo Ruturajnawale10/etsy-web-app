@@ -11,27 +11,37 @@ function Favourites() {
   const [itemsData, setItemsData] = useState(null);
   const [msg, setMsg] = useState(null);
 
-  const canCheckout = useSelector(state => state.checkoutSlice.canCheckout);
+  const canCheckout = useSelector((state) => state.checkoutSlice.canCheckout);
 
   if (!localStorage.getItem("token")) {
     setRedirectVar = <Redirect to="/login" />;
   }
 
   useEffect(() => {
-    axios.defaults.headers.common["authorization"] =
-    localStorage.getItem("token");
-    axios.get(process.env.REACT_APP_LOCALHOST + "/items/getcartitems").then((response) => {
-      let total = 0;
-      console.log(response.data)
-      for (let item of response.data) {
-        total += item.price * item.quantityRequested;
-      }
+    const qlQuery = async (query, variables = {}) => {
+      const resp = await fetch("http://localhost:4001", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, variables }),
+      });
+      return (await resp.json()).data;
+    };
+
+    (async () => {
+      let response = await qlQuery(
+        "query _($userInput: UserInput) {getCartItems(user: $userInput) {itemName, price, quantityRequested}}",
+        {
+          userInput: {
+            id: localStorage.getItem("user_id"),
+          },
+        }
+      );
       setTotal(total);
-      setItemsData(response.data);
+      setItemsData(response.getCartItems);
       setItems(
         <div className="container">
           <div className="row">
-            {response.data.map((item) => (
+            {response.getCartItems.map((item) => (
               <div key={item.itemName} id="cartitemcard" className="col-xs-4">
                 <Cartitemcard item={item} />
               </div>
@@ -39,7 +49,7 @@ function Favourites() {
           </div>
         </div>
       );
-    });
+    })();
   }, []);
 
   function makeid(length) {
@@ -56,8 +66,9 @@ function Favourites() {
   const checkout = (e) => {
     if (canCheckout === "NO") {
       setMsg(
-        <p style={{ color: "red", fontSize: "20px", marginLeft:"50px" }}>
-          Cannot checkout. Please remove the items with Insufficient requested quantities or request for different quantity if available.
+        <p style={{ color: "red", fontSize: "20px", marginLeft: "50px" }}>
+          Cannot checkout. Please remove the items with Insufficient requested
+          quantities or request for different quantity if available.
         </p>
       );
       return;
@@ -69,20 +80,22 @@ function Favourites() {
     };
 
     axios.defaults.headers.common["authorization"] =
-    localStorage.getItem("token");
+      localStorage.getItem("token");
 
-    axios.post(process.env.REACT_APP_LOCALHOST + "/orders/checkout", data).then((response) => {
-      if (response.data === "FILL ADDRESS") {
-        setMsg(
-          <p style={{ color: "red", fontSize: "20px", marginLeft:"50px" }}>
-            Please fill your address in the profile for completing the order
-          </p>
-        );
-      } else {
-        console.log("Order placed successfully!");
-        setRedirectVar(<Redirect to="/purchases" />);
-      }
-    });
+    axios
+      .post(process.env.REACT_APP_LOCALHOST + "/orders/checkout", data)
+      .then((response) => {
+        if (response.data === "FILL ADDRESS") {
+          setMsg(
+            <p style={{ color: "red", fontSize: "20px", marginLeft: "50px" }}>
+              Please fill your address in the profile for completing the order
+            </p>
+          );
+        } else {
+          console.log("Order placed successfully!");
+          setRedirectVar(<Redirect to="/purchases" />);
+        }
+      });
   };
 
   return (
@@ -91,7 +104,9 @@ function Favourites() {
       <h1>Your Cart</h1>
       {items}
 
-      <h3 style={{ marginTop: "60px", marginLeft: "50px" }}>Total: $ {total}</h3>
+      <h3 style={{ marginTop: "60px", marginLeft: "50px" }}>
+        Total: $ {total}
+      </h3>
 
       <button
         type="button"

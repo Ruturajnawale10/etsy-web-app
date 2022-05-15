@@ -97,6 +97,30 @@ const typeDefs = gql`
     sales: Int
     imageName: String
   }
+  input ItemOrderInput {
+    user_id: String
+    orderID: String
+    itemName: String
+    price: String
+    quantity: Int
+    quantityRequested: Int
+    date: String
+    imageName: String
+    shopName: String
+    isGift: Boolean
+  }
+  type ItemOrder {
+    user_id: String
+    orderID: String
+    itemName: String
+    price: String
+    quantityRequested: Int
+    quantity: Int
+    date: String
+    imageName: String
+    shopName: String
+    isGift: Boolean
+  }
   type Query {
     users: String
     getUser(user: UserInput): User
@@ -104,6 +128,7 @@ const typeDefs = gql`
     checkShopnameAvailability(shop: ShopInput): String
     getAllItems(user: UserInput): [Item]
     getItemDetails(item: ItemInput): Item
+    getCartItems(user: UserInput): [ItemOrder]
   }
   type Mutation {
     loginUser(user: UserInput): LoginResponse
@@ -111,6 +136,7 @@ const typeDefs = gql`
     updateUser(user: UserInput): String
     createShop(shop: ShopInput): String
     addItem(item: ItemInput): String
+    addToCart(user: ItemOrderInput): String
     addOrder(itemId: ID): Order
   }
 `;
@@ -161,6 +187,27 @@ const resolvers = {
 
       const itemDetails = await Items.findOne({ itemName: itemName });
       return itemDetails;
+    },
+    getCartItems: async (parent, { user }, context) => {
+      console.log("Inside Get Cart items Query Request");
+      const { id } = user;
+      let items = [];
+
+      let user1 = await Users.findOne({ _id: id });
+
+      for (let i = 0; i < user1.cartItems.length; i++) {
+        let item1 = await Items.findOne({
+          itemName: user1.cartItems[i].itemName,
+        });
+        items.push({
+          itemName: user1.cartItems[i].itemName,
+          quantityRequested: user1.cartItems[i].quantityRequested,
+          price: item1.price,
+          quantity: item1.quantity,
+          isGift: user1.cartItems[i].isGift,
+        });
+      }
+      return items;
     },
   },
   Mutation: {
@@ -305,6 +352,30 @@ const resolvers = {
         imageName: imageName,
       });
       newitem.save(newitem);
+    },
+    addToCart: async (parent, { item }, context) => {
+      console.log("Inside Add item to cart mutation graphql Request");
+
+      const { itemName, quantityRequested, user_id } = item;
+
+      let response = await Users.findOneAndUpdate(
+        { _id: user_id },
+        {
+          $push: {
+            cartItems: {
+              itemName: itemName,
+              quantityRequested: quantityRequested,
+              isGift: false,
+            },
+          },
+        }
+      );
+
+      if (response) {
+        return "SUCCESS";
+      } else {
+        return "FAILURE";
+      }
     },
     addOrder: async (parent, { itemId }, context) => {
       const newOrder = {

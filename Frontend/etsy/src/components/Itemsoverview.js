@@ -42,20 +42,28 @@ function Itemsoverview(props) {
     if (parseInt(quantityRequested) > item.quantity) {
       setAlert(<h6 style={{ color: "red" }}>Out of stock</h6>);
     } else {
-      //call POST API to add to cart
-      const data = {
-        itemName: item.itemName,
-        price: item.price,
-        quantityRequested: quantityRequested,
+      const qlQuery = async (query, variables = {}) => {
+        const resp = await fetch("http://localhost:4001", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query, variables }),
+        });
+        return (await resp.json()).data;
       };
 
-      axios.defaults.headers.common["authorization"] =
-        localStorage.getItem("token");
-      axios
-        .post(process.env.REACT_APP_LOCALHOST + "/items/addtocart", data)
-        .then((response) => {
-          setAlert(<h6 style={{ color: "green" }}>Added to cart</h6>);
-        });
+      (async () => {
+        let response = await qlQuery(
+          "mutation _($itemOrderInput: ItemOrderInput) {addToCart(item: $itemOrderInput)}",
+          {
+            itemOrderInput: {
+              user_id: localStorage.getItem("user_id"),
+              itemName: item.itemName,
+              quantityRequested: quantityRequested,
+            },
+          }
+        );
+        setAlert(<h6 style={{ color: "green" }}>Added to cart</h6>);
+      })();
     }
   };
 
