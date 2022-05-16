@@ -26,7 +26,7 @@ function Itemsoverview(props) {
 
     (async () => {
       let response = await qlQuery(
-        "query _($itemInput: ItemInput) {getItemDetails(item: $itemInput) {itemName, price, imageName, shopName, sales, description}}",
+        "query _($itemInput: ItemInput) {getItemDetails(item: $itemInput) {itemName price imageName shopName sales description quantity}}",
         {
           itemInput: {
             itemName: itemName,
@@ -58,7 +58,7 @@ function Itemsoverview(props) {
             itemOrderInput: {
               user_id: localStorage.getItem("user_id"),
               itemName: item.itemName,
-              quantityRequested: quantityRequested,
+              quantityRequested: parseInt(quantityRequested),
             },
           }
         );
@@ -103,6 +103,7 @@ function Itemsoverview(props) {
             </h2>
             <h2>$ {item.price}</h2>
             <br></br>
+            <h4>Available quantity: {item.quantity}</h4>
             <input
               type="text"
               class="form-control"
@@ -115,6 +116,7 @@ function Itemsoverview(props) {
                 setAlert(null);
               }}
             />
+            <span>Request for quantity above</span>
             <br />
             {alert}
             <br />

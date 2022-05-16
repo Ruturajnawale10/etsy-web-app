@@ -79,23 +79,37 @@ function Favourites() {
       orderID: orderID,
     };
 
-    axios.defaults.headers.common["authorization"] =
-      localStorage.getItem("token");
-
-    axios
-      .post(process.env.REACT_APP_LOCALHOST + "/orders/checkout", data)
-      .then((response) => {
-        if (response.data === "FILL ADDRESS") {
-          setMsg(
-            <p style={{ color: "red", fontSize: "20px", marginLeft: "50px" }}>
-              Please fill your address in the profile for completing the order
-            </p>
-          );
-        } else {
-          console.log("Order placed successfully!");
-          setRedirectVar(<Redirect to="/purchases" />);
-        }
+    const qlQuery = async (query, variables = {}) => {
+      const resp = await fetch("http://localhost:4001", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, variables }),
       });
+      return (await resp.json()).data;
+    };
+
+    (async () => {
+      let response = await qlQuery(
+        "mutation _($checkoutData: CheckoutInput) {checkoutItems(checkoutData: $checkoutData)}",
+        {
+          checkoutData: {
+            orderID: orderID,
+            userID: localStorage.getItem("user_id"),
+            userName: localStorage.getItem("username"),
+          },
+        }
+      );
+      if (response.checkoutItems === "FILL ADDRESS") {
+        setMsg(
+          <p style={{ color: "red", fontSize: "20px", marginLeft: "50px" }}>
+            Please fill your address in the profile for completing the order
+          </p>
+        );
+      } else {
+        console.log("Order placed successfully!");
+        setRedirectVar(<Redirect to="/purchases" />);
+      }
+    })();
   };
 
   return (

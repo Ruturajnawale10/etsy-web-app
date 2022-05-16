@@ -4,6 +4,7 @@ import config from "./configs/config.js";
 import Users from "./models/UserModel.js";
 import Favourites from "./models/FavouritesModel.js";
 import Items from "./models/ItemModel.js";
+import ItemOrders from "./models/ItemOrderModel.js";
 import Orders from "./models/OrderModel.js";
 import Shops from "./models/ShopModel.js";
 import jwt from "jsonwebtoken";
@@ -121,6 +122,11 @@ const typeDefs = gql`
     shopName: String
     isGift: Boolean
   }
+  input CheckoutInput {
+    orderID: String
+    userID: String
+    userName: String
+  }
   type Query {
     users: String
     getUser(user: UserInput): User
@@ -136,12 +142,11 @@ const typeDefs = gql`
     updateUser(user: UserInput): String
     createShop(shop: ShopInput): String
     addItem(item: ItemInput): String
-    addToCart(user: ItemOrderInput): String
-    addOrder(itemId: ID): Order
+    addToCart(item: ItemOrderInput): String
+    checkoutItems(checkoutData: CheckoutInput): String
   }
 `;
 
-const users = [];
 const orders = [];
 
 // A map of functions which return data for the schema.
@@ -377,14 +382,76 @@ const resolvers = {
         return "FAILURE";
       }
     },
-    addOrder: async (parent, { itemId }, context) => {
-      const newOrder = {
-        id: orders.length,
-        userId: context.session.id,
-        itemId,
-      };
-      orders.push(newOrder);
-      return newOrder;
+    checkoutItems: async (parent, { checkoutData }, context) => {
+      console.log("Inside Checkout items mutation graphql Request");
+
+      const { orderID, userID, userName } = checkoutData;
+
+      let date = new Intl.DateTimeFormat("en-GB", {
+        dateStyle: "medium",
+      }).format(Date.now());
+
+      let user = await Users.findOne({ _id: userID });
+      if (!user.address) {
+        return "FILL ADDRESS";
+      } else {
+        let itemNameArr = [];
+        for (let i = 0; i < user.cartItems.length; i++) {
+          itemNameArr.push(user.cartItems[i].itemName);
+        }
+        let items = await Items.find({ itemName: { $in: itemNameArr } });
+        let orderList = [];
+        for (let i = 0; i < items.length; i++) {
+          let itemOrder = new ItemOrders({
+            orderID: orderID,
+            itemName: items[i].itemName,
+            price: items[i].price,
+            quantity: user.cartItems[i].quantityRequested,
+            date: date,
+            imageName: items[i].imageName,
+            shopName: items[i].shopName,
+            isGift: user.cartItems[i].isGift,
+          });
+          orderList.push(itemOrder);
+        }
+
+        let order = await Orders.findOneAndUpdate(
+          { userName: userName },
+          {
+            $push: {
+              orderItems: {
+                $each: orderList,
+              },
+            },
+          }
+        );
+
+        let user2 = await Users.findOneAndUpdate(
+          { username: userName },
+          {
+            $set: {
+              cartItems: [],
+            },
+          }
+        );
+
+        for (let i = 0; i < items.length; i++) {
+          let itemupdateResult = await Items.findOneAndUpdate(
+            { itemName: items[i].itemName },
+            {
+              $set: {
+                quantity:
+                  items[i].quantity -
+                  parseInt(user.cartItems[i].quantityRequested),
+                sales:
+                  items[i].sales +
+                  parseInt(user.cartItems[i].quantityRequested),
+              },
+            }
+          );
+        }
+        return "Updated the quantity!";
+      }
     },
   },
 };
